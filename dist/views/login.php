@@ -15,7 +15,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Login - Biblioteca ADSO</title>
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
@@ -34,8 +34,8 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                                     <h3 class="text-center font-weight-light my-4">Inicio de Sesion</h3>
                                 </div>
                                 <div class="card-body">
-                                    <form action="../controller/controllerLogin.php" method="post">
-                                        <div class="form-floating mb-3">
+                                    <form action="../../controller/controllerLogin.php" method="post">
+                                        <div class="form-floating mb-3 text-black text-opacity-25">
                                             <input class="form-control" id="usuarioLogin" type="text" placeholder="Usuario" name="usuarioLogin" />
                                             <label for="usuarioLogin">Usuario</label>
                                         </div>
@@ -75,7 +75,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="js/scripts.js"></script>
-    <script src="js/sweetAlerts.js"></script>
+    <script src="../js/sweetAlerts.js"></script>
 </body>
 
 </html>
