@@ -4,11 +4,18 @@ class MySQL
 {
 
     //! Datos de conexión
-    private $ipServidor = "localhost"; //
+    //* Conexion clever
+    // private $ipServidor = "bpuff7qnjb6yc3odeeul-mysql.services.clever-cloud.com"; //
+    // private $usuarioBase = "uodrkbidieoxt1m5";
+    // private $contrasena = "wKdffoboIV1ljB1u5QaI";
+    // private $nombreBaseDatos = "bpuff7qnjb6yc3odeeul";
+    
+    //* Conexion local
+    private $ipServidor = "localhost";
     private $usuarioBase = "root";
     private $contrasena = "";
     private $nombreBaseDatos = "kahoot";
-
+    
     private $conexion;
 
     //* Método para conectar a la base de datos
