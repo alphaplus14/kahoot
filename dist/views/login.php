@@ -23,29 +23,28 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
         <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
     <?php } ?>
-            <main>
-                <div class="container-fluid vh-100">
-                    <div class="row h-100 d-flex justify-content-center align-items-center">
-                        <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
-                                <h2 class="text-center mb-4">Inicio de sesión</h2>
-                                    <form action="../../controller/controllerLogin.php" method="post">
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="usuarioLogin" type="text" placeholder="Usuario" name="usuarioLogin" />
-                                            <label for="usuarioLogin">Usuario</label>
-                                        </div>
-                                        <div class="form-floating mb-3">
-                                            <input class="form-control" id="passLogin" type="password" placeholder="Contraseña" name="passLogin" />
-                                            <label for="passLogin">Contraseña</label>
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
-                                            <button type="submit" class="btn btn-primary form-control">Enviar</button>
-                                        </div>
-                                    </form>
-                            </div>
+    <main>
+        <div class="container-fluid vh-100">
+            <div class="row h-100 d-flex justify-content-center align-items-center">
+                <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
+                    <h2 class="text-center mb-4">Inicio de sesión</h2>
+                    <form action="../../controller/controllerLogin.php" method="post">
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="usuarioLogin" type="text" placeholder="Usuario" name="usuarioLogin" />
+                            <label for="usuarioLogin">Usuario</label>
                         </div>
-                    </div>
+                        <div class="form-floating mb-3">
+                            <input class="form-control" id="passLogin" type="password" placeholder="Contraseña" name="passLogin" />
+                            <label for="passLogin">Contraseña</label>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
+                            <button type="submit" class="btn btn-primary form-control">Enviar</button>
+                        </div>
+                    </form>
                 </div>
-            </main>
+            </div>
+        </div>
+    </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
