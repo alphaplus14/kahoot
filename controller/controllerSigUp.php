@@ -5,7 +5,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         isset($_POST['usuarioApellido']) &&
         isset($_POST['usuarioEmail']) &&
         isset($_POST['usuarioPass']) &&
-        !empty($_POST['usuarioNombre']) &&
         !empty($_POST['usuarioApellido']) &&
         !empty($_POST['usuarioEmail']) &&
         !empty($_POST['usuarioPass'])
