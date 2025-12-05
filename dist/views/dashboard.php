@@ -8,16 +8,16 @@ if ($_SESSION['tipoUsuario'] != 'Administrador') {
     header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
     exit;
 }
-require_once '../models/MySQL.php';
+require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado = $mysql->efectuarConsulta("SELECT * FROM usuario 
-JOIN tipoUsuario ON tipoUsuario.idTipoUsuario = usuario.fkTipoUsuario
-JOIN estado ON estado.idEstado = usuario.fkEstadoUsuario");
+$resultado = $mysql->efectuarConsulta(("SELECT * FROM usuarios;"));
+
 $usuario = [];
-while ($fila = mysqli_fetch_assoc($resultado)) {
-    $usuario[] = $fila;
+while ($row = mysqli_fetch_assoc($resultado)) {
+
+    $usuario[] = $row;
 }
 ?>
 <!DOCTYPE html>
@@ -29,11 +29,11 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - ¿Y esa pregunta?</title>
+    <title>Dashboard - ¿Y esa Pregunta?</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-    <link href="css/styles.css" rel="stylesheet" />
+    <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
@@ -65,7 +65,7 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" href="../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li><a class="dropdown-item text-danger" href="../../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
                 </ul>
             </li>
         </ul>
@@ -75,20 +75,16 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav">
-                        <?php
-                        if ($_SESSION['tipoUsuario'] === "Administrador") {
-                            echo '<div class="sb-sidenav-menu-heading">Administracion</div>
+                        <div class="sb-sidenav-menu-heading">Administracion</div>
                         <a class="nav-link" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
-                        </a>';
-                        };
-                        ?>
-                        <div class="sb-sidenav-menu-heading">Libros</div>
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Preguntas</div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
                             aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                            Gestión de Libros
+                            <div class="sb-nav-link-icon"><i class="bi bi-patch-question"></i></div>
+                            Gestión de Preguntas
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
@@ -125,104 +121,41 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
                     <ol class="breadcrumb mb-4">
                         <li class="breadcrumb-item active">Panel de Administracion</li>
                     </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar"><i class="bi bi-person-add"></i> Insertar Usuario</button>
-                    <button class="btn btn-success mb-4" id="generarArchivos"><i class="bi bi-folder-plus"></i> Generar Archivos</button>
+                    <button class="btn btn-success mb-4" id="usuarioInsertar">➕ Insertar Usuario</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
                             Administradores
                         </div>
                         <div class="card-body">
-                            <table id="tablaEmpleados">
+                            <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
                                 <thead>
                                     <tr>
-
+                                        <th>ID</th>
                                         <th>Nombre</th>
-                                        <th>Apellido</th>
-                                        <th>Email</th>
+                                        <th>Correo</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
-                                <tfoot>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido</th>
-                                        <th>Email</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </tfoot>
                                 <tbody>
                                     <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['tipoUsuario'] != 'Cliente') {  ?>
+                                        if ($filaUsuario['id_usuario'] != $_SESSION['idUsuario']): ?>
                                             <tr>
-
-                                                <td><?php echo $filaUsuario['nombreUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['apellidoUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['emailUsuario']; ?></td>
-                                                <td><?php echo '<span class="badge p-2 ms-5 mt-1 fs-6  bg-' . (($filaUsuario['tipoEstado'] === 'Activo') ? 'success"><i class="bi bi-check-circle"></i> ' : 'danger"><i class="bi bi-x-circle"></i> ')  . $filaUsuario['tipoEstado'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-between w-100"><?php if ($filaUsuario['tipoEstado'] == "Activo") {
-                                                                                                        echo '<button onclick="sweetUsuarioDesactivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-danger"><i class="bi bi-person-fill-x"></i> Desactivar</button>';
-                                                                                                    } else {
-                                                                                                        echo '<button onclick="sweetUsuarioActivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-success"><i class="bi bi-person-fill-check"></i> Activar</a>';
-                                                                                                    }; ?>
-                                                    <?php echo '<button onclick="sweetUsuarioEditar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-warning ms-2" id="usuarioEditar"><i class="bi bi-person-video2"></i> Editar</button>'; ?>
-                                                    <!-- Se tiene que quemar el evento por que la tabla no deja asignar con addEventListener -->
+                                                <td><?php echo $filaUsuario['id_usuario']; ?></td>
+                                                <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
+                                                <td><?php echo $filaUsuario['correo_usuario']; ?></td>
+                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
+                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
+                                                                                                    echo '<button class="btn btn-danger usuarioDesactivar btn-sm w-100">❌ Desactivar</button>';
+                                                                                                } else {
+                                                                                                    echo '<button class="btn btn-success usuarioActivar btn-sm w-100">✔ Activar</a>';
+                                                                                                }; ?>
+                                                    <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
                                                 </td>
                                             </tr>
-                                    <?php }
+                                    <?php endif;
                                     } ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Clientes
-                        </div>
-                        <div class="card-body">
-                            <table id="tablaClientes">
-                                <thead>
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Apellido</th>
-                                        <th>Email</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tfoot>
-                                    <tr>
-
-                                        <th>Nombre</th>
-                                        <th>Apellido</th>
-                                        <th>Email</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </tfoot>
-                                <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['tipoUsuario'] == 'Cliente') { ?>
-                                            <tr>
-                                                <td><?php echo $filaUsuario['nombreUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['apellidoUsuario']; ?></td>
-                                                <td><?php echo $filaUsuario['emailUsuario']; ?></td>
-                                                <td><?php echo '<span class="badge p-2 ms-5 mt-1 fs-6 bg-' . (($filaUsuario['tipoEstado'] === 'Activo') ? 'success"><i class="bi bi-check-circle"></i> ' : 'danger"><i class="bi bi-x-circle"></i> ')  . $filaUsuario['tipoEstado'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-between w-100"><?php if ($filaUsuario['tipoEstado'] == "Activo") {
-                                                                                                        echo '<button onclick="sweetUsuarioDesactivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-danger"><i class="bi bi-person-fill-x"></i> Desactivar</button>';
-                                                                                                    } else {
-                                                                                                        echo '<button onclick="sweetUsuarioActivar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-success"><i class="bi bi-person-fill-check"></i> Activar</a>';
-                                                                                                    }; ?>
-                                                    <?php echo '<button onclick="sweetUsuarioEditar(' . $filaUsuario['idUsuario'] . ')" class="btn btn-warning ms-2" id="usuarioEditar"><i class="bi bi-person-video2"></i> Editar</button>'; ?>
-                                                    <!-- Se tiene que quemar el evento por que la tabla no deja asignar con addEventListener -->
-                                                </td>
-                                            </tr>
-                                    <?php }
-                                    }
-                                    ?>
                                 </tbody>
                             </table>
                         </div>
@@ -244,13 +177,13 @@ while ($fila = mysqli_fetch_assoc($resultado)) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="js/scripts.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="../js/datatables/datatables.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-    <script src="js/sweetAlerts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/scripts.js"></script>
+    <script src="../js/dashboard/dashboard.js" type="module"></script>
 </body>
 
 </html>

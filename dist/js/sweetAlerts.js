@@ -5,6 +5,7 @@
 //! Eventos de Botones
 //! /////////////////////////////////////////////////////////
 
+<<<<<<< HEAD
 // #region //* Usuario Insertar
 //TODO Inicio Usuario Insertar
 //? Se capturan todos los botones en un arreglo (creado por defecto)
@@ -34,6 +35,8 @@ configuracionPerfil.forEach((element) => {
 //TODO Fin Configuracion Perfil
 // #endregion
 
+=======
+>>>>>>> origin/mateo
 // #region //* Politica & Privacidad
 //TODO Inicio Politica & Privacidad
 //? Se capturan todos los botones en un arreglo (creado por defecto)
@@ -62,6 +65,7 @@ terminosCondiciones.forEach((element) => {
 //TODO Fin Terminos & Condiciones
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Reserva Libros Insertar
 //TODO Inicio Reserva Libros Insertar
 const reservaInsertar = document.querySelectorAll('#reservaLibros');
@@ -104,6 +108,8 @@ registrarPrestamo.forEach((element) => {
 //TODO Fin Prestamo Registro
 // #endregion
 
+=======
+>>>>>>> origin/mateo
 // #region //* Lanzar sweet errores
 //TODO Inicio Lanzar sweet errores
 window.onload = function () {
@@ -125,13 +131,21 @@ window.onload = function () {
 
 // #region //* Verificar Email
 //TODO Inicio Funcion verificarEmail
+<<<<<<< HEAD
 async function verificarEmail(email) {
+=======
+export async function verificarEmail(email) {
+>>>>>>> origin/mateo
     try {
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('email', email);
         //? Solicitud de datos a controller
+<<<<<<< HEAD
         const response = await fetch('../controller/controllerVerifyEmail.php', {
+=======
+        const response = await fetch('../../controller/verify/controllerVerifyEmail.php', {
+>>>>>>> origin/mateo
             method: 'POST',
             body: formData,
         });
@@ -148,6 +162,7 @@ async function verificarEmail(email) {
 //TODO Fin Funcion verificarEmail
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Verificar ISBN
 //TODO Funcion verificarISBN INICIO
 async function verificarISBN(isbn) {
@@ -176,12 +191,21 @@ async function verificarISBN(isbn) {
 // #region //* Traer Datos Usuario (por id)
 //TODO Inicio Funcion Traer Datos Usuario (por id)
 async function traerDatosUsuarioPorID(id) {
+=======
+// #region //* Traer Datos Usuario (por id)
+//TODO Inicio Funcion Traer Datos Usuario (por id)
+export async function traerDatosUsuarioPorID(id) {
+>>>>>>> origin/mateo
     try {
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
+<<<<<<< HEAD
         const json = await fetch(`../controller/controllerDatosUsuarioPorID.php`, {
+=======
+        const json = await fetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
+>>>>>>> origin/mateo
             method: 'POST',
             body: formData,
         });
@@ -198,6 +222,7 @@ async function traerDatosUsuarioPorID(id) {
 //TODO Fin Funcion Traer Datos Usuario (por id)
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Traer Datos Tabla Pivote Libro Has Reservas (por id)
 //TODO Inicio Traer Datos Tabla Pivote (por id)
 async function traerDatosLibrosHasReservasPorID(id) {
@@ -485,6 +510,8 @@ async function enviarEmailReserva(idReserva, email) {
 //TODO Fin enviar email
 // #endregion
 
+=======
+>>>>>>> origin/mateo
 //! /////////////////////////////////////////////////////////
 //! FIN Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -727,11 +754,16 @@ function crearLi(text) {
 
 // #region //* Contenido Usuario Insertar
 //TODO Inicio Contenido Usuario Insertar
+<<<<<<< HEAD
 async function contenidoUsuarioInsertar() {
     try {
         //? Se traen todos los tipos de usuario disponibles
         const jsonTipoUsuario = await fetch('../controller/controllerDatosTipoUsuario.php');
         const datosTipoUsuario = await jsonTipoUsuario.json();
+=======
+export async function contenidoUsuarioInsertar() {
+    try {
+>>>>>>> origin/mateo
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
@@ -740,12 +772,15 @@ async function contenidoUsuarioInsertar() {
         const nombreInput = crearInputForm('nombreUsuario', 'text', '');
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
+<<<<<<< HEAD
         //? Apellido
         const apellidoDiv = crearDivForm();
         const apellidoLabel = crearLabelForm('apellidoUsuario', 'Apellido');
         const apellidoInput = crearInputForm('apellidoUsuario', 'text', '');
         apellidoDiv.append(apellidoLabel);
         apellidoDiv.append(apellidoInput);
+=======
+>>>>>>> origin/mateo
         //? Email
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Email');
@@ -758,6 +793,7 @@ async function contenidoUsuarioInsertar() {
         const passInput = crearInputForm('passUsuario', 'password', '');
         passDiv.append(passLabel);
         passDiv.append(passInput);
+<<<<<<< HEAD
         //? Select
         const selectDiv = crearDivForm();
         const select = crearSelectForm('tipoUsuario');
@@ -775,6 +811,12 @@ async function contenidoUsuarioInsertar() {
         form.append(emailDiv);
         form.append(passDiv);
         form.append(selectDiv);
+=======
+        //? Asignacion final Form
+        form.append(nombreDiv);
+        form.append(emailDiv);
+        form.append(passDiv);
+>>>>>>> origin/mateo
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -788,6 +830,7 @@ async function contenidoUsuarioInsertar() {
 
 // #region //* Contenido Usuario Editar
 //TODO Inicio Contenido Usuario Editar
+<<<<<<< HEAD
 async function contenidoUsuarioEditar(id) {
     try {
         //? Se traen datos de usuario por ID
@@ -795,11 +838,18 @@ async function contenidoUsuarioEditar(id) {
         //? Se traen todos los tipos de usuario disponibles
         const jsonTipoUsuario = await fetch(`../controller/controllerDatosTipoUsuario.php`);
         const datosTipoUsuario = await jsonTipoUsuario.json();
+=======
+export async function contenidoUsuarioEditar(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const datosUsuario = await traerDatosUsuarioPorID(id);
+>>>>>>> origin/mateo
         //? Inicio Formulario
         const form = crearForm();
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
+<<<<<<< HEAD
         const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombreUsuario);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
@@ -813,6 +863,15 @@ async function contenidoUsuarioEditar(id) {
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Correo');
         const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].emailUsuario);
+=======
+        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombre_usuario);
+        nombreDiv.append(nombreLabel);
+        nombreDiv.append(nombreInput);
+        //? Email
+        const emailDiv = crearDivForm();
+        const emailLabel = crearLabelForm('emailUsuario', 'Correo');
+        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].correo_usuario);
+>>>>>>> origin/mateo
         emailDiv.append(emailLabel);
         emailDiv.append(emailInput);
         //? Password
@@ -821,6 +880,7 @@ async function contenidoUsuarioEditar(id) {
         const passInput = crearInputForm('passUsuario', 'password', '');
         passDiv.append(passLabel);
         passDiv.append(passInput);
+<<<<<<< HEAD
         //? Tipo Usuario
         const selectDiv = crearDivForm();
         const select = crearSelectForm('tipoUsuario');
@@ -841,6 +901,12 @@ async function contenidoUsuarioEditar(id) {
         form.append(emailDiv);
         form.append(passDiv);
         form.append(selectDiv);
+=======
+        //? Asignacion final Form
+        form.append(nombreDiv);
+        form.append(emailDiv);
+        form.append(passDiv);
+>>>>>>> origin/mateo
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -854,7 +920,11 @@ async function contenidoUsuarioEditar(id) {
 
 // #region //* Contenido Usuario Activar
 //TODO Inicio Contenido Usuario Activar
+<<<<<<< HEAD
 async function contenidoUsuarioActivar(id) {
+=======
+export async function contenidoUsuarioActivar(id) {
+>>>>>>> origin/mateo
     try {
         //? Se traen datos de usuario por ID
         const usuario = await traerDatosUsuarioPorID(id);
@@ -879,7 +949,11 @@ async function contenidoUsuarioActivar(id) {
 
 // #region //* Contenido Usuario Desctivar
 //TODO Inicio Contenido Usuario Desactivar
+<<<<<<< HEAD
 async function contenidoUsuarioDesctivar(id) {
+=======
+export async function contenidoUsuarioDesctivar(id) {
+>>>>>>> origin/mateo
     try {
         //? Se traen datos de usuario por ID
         const usuario = await traerDatosUsuarioPorID(id);
@@ -902,6 +976,7 @@ async function contenidoUsuarioDesctivar(id) {
 //TODO Fin Contenido Usuario Desactivar
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Contenido Libro Insertar
 //TODO Inicio Contenido Libro Insertar
 async function contenidoLibroInsertar() {
@@ -1166,6 +1241,11 @@ async function contenidoConfiguracionPerfil(id) {
 // #region //* Contenido Politica & Privacidad
 //TODO Inicio Contenido Politica Privacidad
 async function contenidoPoliticaPrivacidad() {
+=======
+// #region //* Contenido Politica & Privacidad
+//TODO Inicio Contenido Politica Privacidad
+export async function contenidoPoliticaPrivacidad() {
+>>>>>>> origin/mateo
     try {
         //? Texto a mostrar
         const text = `
@@ -1197,7 +1277,11 @@ async function contenidoPoliticaPrivacidad() {
 
 // #region //* Contenido Terminos & Condiciones
 //TODO Inicio Contenido Terminos & Condiciones
+<<<<<<< HEAD
 async function contenidoTerminosCondiciones() {
+=======
+export async function contenidoTerminosCondiciones() {
+>>>>>>> origin/mateo
     try {
         //? Texto a mostrar
         const text = `El acceso y uso de BibliotecaADSO implica la aceptación de estos términos. 
@@ -1225,6 +1309,7 @@ async function contenidoTerminosCondiciones() {
 //TODO Fin Contenido Terminos & Condiciones
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Contenido Reserva Libros
 //TODO Inicio Contenido Reserva
 async function contenidoReservaLibros() {
@@ -1501,6 +1586,11 @@ async function contenidoPrestamoEnviarCorreo(datosPrestamo) {
 // #region //* Contenido Alertas Error
 //TODO Inicio Contenido Alertas Error
 async function contenidoAlertasError(message) {
+=======
+// #region //* Contenido Alertas Error
+//TODO Inicio Contenido Alertas Error
+export async function contenidoAlertasError(message) {
+>>>>>>> origin/mateo
     try {
         //? Texto
         const div = crearDivForm();
@@ -1529,7 +1619,11 @@ async function contenidoAlertasError(message) {
 
 // #region //* Sweet Usuario Insertar
 //TODO Inicio SweetAlert Usuario Insertar
+<<<<<<< HEAD
 async function sweetUsuarioInsertar() {
+=======
+export async function sweetUsuarioInsertar() {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Crear Nuevo Usuario', //? Titulo Modal
@@ -1544,7 +1638,10 @@ async function sweetUsuarioInsertar() {
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuario').value.trim();
+<<<<<<< HEAD
                 const apellido = document.querySelector('#apellidoUsuario').value.trim();
+=======
+>>>>>>> origin/mateo
                 const email = document.querySelector('#emailUsuario').value.trim();
                 //* Validar formato de correo antes de continuar
                 const emailValue = email;
@@ -1554,9 +1651,14 @@ async function sweetUsuarioInsertar() {
                     return false;
                 }
                 const pass = document.querySelector('#passUsuario').value.trim();
+<<<<<<< HEAD
                 const tipoUsuario = document.querySelector('#tipoUsuario').value.trim();
                 //? Verificar que los campos esten llenos
                 if (!nombre || !apellido || !email || !pass || !tipoUsuario) {
+=======
+                //? Verificar que los campos esten llenos
+                if (!nombre || !email || !pass) {
+>>>>>>> origin/mateo
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
@@ -1569,10 +1671,15 @@ async function sweetUsuarioInsertar() {
                 //? Retornar valores finales
                 return {
                     nombre,
+<<<<<<< HEAD
                     apellido,
                     email,
                     pass,
                     tipoUsuario,
+=======
+                    email,
+                    pass,
+>>>>>>> origin/mateo
                 };
             },
         }).then(async (result) => {
@@ -1583,12 +1690,19 @@ async function sweetUsuarioInsertar() {
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
                 formData.append('nombre', datos.nombre);
+<<<<<<< HEAD
                 formData.append('apellido', datos.apellido);
                 formData.append('email', datos.email);
                 formData.append('pass', datos.pass);
                 formData.append('tipoUsuario', datos.tipoUsuario);
                 //? Solicitud de datos a controller
                 const json = await fetch('../controller/controllerUsuarioInsertar.php', {
+=======
+                formData.append('email', datos.email);
+                formData.append('pass', datos.pass);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/usuarios/controllerUsuarioInsertar.php', {
+>>>>>>> origin/mateo
                     method: 'POST',
                     body: formData,
                 });
@@ -1621,7 +1735,11 @@ async function sweetUsuarioInsertar() {
 
 // #region //* Sweet Usuario Editar
 //TODO Inicio SweetAlert Usuario Editar
+<<<<<<< HEAD
 async function sweetUsuarioEditar(id) {
+=======
+export async function sweetUsuarioEditar(id) {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Editar Usuario', //? Titulo Modal
@@ -1638,7 +1756,10 @@ async function sweetUsuarioEditar(id) {
                 const datosUsuario = await traerDatosUsuarioPorID(id);
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuario').value.trim();
+<<<<<<< HEAD
                 const apellido = document.querySelector('#apellidoUsuario').value.trim();
+=======
+>>>>>>> origin/mateo
                 const email = document.querySelector('#emailUsuario').value.trim();
                 //* Validar formato de correo antes de continuar
                 const emailValue = email;
@@ -1648,21 +1769,36 @@ async function sweetUsuarioEditar(id) {
                     return false;
                 }
                 let pass = document.querySelector('#passUsuario').value.trim();
+<<<<<<< HEAD
                 const tipoUsuario = document.querySelector('#tipoUsuario').value.trim();
+=======
+>>>>>>> origin/mateo
                 //? Se verifica si se escribio una password nueva o se dejo vacio
                 let bool = false;
                 if (pass == null || pass == '') {
                     //? Si se dejo vacio se asigna la contraseña anterior
+<<<<<<< HEAD
                     pass = datosUsuario[0].passUsuario;
                     bool = true;
                 }
                 //? Verificar que los campos esten llenos
                 if (!nombre || !apellido || !email || !pass || !tipoUsuario) {
+=======
+                    pass = datosUsuario[0].password_usuario;
+                    bool = true;
+                }
+                //? Verificar que los campos esten llenos
+                if (!nombre || !email || !pass) {
+>>>>>>> origin/mateo
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
                 //? Verificacion de Email del Usuario
+<<<<<<< HEAD
                 if (email != datosUsuario[0].emailUsuario) {
+=======
+                if (email != datosUsuario[0].correo_usuario) {
+>>>>>>> origin/mateo
                     let boolEmail = await verificarEmail(email);
                     if (boolEmail == false) {
                         Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
@@ -1672,10 +1808,15 @@ async function sweetUsuarioEditar(id) {
                 //? Retornar valores finales
                 return {
                     nombre,
+<<<<<<< HEAD
                     apellido,
                     email,
                     pass,
                     tipoUsuario,
+=======
+                    email,
+                    pass,
+>>>>>>> origin/mateo
                     bool,
                     id,
                 };
@@ -1688,6 +1829,7 @@ async function sweetUsuarioEditar(id) {
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
                 formData.append('nombre', datos.nombre);
+<<<<<<< HEAD
                 formData.append('apellido', datos.apellido);
                 formData.append('email', datos.email);
                 formData.append('pass', datos.pass);
@@ -1696,6 +1838,14 @@ async function sweetUsuarioEditar(id) {
                 formData.append('id', datos.id);
                 //? Solicitud de datos a controller
                 const json = await fetch('../controller/controllerUsuarioEditar.php', {
+=======
+                formData.append('email', datos.email);
+                formData.append('pass', datos.pass);
+                formData.append('bool', datos.bool);
+                formData.append('id', datos.id);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/usuarios/controllerUsuarioEditar.php', {
+>>>>>>> origin/mateo
                     method: 'POST',
                     body: formData,
                 });
@@ -1728,7 +1878,11 @@ async function sweetUsuarioEditar(id) {
 
 // #region //* Sweet Usuario Activar
 //TODO Inicio SweetAlert Activar Usuario
+<<<<<<< HEAD
 async function sweetUsuarioActivar(id) {
+=======
+export async function sweetUsuarioActivar(id) {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Activar Usuario', //? Titulo Modal
@@ -1754,7 +1908,11 @@ async function sweetUsuarioActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
+<<<<<<< HEAD
                 const json = await fetch('../controller/controllerUsuarioActivar.php', {
+=======
+                const json = await fetch('../../controller/usuarios/controllerUsuarioActivar.php', {
+>>>>>>> origin/mateo
                     method: 'POST',
                     body: formData,
                 });
@@ -1787,7 +1945,11 @@ async function sweetUsuarioActivar(id) {
 
 // #region //* Sweet Usuario Desactivar
 //TODO Inicio SweetAlert Desactivar Usuario
+<<<<<<< HEAD
 async function sweetUsuarioDesactivar(id) {
+=======
+export async function sweetUsuarioDesactivar(id) {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Desactivar Usuario', //? Titulo Modal
@@ -1813,7 +1975,11 @@ async function sweetUsuarioDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
+<<<<<<< HEAD
                 const json = await fetch('../controller/controllerUsuarioDesactivar.php', {
+=======
+                const json = await fetch('../../controller/usuarios/controllerUsuarioDesactivar.php', {
+>>>>>>> origin/mateo
                     method: 'POST',
                     body: formData,
                 });
@@ -1844,6 +2010,7 @@ async function sweetUsuarioDesactivar(id) {
 //TODO Fin SweetAlert Desactivar Usuario
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Sweet Configuracion Perfil
 //TODO Inicio SweetAlert Editar Perfil
 async function sweetConfiguracionPerfil(id) {
@@ -1944,6 +2111,11 @@ async function sweetConfiguracionPerfil(id) {
 // #region //* Sweet Politica & Privacidad
 //TODO Inicio SweetAlert Activar Usuario
 async function sweetPoliticaPrivacidad() {
+=======
+// #region //* Sweet Politica & Privacidad
+//TODO Inicio SweetAlert Activar Usuario
+export async function sweetPoliticaPrivacidad() {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Politica & Privacidad', //? Titulo Modal
@@ -1963,7 +2135,11 @@ async function sweetPoliticaPrivacidad() {
 
 // #region //* Sweet Terminos & Condiciones
 //TODO Inicio SweetAlert Activar Usuario
+<<<<<<< HEAD
 async function sweetTerminosCondiciones() {
+=======
+export async function sweetTerminosCondiciones() {
+>>>>>>> origin/mateo
     try {
         Swal.fire({
             title: 'Terminos & Condiciones', //? Titulo Modal
@@ -1982,6 +2158,7 @@ async function sweetTerminosCondiciones() {
 //TODO Fin SweetAlert Activar Usuario
 // #endregion
 
+<<<<<<< HEAD
 // #region //* Sweet Libros Info
 //TODO Inicio SweetAlert Libros Info
 async function sweetLibrosInfo(id) {
@@ -3170,6 +3347,11 @@ async function sweetPrestamoVerDetalles(idPrestamo) {
 // #region //* Sweet Alertas Error
 //TODO Inicio Sweet Alertas Error
 async function sweetAlertasError(message, title) {
+=======
+// #region //* Sweet Alertas Error
+//TODO Inicio Sweet Alertas Error
+export async function sweetAlertasError(message, title) {
+>>>>>>> origin/mateo
     Swal.fire({
         title: title,
         html: await contenidoAlertasError(message),
