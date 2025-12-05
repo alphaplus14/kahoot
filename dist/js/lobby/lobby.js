@@ -19,7 +19,6 @@ btnIngresar.addEventListener('click', (e) => {
     Nodatos(input);
 });
 
-// Limpiar el error cuando el usuario comienza a escribir
 input.addEventListener('input', (e) => {
     if (input.value.trim() !== '') {
         input.classList.remove('bg-danger-subtle', 'border-danger-subtle');

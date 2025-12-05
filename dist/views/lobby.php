@@ -16,6 +16,11 @@
     <main class="flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="container-fluid">
             <div class="row justify-content-center">
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex justify-content-center align-items-center mb-4">
+                    <img class="logo img-fluid p-2" src="../assets/img/logo.png" alt="logo" srcset="¿Y esa Pregunta?">
+                </div>
+            </div>
+            <div class="container-body row justify-content-center">
                 <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
                     <form action="" method="post">
                         <div class="mb-2">

@@ -2,12 +2,15 @@ body {
     background: linear-gradient(135deg, #7F3FF0, #3C8CFF);
     background-size: cover;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+
 }
 
 body::before {
     content: "";
-    position: absolute;
+    position: fixed;
     top: -50px;
     left: -50px;
     width: 200px;
@@ -15,11 +18,12 @@ body::before {
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(45deg);
     border-radius: 10px;
+    z-index: 0;
 }
 
 body::after {
     content: "";
-    position: absolute;
+    position: fixed;
     bottom: -80px;
     right: -80px;
     width: 250px;
@@ -27,10 +31,11 @@ body::after {
     background: rgba(255, 255, 255, 0.1);
     transform: rotate(-25deg);
     border-radius: 10px;
+    z-index: 0;
 }
 
 .form-control::placeholder {
-    opacity: 0.5 !important;
+    opacity: 0.6 !important;
 }
 
 .fade-out {
@@ -63,7 +68,7 @@ body::after {
     left: 0;
     width: 100%;
     padding: 15px 20px;
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -85,6 +90,33 @@ body::after {
     display: inline-block;
 }
 
-.fade-out {
-    opacity: 0;
+.logo {
+    width: 100%;
+    max-width: 200px;
+}
+
+main {
+    position: relative;
+    z-index: 1;
+    margin-top: -80px;
+}
+
+
+@media (max-width: 576px) {
+    .alerta {
+        font-size: 13px;
+        padding: 12px 10px;
+    }
+
+    .alerta i {
+        font-size: 16px;
+        margin-right: 6px;
+    }
+}
+
+@media (max-width: 400px) {
+    .alerta {
+        font-size: 12px;
+        padding: 10px 8px;
+    }
 }
