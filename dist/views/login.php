@@ -38,8 +38,12 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                             <label for="passLogin">Contraseña</label>
                         </div>
                         <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
-                            <button type="submit" class="btn btn-primary form-control">Enviar</button>
+                            <button type="submit" class="btn btn-dark w-100">Ingresar</button>
                         </div>
+                        <div class="d-flex align-items-center justify-content-end mt-1 mb-0">
+                            <a href="index.php" class="btn btn-danger w-100">Cancelar</a>
+                        </div>
+
                     </form>
                 </div>
             </div>

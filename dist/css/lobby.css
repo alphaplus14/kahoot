@@ -5,7 +5,6 @@ body {
     overflow-x: hidden;
     overflow-y: auto;
     min-height: 100vh;
-
 }
 
 body::before {
@@ -34,6 +33,29 @@ body::after {
     z-index: 0;
 }
 
+header {
+    position: relative;
+    z-index: 10 !important;
+}
+
+.btn-dark {
+    position: relative;
+    z-index: 10;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    box-shadow: 0 6px 0 #0b0b0b !important;
+}
+
+.btn-dark:hover {
+    transform: translateY(4px) !important;
+    box-shadow: 0 2px 0 #300c63 !important;
+}
+
+.btn-dark:active {
+    transform: translateY(6px) !important;
+    box-shadow: 0 0 0 #300c63 !important;
+}
+
 .form-control::placeholder {
     opacity: 0.6 !important;
 }
@@ -50,16 +72,6 @@ body::after {
     to {
         opacity: 0;
     }
-}
-
-.btn-dark {
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-    box-shadow: 0 6px 0 #300c63 !important;
-}
-
-.btn-dark:hover {
-    transform: translateY(4px) !important;
-    box-shadow: 0 2px 0 #300c63 !important;
 }
 
 .alerta {
@@ -100,7 +112,6 @@ main {
     z-index: 1;
     margin-top: -80px;
 }
-
 
 @media (max-width: 576px) {
     .alerta {

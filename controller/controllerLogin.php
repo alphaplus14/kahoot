@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['correo_usuario'] = $usuario['correo_usuario'];
                 $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
                 //* Exito
-                header("Location: ../dist/views/lobby.php");
+                header("Location: ../dist/views/dashboard.php");
                 exit();
             } else {
                 $mysql->desconectar();
