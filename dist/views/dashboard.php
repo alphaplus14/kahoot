@@ -4,7 +4,7 @@ if (!$_SESSION) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
-if ($_SESSION['tipoUsuario'] != 'Administrador') {
+if ($_SESSION['estado_usuario'] == 'Activo') {
     header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
     exit;
 }
@@ -43,8 +43,8 @@ while ($row = mysqli_fetch_assoc($resultado)) {
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
-        <a class="navbar-brand ps-3" href="<?php echo ($_SESSION['tipoUsuario'] != "Administrador") ? "libros.php" :  "dashboard.php" ?>">
-            <?php echo $_SESSION['nombreUsuario'] . " " . $_SESSION['apellidoUsuario']; ?>
+        <a class="navbar-brand ps-3" href="./dashboard.php">
+            <?php echo $_SESSION['nombre_usuario']; ?>
         </a>
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle">
             <i class="fas fa-bars"></i>
@@ -61,7 +61,7 @@ while ($row = mysqli_fetch_assoc($resultado)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['idUsuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['id_usuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
@@ -76,40 +76,51 @@ while ($row = mysqli_fetch_assoc($resultado)) {
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link" href="dashboard.php">
+                        <a class="nav-link active" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
                         </a>
-                        <div class="sb-sidenav-menu-heading">Preguntas</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                            aria-expanded="true" aria-controls="collapsePages">
-                            <div class="sb-nav-link-icon"><i class="bi bi-patch-question"></i></div>
-                            Gestión de Preguntas
+                        <div class="sb-sidenav-menu-heading">Juegos</div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
+                            aria-expanded="true" aria-controls="collapseJuegos">
+                            <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
+                            Crear juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapsePages" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="libros.php">Búsqueda de Libros</a>
-                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReservas"
-                                    aria-expanded="true" aria-controls="collapseReservas">
-                                    Reservas
-                                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                </a>
-
-                                <div class="collapse" id="collapseReservas" data-bs-parent="#collapseLibros">
-                                    <nav class="sb-sidenav-menu-nested nav">
-                                        <a class="nav-link" href="reservasPendientes.php">Reservas Pendientes</a>
-                                        <a class="nav-link" href="reservasHistorial.php">Historial de Reservas</a>
-                                    </nav>
-                                </div>
-                                <a class="nav-link" href="prestamos.php">Préstamos</a>
+                                <a class="nav-link" href="#">Categorias</a>
+                                <a class="nav-link" href="#">Banco de Preguntas</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePartidas"
+                            aria-expanded="true" aria-controls="collapsePartidas">
+                            <div class="sb-nav-link-icon"><i class="bi bi-controller"></i></div>
+                            Partidas
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="#">Generar PIN</a>
+                                <a class="nav-link" href="#">Historial de partidas</a>
+                            </nav>
+                        </div>
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
+                            aria-expanded="true" aria-controls="collapseReportes">
+                            <div class="sb-nav-link-icon"><i class="bi-bar-chart-fill"></i></div>
+                            Reportes
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" href="#">Reportes por juego</a>
                             </nav>
                         </div>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
                     <div class="small">Logueado como:</div>
-                    <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['tipoUsuario'] . "</p>"; ?>
+                    <?php echo "<p class='text-uppercase fw-bold mb-0'> " . $_SESSION['nombre_usuario'] . "</p>"; ?>
                 </div>
             </nav>
         </div>
@@ -140,7 +151,7 @@ while ($row = mysqli_fetch_assoc($resultado)) {
                                 </thead>
                                 <tbody>
                                     <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['id_usuario'] != $_SESSION['idUsuario']): ?>
+                                        if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
                                             <tr>
                                                 <td><?php echo $filaUsuario['id_usuario']; ?></td>
                                                 <td><?php echo $filaUsuario['nombre_usuario']; ?></td>

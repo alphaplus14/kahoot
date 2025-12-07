@@ -13,6 +13,13 @@
 </head>
 
 <body class="bg-primary d-flex flex-column min-vh-100">
+    <div class="container-fluid">
+        <header class="row align-items-center">
+            <div class="col-6 d-flex justify-content-center align-items-center">
+                
+            </div>
+        </header>
+    </div>
     <main class="flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="container-fluid">
             <div class="row justify-content-center">
