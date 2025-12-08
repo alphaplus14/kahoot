@@ -17,23 +17,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         };
 
         //* Verificaciones
+
         if ($usuario = mysqli_fetch_assoc($resultado)) {
-            if (password_verify($pass, $usuario['password_usuario'])) {
-                //* Se guardan credenciales en variable global $_SESSION
-                $_SESSION['id_usuario'] = $usuario['id_usuario'];
-                $_SESSION['correo_usuario'] = $usuario['correo_usuario'];
-                $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
-                //* Exito
-                header("Location: ../dist/views/lobby.php");
-                exit();
+            if ($usuario['estado_usuario'] == 'Activo') {
+                if (password_verify($pass, $usuario['password_usuario'])) {
+                    //* Se guardan credenciales en variable global $_SESSION
+                    $_SESSION['id_usuario'] = $usuario['id_usuario'];
+                    $_SESSION['correo_usuario'] = $usuario['correo_usuario'];
+                    $_SESSION['nombre_usuario'] = $usuario['nombre_usuario'];
+                    $_SESSION['estado_usuario'] = $usuario['estado_usuario'];
+                    //* Exito
+                    header("Location: ../dist/views/dashboard.php");
+                    exit();
+                } else {
+                    $mysql->desconectar();
+                    header("Location: ../dist/views/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
+                    exit();
+                }
             } else {
                 $mysql->desconectar();
-                header("Location: ../dist/views/login.php?error=true&message=Contraseña incorrecta, intenta nuevamente!&title=Contraseña!");
+                header("Location: ../dist/views/login.php?error=true&message=Usuario inactivo!&title=Error!");
                 exit();
             }
         } else {
             $mysql->desconectar();
-            header("Location: ../dist/views/login.php?error=true&message=Usuario inactivo!&title=Error!");
+            header("Location: ../dist/views/login.php?error=true&message=Usuario no encontrado!&title=Error!");
             exit();
         }
     } else {

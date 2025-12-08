@@ -4,16 +4,23 @@ if (!$_SESSION || $_SESSION['estado_usuario'] != 'Activo') {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
-require_once '../..//models/MySQL.php';
+if (!empty($_GET['error']) && isset($_GET['error'])) {
+    $error = $_GET['error'];
+    $message = $_GET['message'];
+    $title = $_GET['title'];
+}
+require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado = $mysql->efectuarConsulta(("SELECT * FROM usuarios;"));
-
-$usuario = [];
-while ($row = mysqli_fetch_assoc($resultado)) {
-
-    $usuario[] = $row;
+//? Datos categorias
+$resultadoCategorias = $mysql->efectuarConsulta("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
+JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
+GROUP BY categorias.nombre_categoria;");
+$categorias = [];
+while ($row = mysqli_fetch_assoc($resultadoCategorias)) {
+    $row['id_categoria'] = (int)$row['id_categoria'];
+    $categorias[] = $row;
 }
 ?>
 <!DOCTYPE html>
@@ -25,7 +32,7 @@ while ($row = mysqli_fetch_assoc($resultado)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - ¿Y esa Pregunta?</title>
+    <title>Generar PIN - ¿Y esa Pregunta?</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -36,6 +43,9 @@ while ($row = mysqli_fetch_assoc($resultado)) {
 </head>
 
 <body class="sb-nav-fixed">
+    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
+        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
+    <?php } ?>
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
@@ -72,7 +82,7 @@ while ($row = mysqli_fetch_assoc($resultado)) {
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link active" href="dashboard.php">
+                        <a class="nav-link" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
                         </a>
@@ -95,9 +105,9 @@ while ($row = mysqli_fetch_assoc($resultado)) {
                             Partidas
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="generarPIN.php">Generar PIN</a>
+                                <a class="nav-link active" href="generarPIN.php">Generar PIN</a>
                                 <a class="nav-link" href="#">Historial de partidas</a>
                             </nav>
                         </div>
@@ -124,47 +134,29 @@ while ($row = mysqli_fetch_assoc($resultado)) {
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Panel de Administracion</h1>
+                    <h1 class="mt-4">Partidas</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de Administracion</li>
+                        <li class="breadcrumb-item active">Generar PIN</li>
                     </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar">➕ Insertar Usuario</button>
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="fas fa-table me-1"></i>
-                            Administradores
-                        </div>
-                        <div class="card-body">
-                            <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
-                                            <tr>
-                                                <td><?php echo $filaUsuario['id_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['correo_usuario']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
-                                                                                                    echo '<button class="btn btn-danger usuarioDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                                } else {
-                                                                                                    echo '<button class="btn btn-success usuarioActivar btn-sm w-100">✔ Activar</a>';
-                                                                                                }; ?>
-                                                    <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
-                                                </td>
-                                            </tr>
-                                    <?php endif;
-                                    } ?>
-                                </tbody>
-                            </table>
+                    <div class="row">
+                        <div class="col">
+                            <form id="generarPinForm">
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Selecciona una categoria para el juego</label>
+                                    <select class="form-select categoriasInput" aria-label="Default select example" id="categoria" name="categoria">
+                                        <option selected>Seleccione una categoria</option>
+                                        <?php //? CATEGORIAS
+                                        foreach ($categorias as $rowCategoria): ?>
+                                            <option value="<?php echo $rowCategoria['id_categoria']; ?>" name="<?php echo $rowCategoria['conteo']; ?>"><?php echo $rowCategoria['nombre_categoria'] . " / Preguntas disponibles: " . $rowCategoria['conteo']; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="limitePreguntas" class="form-label">Limite de Preguntas</label>
+                                    <input type="number" class="form-control limitePreguntasInput" id="limitePreguntas" name="limitePreguntas" min="0">
+                                </div>
+                                <button type="button" class="btn btn-primary" id="buttonEnviarForm">Generar PIN</button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -184,13 +176,9 @@ while ($row = mysqli_fetch_assoc($resultado)) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="../js/datatables/datatables.js"></script>
-    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/generarPIN/generarPIN.js"></script>
     <script src="../js/scripts.js"></script>
-    <script src="../js/dashboard/dashboard.js" type="module"></script>
 </body>
 
 </html>

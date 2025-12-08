@@ -33,13 +33,7 @@ terminosCondiciones.forEach((element) => {
 //TODO Fin Terminos & Condiciones
 // #endregion
 
-// #region //* Lanzar sweet errores
-//TODO Inicio Lanzar sweet errores
-window.onload = function () {
-    const a = document.getElementById('alertasErrores').click();
-};
-//TODO Fin Lanzar sweet errores
-// #endregion
+
 
 //! /////////////////////////////////////////////////////////
 //! FIN Eventos de Botones
@@ -534,24 +528,6 @@ export async function contenidoTerminosCondiciones() {
 //TODO Fin Contenido Terminos & Condiciones
 // #endregion
 
-// #region //* Contenido Alertas Error
-//TODO Inicio Contenido Alertas Error
-export async function contenidoAlertasError(message) {
-    try {
-        //? Texto
-        const div = crearDivForm();
-        const p = crearParrafo(message);
-        div.append(p);
-        return div;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Contenido Alertas Error
-// #endregion
-
 //! /////////////////////////////////////////////////////////
 //! FIN Contenidos de HTML para los SweetAlert
 //! /////////////////////////////////////////////////////////
@@ -907,21 +883,6 @@ export async function sweetTerminosCondiciones() {
 }
 
 //TODO Fin SweetAlert Activar Usuario
-// #endregion
-
-// #region //* Sweet Alertas Error
-//TODO Inicio Sweet Alertas Error
-export async function sweetAlertasError(message, title) {
-    Swal.fire({
-        title: title,
-        html: await contenidoAlertasError(message),
-        icon: 'error',
-        confirmButtonColor: '#28a745',
-        confirmButtonText: 'Aceptar',
-        showLoaderOnConfirm: true,
-    });
-}
-//TODO Fin Sweet Alertas Error
 // #endregion
 
 //! /////////////////////////////////////////////////////////

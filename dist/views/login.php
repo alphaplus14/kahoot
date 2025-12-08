@@ -48,7 +48,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
-    <script src="../js/sweetAlerts.js"></script>
+    <script src="../js/login/login.js"></script>
 </body>
 
 </html>
