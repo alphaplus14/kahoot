@@ -1,24 +1,25 @@
 <?php
 session_start();
-if (!$_SESSION) {
+if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
-if ($_SESSION['estado_usuario'] == 'Activo') {
-    header("Location: libros.php?error=true&message=Acceso denegado, solo se aceptan administradores!&title=Acceso denegado!");
+if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo') {
+    header("Location: login.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
     exit;
 }
 require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado = $mysql->efectuarConsulta(("SELECT * FROM usuarios;"));
+$stmt = $mysql->getConexion()->query("SELECT * FROM usuarios");
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $usuario = [];
-while ($row = mysqli_fetch_assoc($resultado)) {
-
+while ($row = $stmt->fetch()) {
     $usuario[] = $row;
 }
+$mysql->desconectar();
 ?>
 <!DOCTYPE html>
 <html lang="en">
