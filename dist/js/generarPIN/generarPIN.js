@@ -71,15 +71,48 @@ buttonEnviarForm.addEventListener('click', async () => {
     } else {
         inputLimite.removeAttribute('class');
         inputLimite.classList.add('form-control', 'limitePreguntasInput');
-        const categoria = opcion.getAttribute('value');
 
         const formDataGenerarPIN = new FormData();
-        formDataGenerarPIN.append('categoria', categoria);
         formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
         const jsonGenerarPIN = await fetch('../../controller/pin/controllerGenerarPIN.php', {
             method: 'POST',
             body: formDataGenerarPIN,
         });
         const responseGenerarPIN = await jsonGenerarPIN.json();
+        if (responseGenerarPIN.success == true) {
+            const categoria = opcion.getAttribute('value');
+            const formDataPreguntasPivote = new FormData();
+            formDataPreguntasPivote.append('categoria', categoria);
+            formDataPreguntasPivote.append('limitePreguntas', inputLimite.value);
+            formDataPreguntasPivote.append('pin', responseGenerarPIN.pin);
+            const jsonInsertarPivote = await fetch('../../controller/pin/controllerInsertarPreguntasPivote.php', {
+                method: 'POST',
+                body: formDataPreguntasPivote,
+            });
+            const responseInsertarPivote = await jsonInsertarPivote.json();
+            if (responseInsertarPivote.success == true) {
+                Swal.fire({
+                    title: 'Exito!',
+                    text: responseInsertarPivote.message,
+                    icon: 'success',
+                    confirmButtonColor: '#007bff',
+                });
+            } else {
+                Swal.fire({
+                    title: '¡Error!',
+                    text: responseInsertarPivote.message,
+                    icon: 'error',
+                    confirmButtonColor: '#007bff',
+                });
+            }
+            
+        } else {
+            Swal.fire({
+                title: '¡Error!',
+                text: responseGenerarPIN.message,
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            });
+        }
     }
 });

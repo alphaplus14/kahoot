@@ -7,8 +7,7 @@ if (!$_SESSION) {
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$categoriaJuego = filter_var($_POST['categoria'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-$limitePreguntas = filter_var($_POST['limitePreguntas'], FILTER_VALIDATE_INT);
+$limitePreguntas = filter_var($_POST['limitePreguntas'], FILTER_SANITIZE_NUMBER_INT);
 $fecha = date("Y-m-d H:i:s");
 $verf = false;
 while ($verf == false) {
@@ -23,6 +22,8 @@ try {
     $mysql->efectuarConsulta("INSERT INTO partidas 
     (pin_partida, preguntas_limite_partida, estado_partida, fecha_partida) 
     VALUES ('$pinPartida','$limitePreguntas','Esperando','$fecha');");
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true, 'pin' => $pinPartida]);
 } catch (\Throwable $th) {
     $mysql->desconectar();
     header("Location: ../dist/views/generarPIN.php?error=true&message=" . $th . "&title=Error al generar PIN!");
