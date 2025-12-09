@@ -32,7 +32,7 @@
                 <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
                     <form action="procesar_pin.php" method="post">
                         <div class="mb-2">
-                            <input class="form-control text-center p-3" id="pin" type="text" placeholder="PIN de partida" name="pin" required />
+                            <input class="form-control text-center p-3" id="pin" type="text" pattern="\d{6}" maxlength="6" placeholder="PIN de partida" name="pin" required />
                         </div>
                         <div class="d-flex align-items-center justify-content-end mt-3 mb-0">
                             <button type="button" id="ingresar" class="btn btn-dark w-100 p-2 fs-5">Ingresar</button>

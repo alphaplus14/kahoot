@@ -25,6 +25,13 @@ input.addEventListener('input', (e) => {
     }
 });
 
+// para evitar que se ingreen letras
+const inputPin = document.querySelector('#pin');
+
+inputPin.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '');
+});
+
 function Nodatos(e) {
     if (e.value.trim() === '' || e.value == null) {
         e.classList.add('bg-danger-subtle', 'border-danger-subtle');
