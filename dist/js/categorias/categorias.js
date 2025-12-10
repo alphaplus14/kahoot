@@ -1,4 +1,4 @@
-import * as sweetAlert from '../sweetAlerts.js';
+import * as sweetAlert from './sweetAlertsCategorias.js';
 
 const tablaAdmins = document.querySelector('#tablaCategorias');
 

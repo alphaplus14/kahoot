@@ -205,7 +205,7 @@ $mysql->desconectar();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
     <script src="../js/dashboard/dashboard.js" type="module"></script>
-    <script src="../js/general/scriptsGenerales.js" type="module"></script>
+    <script type="module" src="../js/general/scriptsGenerales.js"></script>
 </body>
 
 </html>
