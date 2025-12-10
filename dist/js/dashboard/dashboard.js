@@ -1,4 +1,4 @@
-import * as sweetAlert from '../sweetAlerts.js';
+import * as sweetAlert from './sweetAlertsDashboard.js';
 
 const tablaAdmins = document.querySelector('#tablaAdministradores');
 
@@ -21,6 +21,12 @@ tablaAdmins.addEventListener('click', (e) => {
 });
 
 const usuarioInsertar = document.querySelector('#usuarioInsertar');
+
+usuarioInsertar.addEventListener('click', () => {
+    sweetAlert.sweetUsuarioInsertar();
+});
+
+const usuarioEditarPerfil = document.querySelector('#usuarioInsertar');
 
 usuarioInsertar.addEventListener('click', () => {
     sweetAlert.sweetUsuarioInsertar();
