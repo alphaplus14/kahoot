@@ -99,8 +99,8 @@ while ($row = $stmt->fetch()) {
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Categorias</a>
-                                <a class="nav-link" href="#">Banco de Preguntas</a>
+                                <a class="nav-link" href="categorias.php">Categorias</a>
+                                <a class="nav-link" href="bancoPreguntas.php">Banco de Preguntas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePartidas"
@@ -112,7 +112,7 @@ while ($row = $stmt->fetch()) {
                         <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link active" href="generarPIN.php">Generar PIN</a>
-                                <a class="nav-link" href="#">Historial de partidas</a>
+                                <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
@@ -123,7 +123,7 @@ while ($row = $stmt->fetch()) {
                         </a>
                         <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Reportes por juego</a>
+                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
                             </nav>
                         </div>
                     </div>

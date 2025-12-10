@@ -11,13 +11,15 @@ if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo
 require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-
-$stmt = $mysql->getConexion()->query("SELECT * FROM usuarios");
+$sql = "SELECT categorias.id_categoria, categorias.nombre_categoria, COUNT(cuestionario.categorias_id_categoria) as conteo, categorias.estado_categoria 
+FROM categorias LEFT JOIN cuestionario ON cuestionario.categorias_id_categoria = categorias.id_categoria
+GROUP BY cuestionario.categorias_id_categoria;";
+$stmt = $mysql->getConexion()->query($sql);
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-$usuario = [];
+$categorias = [];
 while ($row = $stmt->fetch()) {
-    $usuario[] = $row;
+    $categorias[] = $row;
 }
 $mysql->desconectar();
 ?>
@@ -30,7 +32,7 @@ $mysql->desconectar();
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - ¿Y esa Pregunta?</title>
+    <title>Categorias - ¿Y esa Pregunta?</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -86,7 +88,7 @@ $mysql->desconectar();
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link active" href="dashboard.php">
+                        <a class="nav-link" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
                         </a>
@@ -97,9 +99,9 @@ $mysql->desconectar();
                             Crear juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse show" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="categorias.php">Categorias</a>
+                                <a class="nav-link active" href="categorias.php">Categorias</a>
                                 <a class="nav-link" href="bancoPreguntas.php">Banco de Preguntas</a>
                             </nav>
                         </div>
@@ -138,45 +140,43 @@ $mysql->desconectar();
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Panel de Administracion</h1>
+                    <h1 class="mt-4">Configurar Juego</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de Administracion</li>
+                        <li class="breadcrumb-item active">Categorias</li>
                     </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar">➕ Insertar Usuario</button>
+                    <button class="btn btn-success mb-4" id="categoriaInsertar">➕ Insertar Categoria</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
-                            Administradores
+                            Categorias
                         </div>
                         <div class="card-body">
-                            <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
+                            <table id="tablaCategorias" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Nombre</th>
-                                        <th>Correo</th>
+                                        <th>Preguntas asociadas</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
-                                            <tr>
-                                                <td><?php echo $filaUsuario['id_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['correo_usuario']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
-                                                                                                    echo '<button class="btn btn-danger usuarioDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                                } else {
-                                                                                                    echo '<button class="btn btn-success usuarioActivar btn-sm w-100">✔ Activar</a>';
-                                                                                                }; ?>
-                                                    <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
-                                                </td>
-                                            </tr>
-                                    <?php endif;
-                                    } ?>
+                                    <?php foreach ($categorias as $filaCategoria): ?>
+                                        <tr>
+                                            <td><?php echo $filaCategoria['id_categoria']; ?></td>
+                                            <td><?php echo $filaCategoria['nombre_categoria']; ?></td>
+                                            <td><?php echo $filaCategoria['conteo']; ?></td>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaCategoria['estado_categoria'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCategoria['estado_categoria'] . '</span>' ?></td>
+                                            <td class="d-flex justify-content-center gab-1"><?php if ($filaCategoria['estado_categoria'] == "Activo") {
+                                                                                                echo '<button class="btn btn-danger categoriaDesactivar btn-sm w-100">❌ Desactivar</button>';
+                                                                                            } else {
+                                                                                                echo '<button class="btn btn-success categoriaActivar btn-sm w-100">✔ Activar</a>';
+                                                                                            }; ?>
+                                                <?php echo '<button class="btn btn-warning ms-2 categoriaEditar btn-sm">📝 Editar</button>'; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -204,7 +204,7 @@ $mysql->desconectar();
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
-    <script src="../js/dashboard/dashboard.js" type="module"></script>
+    <script src="../js/categorias/categorias.js" type="module"></script>
     <script src="../js/general/scriptsGenerales.js" type="module"></script>
 </body>
 
