@@ -1010,9 +1010,6 @@ export async function sweetCategoriaInsertar() {
                     body: formData,
                 });
                 //? Conversion a JSON valido
-                const prueba = await json.text();
-                console.log(prueba);
-                return false;
                 const response = await json.json();
                 //? Verificacion de proceso (success = True: Exito, success = False: Error)
                 if (response.success) {

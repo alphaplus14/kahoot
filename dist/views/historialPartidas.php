@@ -8,7 +8,7 @@ if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo
     header("Location: login.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
     exit;
 }
-require_once '../..//models/MySQL.php';
+require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
@@ -31,7 +31,6 @@ $mysql->desconectar();
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Dashboard - ¿Y esa Pregunta?</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
@@ -159,19 +158,19 @@ $mysql->desconectar();
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($partidas as $filaPartida) {
-                                        if ($filaPartida['id_partida'] != $_SESSION['id_usuario']): ?>
-                                            <tr>
-                                                <td><?php echo $filaPartida['id_partida']; ?></td>
-                                                <td><?php echo $filaPartida['pin_partida']; ?></td>
-                                                <td><?php echo $filaPartida['preguntas_limite_partida']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Terminado') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1">
-                                                    <a href="" class="btn btn-info btn-sm"><i class="bi bi-eye "></i> </a>
-                                                </td>
-                                            </tr>
-                                    <?php endif;
-                                    } ?>
+                                    <?php foreach ($partidas as $filaPartida): ?>
+                                        <tr>
+                                            <td><?php echo $filaPartida['id_partida']; ?></td>
+                                            <td><?php echo $filaPartida['pin_partida']; ?></td>
+                                            <td><?php echo $filaPartida['preguntas_limite_partida']; ?></td>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Terminado') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
+                                            <td class="d-flex justify-content-center gap-1">
+                                                <button class="btn btn-info btn-sm btnVerDetalle" data-id="<?php echo $filaPartida['id_partida']; ?>">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -198,7 +197,9 @@ $mysql->desconectar();
     <script src="../js/datatables/datatables.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="../js/scripts.js"></script>
+    <script src="../js/partidas/sweetAlerts.js"></script>
+    <script src="../js/partidas/historialPartida.js"></script>
+    <script src="../js/partidas/traerDatosPartida.js"></script>
 </body>
 
 </html>
