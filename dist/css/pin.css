@@ -38,6 +38,7 @@ header {
     z-index: 10 !important;
 }
 
+
 .btn-dark {
     position: relative;
     z-index: 10;
@@ -56,8 +57,8 @@ header {
     box-shadow: 0 0 0 #300c63 !important;
 }
 
-.form-control::placeholder {
-    opacity: 0.6 !important;
+.pin-container {
+    background-color: rgba(255, 255, 255, 0.837);
 }
 
 .fade-out {
@@ -76,6 +77,7 @@ input[type=number] {
     -moz-appearance: textfield;
 }
 
+
 @keyframes fadeOut {
     from {
         opacity: 1;
@@ -86,32 +88,13 @@ input[type=number] {
     }
 }
 
-.alerta {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 15px 20px;
-    font-size: 16px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.8s ease-out;
-    z-index: 1000;
+.pin-container {
+    background-color: rgba(255, 255, 255, 0.837);
 }
 
-.alerta i {
-    font-size: 20px;
-    flex-shrink: 0;
-    padding: 0 !important;
-    margin-right: 8px;
-}
-
-.alerta span {
-    display: inline-block;
+.pin-grueso {
+    font-weight: 900;
+    font-size: 4rem;
 }
 
 .logo {
