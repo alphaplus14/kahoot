@@ -33,8 +33,6 @@ terminosCondiciones.forEach((element) => {
 //TODO Fin Terminos & Condiciones
 // #endregion
 
-
-
 //! /////////////////////////////////////////////////////////
 //! FIN Eventos de Botones
 //! /////////////////////////////////////////////////////////
@@ -80,6 +78,31 @@ export async function traerDatosUsuarioPorID(id) {
         formData.append('id', id);
         //? Solicitud de datos a controller
         const json = await fetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Funcion Traer Datos Usuario (por id)
+// #endregion
+
+// #region //* Traer Datos Categoria (por id)
+//TODO Inicio Funcion Traer Datos Usuario (por id)
+export async function traerDatosCategoriaPorID(id) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('id', id);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../../controller/categorias/controllerDatosCategoriaPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -386,13 +409,13 @@ export async function contenidoUsuarioEditar(id) {
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombre_usuario);
+        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario.nombre_usuario);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Email
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Correo');
-        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].correo_usuario);
+        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario.correo_usuario);
         emailDiv.append(emailLabel);
         emailDiv.append(emailInput);
         //? Password
@@ -426,7 +449,7 @@ export async function contenidoUsuarioActivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el usuario ${usuario.nombreUsuario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -451,7 +474,7 @@ export async function contenidoUsuarioDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el usuario ${usuario.nombreUsuario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -464,6 +487,108 @@ export async function contenidoUsuarioDesctivar(id) {
     }
 }
 //TODO Fin Contenido Usuario Desactivar
+// #endregion
+
+// #region //* Contenido Categoria Insertar
+//TODO Inicio Contenido Categoria Insertar
+export async function contenidoCategoriaInsertar() {
+    try {
+        //? Inicio Formulario
+        const form = crearForm();
+        //? Nombre
+        const nombreDiv = crearDivForm();
+        const nombreLabel = crearLabelForm('nombreCategoria', 'Nombre');
+        const nombreInput = crearInputForm('nombreCategoria', 'text', '');
+        nombreDiv.append(nombreLabel);
+        nombreDiv.append(nombreInput);
+        //? Asignacion final Form
+        form.append(nombreDiv);
+        //? Retorno de HTML
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Categoria Insertar
+// #endregion
+
+// #region //* Contenido Categoria Editar
+//TODO Inicio Contenido Categoria Editar
+export async function contenidoCategoriaEditar(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const datosCategoria = await traerDatosCategoriaPorID(id);
+        //? Inicio Formulario
+        const form = crearForm();
+        //? Nombre
+        const nombreDiv = crearDivForm();
+        const nombreLabel = crearLabelForm('nombreCategoria', 'Nombre');
+        const nombreInput = crearInputForm('nombreCategoria', 'text', datosCategoria.nombre_categoria);
+        nombreDiv.append(nombreLabel);
+        nombreDiv.append(nombreInput);
+        //? Asignacion final Form
+        form.append(nombreDiv);
+        //? Retorno de HTML
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Categoria Editar
+// #endregion
+
+// #region //* Contenido Categoria Activar
+//TODO Inicio Contenido Categoria Activar
+export async function contenidoCategoriaActivar(id) {
+    try {
+        //? Se traen datos de Categoria por ID
+        const categoria = await traerDatosCategoriaPorID(id);
+        //? Inicio Formulario
+        const form = crearForm();
+        //? Label (texto)
+        const labelDiv = crearDivForm();
+        const label = crearLabelForm('', `¿Desea activar la categoria ${categoria.nombre_categoria} con ID ${id}?`);
+        labelDiv.append(label);
+        //? Asignacion final Form
+        form.append(labelDiv);
+        //? Retorno de HTML
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Categoria Activar
+// #endregion
+
+// #region //* Contenido Categoria Desctivar
+//TODO Inicio Contenido Categoria Desactivar
+export async function contenidoCategoriaDesctivar(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const categoria = await traerDatosCategoriaPorID(id);
+        //? Inicio Formulario
+        const form = crearForm();
+        //? Label (texto)
+        const labelDiv = crearDivForm();
+        const label = crearLabelForm('', `¿Desea desactivar la categoria ${categoria.nombre_categoria} con ID ${id}?`);
+        labelDiv.append(label);
+        //? Asignacion final Form
+        form.append(labelDiv);
+        //? Retorno de HTML
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Categoria Desactivar
 // #endregion
 
 // #region //* Contenido Politica & Privacidad
@@ -657,7 +782,7 @@ export async function sweetUsuarioEditar(id) {
                 let bool = false;
                 if (pass == null || pass == '') {
                     //? Si se dejo vacio se asigna la contraseña anterior
-                    pass = datosUsuario[0].password_usuario;
+                    pass = datosUsuario.password_usuario;
                     bool = true;
                 }
                 //? Verificar que los campos esten llenos
@@ -666,7 +791,7 @@ export async function sweetUsuarioEditar(id) {
                     return false;
                 }
                 //? Verificacion de Email del Usuario
-                if (email != datosUsuario[0].correo_usuario) {
+                if (email != datosUsuario.correo_usuario) {
                     let boolEmail = await verificarEmail(email);
                     if (boolEmail == false) {
                         Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');
@@ -842,6 +967,265 @@ export async function sweetUsuarioDesactivar(id) {
     }
 }
 //TODO Fin SweetAlert Desactivar Usuario
+// #endregion
+
+// #region //* Sweet Categoria Insertar
+//TODO Inicio SweetAlert Categoria Insertar
+export async function sweetCategoriaInsertar() {
+    try {
+        Swal.fire({
+            title: 'Crear Nuevo Categoria', //? Titulo Modal
+            showLoaderOnConfirm: true, //? Muestra loader mientras espera el preConfirm
+            html: await contenidoCategoriaInsertar(), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton confirmar
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: async () => {
+                //? Se capturan los datos del formulario
+                const nombre = document.querySelector('#nombreCategoria').value.trim();
+                //? Verificar que los campos esten llenos
+                if (!nombre) {
+                    Swal.showValidationMessage('¡Todos los campos son requeridos!');
+                    return false;
+                }
+                //? Retornar valores finales
+                return {
+                    nombre,
+                };
+            },
+        }).then(async (result) => {
+            //? Verificar click en boton confirmar
+            if (result.isConfirmed) {
+                //? Traer datos retornados del preConfirm
+                const datos = result.value;
+                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                let formData = new FormData();
+                formData.append('nombre', datos.nombre);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/categorias/controllerCategoriaInsertar.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+                //? Conversion a JSON valido
+                const prueba = await json.text();
+                console.log(prueba);
+                return false;
+                const response = await json.json();
+                //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                if (response.success) {
+                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                } else {
+                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                }
+            }
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Usuario Insertar
+// #endregion
+
+// #region //* Sweet Categoria Editar
+//TODO Inicio SweetAlert Categoria Editar
+export async function sweetCategoriaEditar(id) {
+    try {
+        Swal.fire({
+            title: 'Editar Categoria', //? Titulo Modal
+            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
+            html: await contenidoCategoriaEditar(id), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: async () => {
+                //? Se traen datos de Categoria por ID
+                const datosCategoria = await traerDatosCategoriaPorID(id);
+                //? Se capturan los datos del formulario
+                const nombre = document.querySelector('#nombreCategoria').value.trim();
+                //? Verificar que los campos esten llenos
+                if (!nombre) {
+                    Swal.showValidationMessage('¡Todos los campos son requeridos!');
+                    return false;
+                }
+                //? Retornar valores finales
+                return {
+                    nombre,
+                    id,
+                };
+            },
+        }).then(async (result) => {
+            //? Verificar click en boton confirmar
+            if (result.isConfirmed) {
+                //? Traer datos retornados del preConfirm
+                const datos = result.value;
+                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                let formData = new FormData();
+                formData.append('nombre', datos.nombre);
+                formData.append('id', datos.id);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/categorias/controllerCategoriaEditar.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+                //? Conversion a JSON valido
+                const response = await json.json();
+                //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                if (response.success) {
+                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                } else {
+                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                }
+            }
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Categoria Editar
+// #endregion
+
+// #region //* Sweet Categoria Activar
+//TODO Inicio SweetAlert Activar Categoria
+export async function sweetCategoriaActivar(id) {
+    try {
+        Swal.fire({
+            title: 'Activar Categoria', //? Titulo Modal
+            icon: 'question', //? Icono Modal
+            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
+            html: await contenidoCategoriaActivar(id), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: () => {
+                //? Retornar valores finales
+                return id;
+            },
+        }).then(async (result) => {
+            //? Verificar click en boton confirmar
+            if (result.isConfirmed) {
+                //? Traer datos retornados del preConfirm
+                const datos = result.value;
+                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                let formData = new FormData();
+                formData.append('id', datos);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/categorias/controllerCategoriaActivar.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+                //? Conversion a JSON valido
+                const response = await json.json();
+                //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                if (response.success) {
+                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                } else {
+                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                }
+            }
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Activar Categoria
+// #endregion
+
+// #region //* Sweet Categoria Desactivar
+//TODO Inicio SweetAlert Desactivar Categoria
+export async function sweetCategoriaDesactivar(id) {
+    try {
+        Swal.fire({
+            title: 'Desactivar Categoria', //? Titulo Modal
+            icon: 'warning', //? Icono Modal
+            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
+            html: await contenidoCategoriaDesctivar(id), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            showCancelButton: true, //? Mostrar boton cancelar
+            cancelButtonText: 'Cancelar', //? Texto boton cancelar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+            cancelButtonColor: '#dc3545', //? Color boton cancelar
+            preConfirm: () => {
+                //? Retornar valores finales
+                return id;
+            },
+        }).then(async (result) => {
+            //? Verificar click en boton confirmar
+            if (result.isConfirmed) {
+                //? Traer datos retornados del preConfirm
+                const datos = result.value;
+                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                let formData = new FormData();
+                formData.append('id', datos);
+                //? Solicitud de datos a controller
+                const json = await fetch('../../controller/categorias/controllerCategoriaDesactivar.php', {
+                    method: 'POST',
+                    body: formData,
+                });
+                //? Conversion a JSON valido
+                const response = await json.json();
+                //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                if (response.success) {
+                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                } else {
+                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
+                        () => {
+                            location.reload();
+                        },
+                    );
+                }
+            }
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Desactivar Categoria
 // #endregion
 
 // #region //* Sweet Politica & Privacidad

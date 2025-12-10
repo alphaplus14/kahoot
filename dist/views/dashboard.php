@@ -99,8 +99,8 @@ $mysql->desconectar();
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Categorias</a>
-                                <a class="nav-link" href="#">Banco de Preguntas</a>
+                                <a class="nav-link" href="categorias.php">Categorias</a>
+                                <a class="nav-link" href="bancoPreguntas.php">Banco de Preguntas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePartidas"
@@ -123,7 +123,7 @@ $mysql->desconectar();
                         </a>
                         <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Reportes por juego</a>
+                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
                             </nav>
                         </div>
                     </div>
@@ -205,6 +205,7 @@ $mysql->desconectar();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
     <script src="../js/dashboard/dashboard.js" type="module"></script>
+    <script src="../js/general/scriptsGenerales.js" type="module"></script>
 </body>
 
 </html>

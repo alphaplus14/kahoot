@@ -7,16 +7,16 @@ if (!$_SESSION) {
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$idUsuario = filter_var($_POST['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+$id = filter_var($_POST['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 try {
-    $sql = "SELECT * FROM usuarios WHERE id_usuario = :idUsuario;";
+    $sql = "SELECT * FROM categorias WHERE id_categoria = :id;";
     $stmt = $mysql->getConexion()->prepare($sql);
-    $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario por ID', 'error' => $th]);
+    echo json_encode(['success' => false, 'message' => 'Error al traer datos de categoria por ID', 'error' => $th]);
 }
 $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 header('Content-Type: application/json');

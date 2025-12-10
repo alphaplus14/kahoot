@@ -1,31 +1,27 @@
 <?php
 session_start();
-if (!$_SESSION || $_SESSION['estado_usuario'] != 'Activo') {
+if (!isset($_SESSION['id_usuario'])) {
     header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
-if (!empty($_GET['error']) && isset($_GET['error'])) {
-    $error = $_GET['error'];
-    $message = $_GET['message'];
-    $title = $_GET['title'];
+if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo') {
+    header("Location: login.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
+    exit;
 }
-require_once '../../models/MySQL.php';
+require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-
-//? Datos categorias
-$stmt = $mysql->getConexion()->query("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
-JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
-GROUP BY categorias.nombre_categoria;");
+$sql = "SELECT categorias.id_categoria, categorias.nombre_categoria, COUNT(cuestionario.categorias_id_categoria) as conteo, categorias.estado_categoria 
+FROM categorias LEFT JOIN cuestionario ON cuestionario.categorias_id_categoria = categorias.id_categoria
+GROUP BY cuestionario.categorias_id_categoria;";
+$stmt = $mysql->getConexion()->query($sql);
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $categorias = [];
-
-
 while ($row = $stmt->fetch()) {
-    $row['id_categoria'] = (int)$row['id_categoria'];
     $categorias[] = $row;
 }
+$mysql->desconectar();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +32,7 @@ while ($row = $stmt->fetch()) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Generar PIN - ¿Y esa Pregunta?</title>
+    <title>Categorias - ¿Y esa Pregunta?</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -47,9 +43,6 @@ while ($row = $stmt->fetch()) {
 </head>
 
 <body class="sb-nav-fixed">
-    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
-        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
-    <?php } ?>
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand -->
@@ -71,11 +64,20 @@ while ($row = $stmt->fetch()) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['id_usuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                    <li><button class="dropdown-item text-success d-flex justify-content-center align-items-center" id="configuracionPerfil" name="<?php echo $_SESSION['id_usuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" href="../../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li>
+                        <a href="../../controller/controllerLogout.php"
+                            class="dropdown-item text-danger d-flex justify-content-center align-items-center position-relative ps-4">
+
+                            <i class="bi bi-box-arrow-in-right fs-3"
+                                style="position: absolute; left: 15px;"></i>
+                            Cerrar Sesión
+                        </a>
+                    </li>
+
                 </ul>
             </li>
         </ul>
@@ -94,12 +96,12 @@ while ($row = $stmt->fetch()) {
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Configurar juego
+                            Crear juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse show" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="categorias.php">Categorias</a>
+                                <a class="nav-link active" href="categorias.php">Categorias</a>
                                 <a class="nav-link" href="bancoPreguntas.php">Banco de Preguntas</a>
                             </nav>
                         </div>
@@ -109,9 +111,9 @@ while ($row = $stmt->fetch()) {
                             Partidas
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link active" href="generarPIN.php">Generar PIN</a>
+                                <a class="nav-link" href="generarPIN.php">Generar PIN</a>
                                 <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
@@ -138,29 +140,45 @@ while ($row = $stmt->fetch()) {
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Partidas</h1>
+                    <h1 class="mt-4">Configurar Juego</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Generar PIN</li>
+                        <li class="breadcrumb-item active">Categorias</li>
                     </ol>
-                    <div class="row">
-                        <div class="col">
-                            <form id="generarPinForm">
-                                <div class="mb-3">
-                                    <label for="categoria" class="form-label">Selecciona una categoria para el juego</label>
-                                    <select class="form-select categoriasInput" aria-label="Default select example" id="categoria" name="categoria">
-                                        <option selected>Seleccione una categoria</option>
-                                        <?php //? CATEGORIAS
-                                        foreach ($categorias as $rowCategoria): ?>
-                                            <option value="<?php echo $rowCategoria['id_categoria']; ?>" name="<?php echo $rowCategoria['conteo']; ?>"><?php echo $rowCategoria['nombre_categoria'] . " / Preguntas disponibles: " . $rowCategoria['conteo']; ?></option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="limitePreguntas" class="form-label">Limite de Preguntas</label>
-                                    <input type="number" class="form-control limitePreguntasInput" id="limitePreguntas" name="limitePreguntas" min="0">
-                                </div>
-                                <button type="button" class="btn btn-primary" id="buttonEnviarForm">Generar PIN</button>
-                            </form>
+                    <button class="btn btn-success mb-4" id="categoriaInsertar">➕ Insertar Categoria</button>
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <i class="fas fa-table me-1"></i>
+                            Categorias
+                        </div>
+                        <div class="card-body">
+                            <table id="tablaCategorias" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Preguntas asociadas</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($categorias as $filaCategoria): ?>
+                                        <tr>
+                                            <td><?php echo $filaCategoria['id_categoria']; ?></td>
+                                            <td><?php echo $filaCategoria['nombre_categoria']; ?></td>
+                                            <td><?php echo $filaCategoria['conteo']; ?></td>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaCategoria['estado_categoria'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCategoria['estado_categoria'] . '</span>' ?></td>
+                                            <td class="d-flex justify-content-center gab-1"><?php if ($filaCategoria['estado_categoria'] == "Activo") {
+                                                                                                echo '<button class="btn btn-danger categoriaDesactivar btn-sm w-100">❌ Desactivar</button>';
+                                                                                            } else {
+                                                                                                echo '<button class="btn btn-success categoriaActivar btn-sm w-100">✔ Activar</a>';
+                                                                                            }; ?>
+                                                <?php echo '<button class="btn btn-warning ms-2 categoriaEditar btn-sm">📝 Editar</button>'; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -180,9 +198,13 @@ while ($row = $stmt->fetch()) {
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="../js/datatables/datatables.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="../js/generarPIN/generarPIN.js"></script>
     <script src="../js/scripts.js"></script>
+    <script src="../js/categorias/categorias.js" type="module"></script>
     <script src="../js/general/scriptsGenerales.js" type="module"></script>
 </body>
 
