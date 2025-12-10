@@ -15,7 +15,7 @@ async function verDetallePartida(idPartida) {
         let info = `
             <div class="mb-3 text-start">
                 <p><strong>PIN:</strong> <span class="badge bg-primary fs-6">${partida.pin_partida || 'N/A'}</span></p>
-                <p><strong>Estado:</strong> <span class="badge ${partida.estado_partida === 'Activo' ? 'bg-success' : 'bg-secondary'}">${partida.estado_partida || 'N/A'}</span></p>
+                <p><strong>Estado:</strong> <span class="badge ${partida.estado_partida === 'Terminado' ? 'bg-success' : 'bg-secondary'}">${partida.estado_partida || 'N/A'}</span></p>
                 <p><strong>Fecha de Partida:</strong> ${partida.fecha_partida || 'N/A'}</p>
                 <p><strong>Total Jugadores:</strong> ${jugadores.length}</p>
             </div>
@@ -42,7 +42,7 @@ async function verDetallePartida(idPartida) {
                     <td>${index + 1}</td>
                     <td>${jugador.nombre_jugador || 'Anónimo'}</td>
                     <td><span class="badge bg-info">${jugador.puntaje_jugador || 0} pts</span></td>
-                    <td><span class="badge ${jugador.ficha_jugador === 'Conectado' ? 'bg-success' : 'bg-danger'}">${jugador.ficha_jugador || 'Desconocido'}</span></td>
+                    <td><span class="badge bg-danger">${jugador.ficha_jugador || 'Desconocido'}</span></td>
                 </tr>
             `;
         });
