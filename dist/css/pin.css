@@ -1,0 +1,145 @@
+body {
+    background: linear-gradient(135deg, #7F3FF0, #3C8CFF);
+    background-size: cover;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+    border-radius: 10px;
+    z-index: 0;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    bottom: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(-25deg);
+    border-radius: 10px;
+    z-index: 0;
+}
+
+header {
+    position: relative;
+    z-index: 10 !important;
+}
+
+.btn-dark {
+    position: relative;
+    z-index: 10;
+    cursor: pointer !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    box-shadow: 0 6px 0 #0b0b0b !important;
+}
+
+.btn-dark:hover {
+    transform: translateY(4px) !important;
+    box-shadow: 0 2px 0 #300c63 !important;
+}
+
+.btn-dark:active {
+    transform: translateY(6px) !important;
+    box-shadow: 0 0 0 #300c63 !important;
+}
+
+.form-control::placeholder {
+    opacity: 0.6 !important;
+}
+
+.fade-out {
+    animation: fadeOut 0.8s forwards;
+}
+
+/* Para Chrome, Safari, Edge y Opera */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Para Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.alerta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.8s ease-out;
+    z-index: 1000;
+}
+
+.alerta i {
+    font-size: 20px;
+    flex-shrink: 0;
+    padding: 0 !important;
+    margin-right: 8px;
+}
+
+.alerta span {
+    display: inline-block;
+}
+
+.logo {
+    width: 100%;
+    max-width: 200px;
+}
+
+main {
+    position: relative;
+    z-index: 1;
+    margin-top: -80px;
+}
+
+@media (max-width: 576px) {
+    .alerta {
+        font-size: 13px;
+        padding: 12px 10px;
+    }
+
+    .alerta i {
+        font-size: 16px;
+        margin-right: 6px;
+    }
+}
+
+@media (max-width: 400px) {
+    .alerta {
+        font-size: 12px;
+        padding: 10px 8px;
+    }
+}

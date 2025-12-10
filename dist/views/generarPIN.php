@@ -14,11 +14,15 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 //? Datos categorias
-$resultadoCategorias = $mysql->efectuarConsulta("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
+$stmt = $mysql->getConexion()->query("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
 JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
 GROUP BY categorias.nombre_categoria;");
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+
 $categorias = [];
-while ($row = mysqli_fetch_assoc($resultadoCategorias)) {
+
+
+while ($row = $stmt->fetch()) {
     $row['id_categoria'] = (int)$row['id_categoria'];
     $categorias[] = $row;
 }

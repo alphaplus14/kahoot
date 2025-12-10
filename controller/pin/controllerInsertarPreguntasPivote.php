@@ -13,9 +13,13 @@ $pinPartida = filter_var($_POST['pin'], FILTER_SANITIZE_NUMBER_INT);
 
 //? Traer id de la partida
 try {
-    $resultadoIdPartida = $mysql->efectuarConsulta("SELECT * FROM partidas WHERE pin_partida = $pinPartida;");
+    $sql = "SELECT * FROM partidas WHERE pin_partida = :pin_partida";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(':pin_partida', $pinPartida, PDO::PARAM_INT);
+    $stmt->execute();
+
     $datosPartida = [];
-    while ($row = mysqli_fetch_assoc($resultadoIdPartida)) {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $datosPartida[] = $row;
     }
     $idPartida = $datosPartida[0]['id_partida'];
@@ -26,9 +30,13 @@ try {
 
 //? Traer preguntas por categoria
 try {
-    $resultadoPreguntasDisponibles = $mysql->efectuarConsulta("SELECT * FROM cuestionario WHERE categorias_id_categoria = $categoriaJuego;");
+    $sql = "SELECT * FROM cuestionario WHERE categorias_id_categoria = :categoria";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(':categoria', $categoriaJuego, PDO::PARAM_INT);
+    $stmt->execute();
+
     $preguntas = [];
-    while ($row = mysqli_fetch_assoc($resultadoPreguntasDisponibles)) {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $preguntas[] = $row;
     }
 } catch (\Throwable $th) {
@@ -47,9 +55,11 @@ try {
             $pregunta = $preguntas[$numero]['id_cuestionario'];
             $preguntas[$numero]['id_cuestionario'] = "";
             //? Insertar valores
-            $mysql->efectuarConsulta("INSERT INTO quiz 
-            (cuestionario_id_cuestionario, partidas_id_partida) 
-            VALUES ($pregunta,$idPartida);");
+            $sql = "INSERT INTO quiz (cuestionario_id_cuestionario, partidas_id_partida) VALUES (:pregunta, :partida)";
+            $stmt = $mysql->getConexion()->prepare($sql);
+            $stmt->bindParam(':pregunta', $pregunta, PDO::PARAM_INT);
+            $stmt->bindParam(':partida', $idPartida, PDO::PARAM_INT);
+            $stmt->execute();
             $i++;
         }
     }

@@ -96,6 +96,8 @@ buttonEnviarForm.addEventListener('click', async () => {
                     text: responseInsertarPivote.message,
                     icon: 'success',
                     confirmButtonColor: '#007bff',
+                }).then(() => {
+                    window.location.href = '../views/pinGenerado.php';
                 });
             } else {
                 Swal.fire({
@@ -105,7 +107,6 @@ buttonEnviarForm.addEventListener('click', async () => {
                     confirmButtonColor: '#007bff',
                 });
             }
-            
         } else {
             Swal.fire({
                 title: '¡Error!',
