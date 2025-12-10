@@ -94,7 +94,7 @@ while ($row = $stmt->fetch()) {
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Crear juego
+                            Configurar juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
@@ -112,7 +112,7 @@ while ($row = $stmt->fetch()) {
                         <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link active" href="generarPIN.php">Generar PIN</a>
-                                <a class="nav-link" href="#">Historial de partidas</a>
+                                <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"

@@ -12,12 +12,12 @@ require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$stmt = $mysql->getConexion()->query("SELECT * FROM usuarios");
+$stmt = $mysql->getConexion()->query("SELECT * FROM partidas");
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
-$usuario = [];
+$partidas = [];
 while ($row = $stmt->fetch()) {
-    $usuario[] = $row;
+    $partidas[] = $row;
 }
 $mysql->desconectar();
 ?>
@@ -86,7 +86,7 @@ $mysql->desconectar();
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link active" href="dashboard.php">
+                        <a class="nav-link" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
                         </a>
@@ -109,10 +109,10 @@ $mysql->desconectar();
                             Partidas
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="generarPIN.php">Generar PIN</a>
-                                <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
+                                <a class="nav-link active" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
@@ -138,41 +138,36 @@ $mysql->desconectar();
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Panel de Administracion</h1>
+                    <h1 class="mt-4">Historial de Partidas</h1>
                     <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Panel de Administracion</li>
+                        <li class="breadcrumb-item active">Historial</li>
                     </ol>
-                    <button class="btn btn-success mb-4" id="usuarioInsertar">➕ Insertar Usuario</button>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
-                            Administradores
+                            Historial de Partidas
                         </div>
                         <div class="card-body">
-                            <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
+                            <table id="tablaHistorialPartida" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
+                                        <th>PIN Partida</th>
+                                        <th>Preguntas</th>
                                         <th>Estado</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
+                                    <?php foreach ($partidas as $filaPartida) {
+                                        if ($filaPartida['id_partida'] != $_SESSION['id_usuario']): ?>
                                             <tr>
-                                                <td><?php echo $filaUsuario['id_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['correo_usuario']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
-                                                                                                    echo '<button class="btn btn-danger usuarioDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                                } else {
-                                                                                                    echo '<button class="btn btn-success usuarioActivar btn-sm w-100">✔ Activar</a>';
-                                                                                                }; ?>
-                                                    <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
+                                                <td><?php echo $filaPartida['id_partida']; ?></td>
+                                                <td><?php echo $filaPartida['pin_partida']; ?></td>
+                                                <td><?php echo $filaPartida['preguntas_limite_partida']; ?></td>
+                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Terminado') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
+                                                <td class="d-flex justify-content-center gab-1">
+                                                    <a href="" class="btn btn-info btn-sm"><i class="bi bi-eye "></i> </a>
                                                 </td>
                                             </tr>
                                     <?php endif;
@@ -204,7 +199,6 @@ $mysql->desconectar();
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="../js/scripts.js"></script>
-    <script src="../js/dashboard/dashboard.js" type="module"></script>
 </body>
 
 </html>
