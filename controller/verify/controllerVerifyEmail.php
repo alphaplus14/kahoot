@@ -9,14 +9,18 @@ $mysql = new MySQL();
 $mysql->conectar();
 $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 try {
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM usuarios WHERE correo_usuario = '$email';");
+    $sql = "SELECT * FROM usuarios WHERE correo_usuario = :email;";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+    $stmt->execute();
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Error al verificar email', 'error' => $th]);
 };
 
+$resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 $bool = true;
-if (mysqli_num_rows($resultado) > 0) {
+if ($resultado != false) {
     $bool = false;
 }
 header("Content-Type: application/json");

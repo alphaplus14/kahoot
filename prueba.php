@@ -4,21 +4,18 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 
-
-
-
-
-
+$idUsuario = 1;
 try {
-    $resultadoIdPartida = $mysql->efectuarConsulta("SELECT * FROM partidas WHERE pin_partida = 177154;");
-    $datosPartida = [];
-    while ($row = mysqli_fetch_assoc($resultadoIdPartida)) {
-        $datosPartida[] = $row;
-    }
-    $idPartida = $datosPartida[0]['id_partida'];
-    echo $datosPartida[0]['id_partida'];
+    $sql = "SELECT * FROM usuarios WHERE id_usuario = :idUsuario;";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+    $stmt->execute();
 } catch (\Throwable $th) {
-    //throw $th;
+    header('Content-Type: application/json');
+    echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario por ID', 'error' => $th]);
 }
+$datos = $stmt->fetch(PDO::FETCH_ASSOC);
+header('Content-Type: application/json');
+echo json_encode($datos);
 
 

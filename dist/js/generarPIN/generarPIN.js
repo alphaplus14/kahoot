@@ -97,7 +97,7 @@ buttonEnviarForm.addEventListener('click', async () => {
                     icon: 'success',
                     confirmButtonColor: '#007bff',
                 }).then(() => {
-                    window.location.href = '../views/pinGenerado.php';
+                    window.location.href = `../views/pinGenerado.php?pin=${responseGenerarPIN.pin}`;
                 });
             } else {
                 Swal.fire({

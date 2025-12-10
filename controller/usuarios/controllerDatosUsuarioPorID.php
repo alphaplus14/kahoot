@@ -10,16 +10,14 @@ $mysql->conectar();
 $idUsuario = filter_var($_POST['id'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 
 try {
-    $resultado = $mysql->efectuarConsulta("SELECT * FROM usuarios
-WHERE id_usuario = $idUsuario;");
+    $sql = "SELECT * FROM usuarios WHERE id_usuario = :idUsuario;";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
+    $stmt->execute();
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Error al traer datos de usuario por ID', 'error' => $th]);
 }
-$datos;
-while ($row = mysqli_fetch_assoc($resultado)) {
-    $row['id_usuario'] = (int)$row['id_usuario'];
-    $datos[] = $row;
-}
+$datos = $stmt->fetch(PDO::FETCH_ASSOC);
 header('Content-Type: application/json');
 echo json_encode($datos);

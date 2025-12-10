@@ -20,7 +20,12 @@ if (
     $mysql = new MySQL();
     $mysql->conectar();
     try {
-        $mysql->efectuarConsulta("INSERT INTO usuarios (nombre_usuario, correo_usuario, password_usuario, estado_usuario) VALUES ('$nombre','$email','$hash','Activo');");
+        $sql = "INSERT INTO usuarios (nombre_usuario, correo_usuario, password_usuario, estado_usuario) VALUES (:nombre, :correo, :pass, 'Activo');";
+        $stmt = $mysql->getConexion()->prepare($sql);
+        $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+        $stmt->bindParam(":correo", $email, PDO::PARAM_STR);
+        $stmt->bindParam(":pass", $hash, PDO::PARAM_STR);
+        $stmt->execute();
         //? Retorno de datos aplicando JSON
         header("Content-Type: application/json");
         echo json_encode(['success' => true, 'message' => 'Empleado creado exitosamente!']);

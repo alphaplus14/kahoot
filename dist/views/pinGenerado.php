@@ -12,12 +12,7 @@ require_once '../..//models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$stmt = $mysql->getConexion()->prepare("select pin_partida from partidas order by id_partida desc limit 1");
-$stmt->execute();
-
-// Obtener el resultado
-$resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-
+$resultado = $_GET['pin'];
 ?>
 
 <!DOCTYPE html>
@@ -54,7 +49,7 @@ $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
                 <div class="col-10 col-sm-6 col-md-4 col-lg-3 p-3 rounded">
                     <div class="mb-2">
                         <label> Game PIN:</label>
-                        <h1 class="text-center"><?php echo $resultado['pin_partida']; ?></h1>
+                        <h1 class="text-center"><?php echo $resultado; ?></h1>
                     </div>
                 </div>
             </div>

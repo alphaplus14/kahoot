@@ -19,8 +19,13 @@ require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 try {
-    $mysql->efectuarConsulta("UPDATE usuarios 
-SET nombre_usuario = '$nombre', correo_usuario = '$email', password_usuario = '$hash' WHERE id_usuario = $id;");
+    $sql = "UPDATE usuarios SET nombre_usuario = :nombre, correo_usuario = :correo, password_usuario = :pass WHERE id_usuario = :id;";
+    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt->bindParam(":nombre", $nombre, PDO::PARAM_STR);
+    $stmt->bindParam(":correo", $email, PDO::PARAM_STR);
+    $stmt->bindParam(":pass", $hash, PDO::PARAM_STR);
+    $stmt->bindParam(":id", $id, PDO::PARAM_STR);
+    $stmt->execute();
     //? Retorno de datos aplicando JSON
     header('Content-Type: application/json');
     echo json_encode(['success' => true, 'message' => 'Usuario actualizado exitosamente!']);

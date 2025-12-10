@@ -33,8 +33,6 @@ terminosCondiciones.forEach((element) => {
 //TODO Fin Terminos & Condiciones
 // #endregion
 
-
-
 //! /////////////////////////////////////////////////////////
 //! FIN Eventos de Botones
 //! /////////////////////////////////////////////////////////
@@ -386,13 +384,13 @@ export async function contenidoUsuarioEditar(id) {
         //? Nombre
         const nombreDiv = crearDivForm();
         const nombreLabel = crearLabelForm('nombreUsuario', 'Nombre');
-        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario[0].nombre_usuario);
+        const nombreInput = crearInputForm('nombreUsuario', 'text', datosUsuario.nombre_usuario);
         nombreDiv.append(nombreLabel);
         nombreDiv.append(nombreInput);
         //? Email
         const emailDiv = crearDivForm();
         const emailLabel = crearLabelForm('emailUsuario', 'Correo');
-        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario[0].correo_usuario);
+        const emailInput = crearInputForm('emailUsuario', 'email', datosUsuario.correo_usuario);
         emailDiv.append(emailLabel);
         emailDiv.append(emailInput);
         //? Password
@@ -426,7 +424,7 @@ export async function contenidoUsuarioActivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar el usuario ${usuario.nombreUsuario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -451,7 +449,7 @@ export async function contenidoUsuarioDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar el usuario ${usuario[0].nombreUsuario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar el usuario ${usuario.nombreUsuario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -657,7 +655,7 @@ export async function sweetUsuarioEditar(id) {
                 let bool = false;
                 if (pass == null || pass == '') {
                     //? Si se dejo vacio se asigna la contraseña anterior
-                    pass = datosUsuario[0].password_usuario;
+                    pass = datosUsuario.password_usuario;
                     bool = true;
                 }
                 //? Verificar que los campos esten llenos
@@ -666,7 +664,7 @@ export async function sweetUsuarioEditar(id) {
                     return false;
                 }
                 //? Verificacion de Email del Usuario
-                if (email != datosUsuario[0].correo_usuario) {
+                if (email != datosUsuario.correo_usuario) {
                     let boolEmail = await verificarEmail(email);
                     if (boolEmail == false) {
                         Swal.showValidationMessage('¡Email ya existente, intenta con otro email!');

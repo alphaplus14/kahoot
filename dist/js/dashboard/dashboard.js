@@ -20,12 +20,6 @@ tablaAdmins.addEventListener('click', (e) => {
     }
 });
 
-const editarPerfil = document.querySelector('#configuracionPerfil');
-
-editarPerfil.addEventListener('click', () => {
-    sweetAlert.sweetUsuarioEditar(editarPerfil.name);
-});
-
 const usuarioInsertar = document.querySelector('#usuarioInsertar');
 
 usuarioInsertar.addEventListener('click', () => {
