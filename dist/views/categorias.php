@@ -13,7 +13,7 @@ $mysql = new MySQL();
 $mysql->conectar();
 $sql = "SELECT categorias.id_categoria, categorias.nombre_categoria, COUNT(cuestionario.categorias_id_categoria) as conteo, categorias.estado_categoria 
 FROM categorias LEFT JOIN cuestionario ON cuestionario.categorias_id_categoria = categorias.id_categoria
-GROUP BY cuestionario.categorias_id_categoria;";
+GROUP BY categorias.id_categoria;";
 $stmt = $mysql->getConexion()->query($sql);
 
 $categorias = [];

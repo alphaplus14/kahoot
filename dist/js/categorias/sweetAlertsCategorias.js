@@ -29,6 +29,31 @@ export async function traerDatosCategoriaPorID(id) {
 //TODO Fin Funcion Traer Datos Usuario (por id)
 // #endregion
 
+// #region //* Verificar Nombre Categoria
+//TODO Inicio Verificar Nombre Categoria
+export async function verificarNombreCategoria(nombre) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        //? Solicitud de datos a controller
+        const json = await fetch(`../../controller/verify/controllerVerifyNombreCategoria.php`, {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const datos = await json.json();
+        //? Retorno de datos
+        return datos;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Verificar Nombre Categoria
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -404,6 +429,12 @@ export async function sweetCategoriaInsertar() {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
+                //? Verificar si esta disponible el nombre
+                let bool = await verificarNombreCategoria(nombre);
+                if (bool == false) {
+                    Swal.showValidationMessage('¡Nombre no disponible!');
+                    return false;
+                }
                 //? Retornar valores finales
                 return {
                     nombre,
@@ -472,6 +503,14 @@ export async function sweetCategoriaEditar(id) {
                 if (!nombre) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
+                }
+                //? Verificar si esta disponible el nombre
+                if (datosCategoria.nombre_categoria != nombre) {
+                    let bool = await verificarNombreCategoria(nombre);
+                    if (bool == false) {
+                        Swal.showValidationMessage('¡Nombre no disponible!');
+                        return false;
+                    }
                 }
                 //? Retornar valores finales
                 return {
