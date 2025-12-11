@@ -22,12 +22,22 @@
                 </div>
             </div>
             <div class="container-body row justify-content-center">
-                <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
-                    <form action="procesar_pin.php" method="post">
-                        <div class="mb-2">
-                            <label class="form-label"> Nombre </label>
-                            <input class="form-control" type="text" placeholder="Ingrese Su nombre">
+                <div class="col-10 col-sm-6 col-md-4 col-lg-3 card-lobby">
+                    <form action="" method="post">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
+                            <label for="nombre">Nombre</label>
+                        </div>
 
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="ficha" placeholder="Ficha" required>
+                            <label for="ficha">Ficha</label>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
+                            <button type="submit" class="btn btn-dark w-100">Entrar al juego</button>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-end mt-2 mb-0">
+                            <a href="index.php" class="btn btn-danger w-100">Cancelar</a>
                         </div>
                     </form>
                 </div>

@@ -8,7 +8,7 @@ require_once '../../models/MySQL.php';
 try {
     $mysql = new MySQL();
     $mysql->conectar();
-
+    //consulta para verificar el pin
     $stmt = $mysql->getConexion()->prepare("SELECT * FROM partidas WHERE pin_partida = :pin_partida");
     $pinPartida = filter_input(INPUT_POST, 'pinIngresado', FILTER_SANITIZE_NUMBER_INT);
     $stmt->bindParam(':pin_partida', $pinPartida, PDO::PARAM_INT);

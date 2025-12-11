@@ -63,6 +63,7 @@ btnIngresarPartida.addEventListener('click', (e) => {
     validarPin();
 });
 
+//permite ingresar a ldar enter
 pinIngresado.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -73,7 +74,7 @@ pinIngresado.addEventListener('keypress', (e) => {
 async function validarPin() {
     const valorIngresado = pinIngresado.value.trim();
 
-    // Validación antes de enviar
+    // validar caracteres
     if (valorIngresado.length !== 6) {
         mostrarError('El PIN debe tener exactamente 6 dígitos');
         pinIngresado.classList.add('bg-danger-subtle', 'border-danger-subtle');
@@ -84,6 +85,7 @@ async function validarPin() {
         const formData = new FormData();
         formData.append('pinIngresado', valorIngresado);
 
+        // se crea form data para mandar el pin y verificarlo
         const res = await fetch('../../controller/partidas/controllerVerificarPin.php', {
             method: 'POST',
             body: formData,
@@ -91,6 +93,7 @@ async function validarPin() {
 
         const data = await res.json();
         console.log('Respuesta:', data);
+
 
         if (data.success === true) {
             mostrarExito('¡PIN correcto! Ingresando...');
