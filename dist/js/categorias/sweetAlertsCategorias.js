@@ -54,6 +54,16 @@ export async function verificarNombreCategoria(nombre) {
 //TODO Fin Verificar Nombre Categoria
 // #endregion
 
+// #region //* Convertir texto de Base de datos a Texto legible
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+function convertirTextoBD(text) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -89,7 +99,7 @@ function crearLabelForm(labelFor, text) {
         let label = document.createElement('label');
         label.classList.add('form-label');
         label.setAttribute('for', labelFor);
-        label.textContent = text;
+        label.textContent = convertirTextoBD(text);
         //? Retorno de elemento
         return label;
     } catch (e) {
@@ -110,7 +120,7 @@ function crearInputForm(inputId, type, value) {
         input.classList.add('form-control');
         input.setAttribute('type', type);
         input.setAttribute('id', inputId);
-        input.setAttribute('value', value);
+        input.setAttribute('value', convertirTextoBD(value));
         //? Retorno de elemento
         return input;
     } catch (e) {
@@ -140,158 +150,15 @@ function crearDivForm() {
 //TODO Fin Div Form
 // #endregion
 
-// #region //* Crear SelectForm
-//TODO Inicio Select Form
-function crearSelectForm(selectId) {
-    try {
-        //? Creacion de elemento Select
-        let select = document.createElement('select');
-        select.classList.add('form-select');
-        select.setAttribute('id', selectId);
-        //? Retorno de elemento
-        return select;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Select Form
-// #endregion
-
-// #region //* Crear OptionForm
-//TODO Inicio Option
-function crearOptionForm(value, text, selected) {
-    try {
-        //? Creacion de elemento Option
-        let option = document.createElement('option');
-        option.setAttribute('value', value);
-        option.textContent = text;
-        //? True: Se aplica selected al option // False: No se aplica nada
-        if (selected == true) {
-            option.setAttribute('selected', 'selected');
-        }
-        //? Retorno de elemento
-        return option;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Option
-// #endregion
-
-// #region //* Crear Button
-//TODO Inicio Button
-function crearButton(type, text) {
-    try {
-        //? Creacion de elemento Button
-        let button = document.createElement('button');
-        button.classList.add('btn', 'btn-primary');
-        button.setAttribute('type', type);
-        button.textContent = text;
-        //? Retorno de elemento
-        return button;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Button
-// #endregion
-
-// #region //* Crear Parrafo
-//TODO Inicio Button
-function crearParrafo(text) {
-    try {
-        //? Creacion de elemento P (parrafo)
-        let p = document.createElement('p');
-        p.textContent = text;
-        //? Retorno de elemento
-        return p;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Button
-// #endregion
-
-// #region //* Crear Div Personalizado
-//TODO Inicio Div Personalizado
-function crearDivPersonalizado(id, ...clase) {
-    try {
-        //? Se usa parametro tipo rest (...),
-        //? basicamente para que ese parametro no tenga limite y se pueda repetir mediante comas ","
-        //? en la invocacion de la funcion
-
-        //? Creacion de elemento Div
-        const div = document.createElement('div');
-        //? ID
-        div.setAttribute('id', id);
-        //? Se agregan las clases (con parametro tipo rest)
-        div.classList.add(...clase);
-        //? Retorno de elemento
-        return div;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Div Personalizado
-// #endregion
-
-// #region //* Crear Lista
-//TODO Inicio Crear Lista
-function crearLista(tipoLista, id) {
-    try {
-        //? Creacion de elemento Lista
-        const lista = document.createElement(`${tipoLista}`);
-        //? ID
-        lista.setAttribute('id', id);
-        //? Retorno de elemento
-        return lista;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Crear Lista
-// #endregion
-
-// #region //* Crear Li (lista)
-//TODO Inicio Crear Li (lista)
-function crearLi(text) {
-    try {
-        //? Creacion de elemento Lista
-        const li = document.createElement('li');
-        //? Texto li
-        li.textContent = text;
-        //? Retorno de elemento
-        return li;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Crear Lista
-// #endregion
-
 //! /////////////////////////////////////////////////////////
 //! FIN Definicion de Funciones createElement
 //! /////////////////////////////////////////////////////////
 
 // #endregion
 
-// #region //* Definicion de Funciones createElement
+// #region //* Contenido HTML sweetAlerts
 //! /////////////////////////////////////////////////////////
-//! Definicion de Funciones createElement
+//! Contenido HTML sweetAlerts
 //! /////////////////////////////////////////////////////////
 
 // #region //* Contenido Categoria Insertar
@@ -397,7 +264,7 @@ export async function contenidoCategoriaDesctivar(id) {
 // #endregion
 
 //! /////////////////////////////////////////////////////////
-//! FIN Definicion de Funciones createElement
+//! FIN Contenido HTML sweetAlerts
 //! /////////////////////////////////////////////////////////
 
 // #endregion
@@ -430,7 +297,7 @@ export async function sweetCategoriaInsertar() {
                     return false;
                 }
                 //? Verificar si esta disponible el nombre
-                let bool = await verificarNombreCategoria(nombre);
+                let bool = await verificarNombreCategoria(nombre.toLowerCase());
                 if (bool == false) {
                     Swal.showValidationMessage('¡Nombre no disponible!');
                     return false;
@@ -505,7 +372,7 @@ export async function sweetCategoriaEditar(id) {
                     return false;
                 }
                 //? Verificar si esta disponible el nombre
-                if (datosCategoria.nombre_categoria != nombre) {
+                if (datosCategoria.nombre_categoria.toLowerCase() != nombre.toLowerCase()) {
                     let bool = await verificarNombreCategoria(nombre);
                     if (bool == false) {
                         Swal.showValidationMessage('¡Nombre no disponible!');
