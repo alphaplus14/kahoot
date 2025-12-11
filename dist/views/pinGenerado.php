@@ -54,7 +54,6 @@ $mysql->conectar();
         </div>
     </main>
     <script src="../js/mostrarPin/mostrarPin.js"></script>
-    <sc
 </body>
 
 </html>
