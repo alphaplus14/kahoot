@@ -16,7 +16,7 @@ $mysql->conectar();
 //? Datos categorias
 $stmt = $mysql->getConexion()->query("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
 JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
-GROUP BY categorias.nombre_categoria;");
+WHERE categorias.estado_categoria = 'Activo' AND cuestionario.estado_cuestionario = 'Activo' GROUP BY categorias.nombre_categoria;");
 
 $categorias = [];
 
