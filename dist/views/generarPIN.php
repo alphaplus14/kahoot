@@ -17,12 +17,11 @@ $mysql->conectar();
 $stmt = $mysql->getConexion()->query("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
 JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
 GROUP BY categorias.nombre_categoria;");
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $categorias = [];
 
 
-while ($row = $stmt->fetch()) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $row['id_categoria'] = (int)$row['id_categoria'];
     $categorias[] = $row;
 }
@@ -94,7 +93,7 @@ while ($row = $stmt->fetch()) {
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Crear juego
+                            Configurar Juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">

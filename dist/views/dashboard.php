@@ -13,10 +13,9 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 $stmt = $mysql->getConexion()->query("SELECT * FROM usuarios");
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $usuario = [];
-while ($row = $stmt->fetch()) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $usuario[] = $row;
 }
 $mysql->desconectar();
@@ -94,7 +93,7 @@ $mysql->desconectar();
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Crear juego
+                            Configurar Juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
