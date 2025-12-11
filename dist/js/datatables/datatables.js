@@ -28,6 +28,7 @@ $('#tablaCategorias').DataTable({
         { targets: 4, orderable: false, width: '140px' }, // Acciones
     ],
 });
+
 $('#tablaHistorialPartida').DataTable({
     responsive: true,
     autoWidth: false,
