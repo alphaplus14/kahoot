@@ -265,6 +265,7 @@ function crearLi(text) {
     try {
         //? Creacion de elemento Lista
         const li = document.createElement('li');
+        li.classList.add("text-start")
         //? Texto li
         li.textContent = text;
         //? Retorno de elemento
