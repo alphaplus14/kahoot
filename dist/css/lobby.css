@@ -138,3 +138,60 @@ main {
         padding: 10px 8px;
     }
 }
+
+
+.container-body .card-lobby {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.20);
+    animation: fadeIn .6s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-lobby label {
+    font-weight: 600;
+    color: #333;
+    font-size: 15px;
+}
+
+.card-lobby .form-control {
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    transition:git  0.2s;
+}
+
+.card-lobby .form-control:focus {
+    border-color: #6A11CB;
+    box-shadow: 0 0 6px rgba(106, 17, 203, 0.4);
+}
+
+.card-lobby .btn-dark {
+    background: #000;
+    border-radius: 50px;
+    padding: 12px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.card-lobby .btn-dark:hover {
+    background: #333;
+}
+
+.card-lobby .btn-danger {
+    border-radius: 50px;
+    padding: 12px;
+    font-weight: 600;
+}
