@@ -49,6 +49,16 @@ export async function traerDatosCategorias() {
 //TODO Fin Funcion Traer Datos Categorias
 // #endregion
 
+// #region //* Convertir texto de Base de datos a Texto legible
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+function convertirTextoBD(text) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+// #endregion
+
 //! /////////////////////////////////////////////////////////
 //! FIN Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -84,7 +94,7 @@ function crearLabelForm(labelFor, text) {
         let label = document.createElement('label');
         label.classList.add('form-label');
         label.setAttribute('for', labelFor);
-        label.textContent = text;
+        label.textContent = convertirTextoBD(text);
         //? Retorno de elemento
         return label;
     } catch (e) {
@@ -94,27 +104,6 @@ function crearLabelForm(labelFor, text) {
     }
 }
 //TODO Fin label
-// #endregion
-
-// #region //* Crear InputForm
-//TODO Inicio Input
-function crearInputForm(inputId, type, value) {
-    try {
-        //? Creacion de elemento Input
-        let input = document.createElement('input');
-        input.classList.add('form-control');
-        input.setAttribute('type', type);
-        input.setAttribute('id', inputId);
-        input.setAttribute('value', value);
-        //? Retorno de elemento
-        return input;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Input
 // #endregion
 
 // #region //* Crear DivForm
@@ -161,7 +150,7 @@ function crearOptionForm(value, text, selected) {
         //? Creacion de elemento Option
         let option = document.createElement('option');
         option.setAttribute('value', value);
-        option.textContent = text;
+        option.textContent = convertirTextoBD(text);
         //? True: Se aplica selected al option // False: No se aplica nada
         if (selected == true) {
             option.setAttribute('selected', 'selected');
@@ -175,44 +164,6 @@ function crearOptionForm(value, text, selected) {
     }
 }
 //TODO Fin Option
-// #endregion
-
-// #region //* Crear Button
-//TODO Inicio Button
-function crearButton(type, text) {
-    try {
-        //? Creacion de elemento Button
-        let button = document.createElement('button');
-        button.classList.add('btn', 'btn-primary');
-        button.setAttribute('type', type);
-        button.textContent = text;
-        //? Retorno de elemento
-        return button;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Button
-// #endregion
-
-// #region //* Crear Parrafo
-//TODO Inicio Button
-function crearParrafo(text) {
-    try {
-        //? Creacion de elemento P (parrafo)
-        let p = document.createElement('p');
-        p.textContent = text;
-        //? Retorno de elemento
-        return p;
-    } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
-    }
-}
-//TODO Fin Button
 // #endregion
 
 // #region //* Crear Div Personalizado
@@ -265,9 +216,9 @@ function crearLi(text) {
     try {
         //? Creacion de elemento Lista
         const li = document.createElement('li');
-        li.classList.add("text-start")
+        li.classList.add('text-start');
         //? Texto li
-        li.textContent = text;
+        li.textContent = convertirTextoBD(text);
         //? Retorno de elemento
         return li;
     } catch (e) {
@@ -290,7 +241,8 @@ function crearTextArea(id, text) {
         //? id
         preguntaText.setAttribute('id', id);
         //? texto
-        preguntaText.textContent = text;
+        const decode = convertirTextoBD(text);
+        preguntaText.value = decode;
         //? Retorno de elemento
         return preguntaText;
     } catch (e) {
@@ -658,19 +610,46 @@ export async function sweetCuestionarioEditar(id) {
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
-                //? Se traen datos de Cuestionario por ID
-                const datosCuestionario = await traerDatosCuestionarioPorID(id);
                 //? Se capturan los datos del formulario
-                const nombre = document.querySelector('#nombreCuestionario').value.trim();
+                const pregunta = document.querySelector('#inputPregunta').value.trim();
+                const respuestaA = document.querySelector('#inputRespuestaA').value.trim();
+                const respuestaB = document.querySelector('#inputRespuestaB').value.trim();
+                const respuestaC = document.querySelector('#inputRespuestaC').value.trim();
+                const respuestaD = document.querySelector('#inputRespuestaD').value.trim();
+                let respuestaCorrecta = document.querySelector('#selectRespuestaCorrecta').value.trim();
+                const categoria = document.querySelector('#selectCategorias').value.trim();
                 //? Verificar que los campos esten llenos
-                if (!nombre) {
+                if (!pregunta || !respuestaA || !respuestaB || !respuestaC || !respuestaD || !respuestaCorrecta || !categoria) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
+                //? Asignar respuesta correcta
+                switch (respuestaCorrecta) {
+                    case 'A':
+                        respuestaCorrecta = respuestaA;
+                        break;
+                    case 'B':
+                        respuestaCorrecta = respuestaB;
+                        break;
+                    case 'C':
+                        respuestaCorrecta = respuestaC;
+                        break;
+                    case 'D':
+                        respuestaCorrecta = respuestaD;
+                        break;
+                    default:
+                        break;
+                }
                 //? Retornar valores finales
                 return {
-                    nombre,
                     id,
+                    pregunta,
+                    respuestaA,
+                    respuestaB,
+                    respuestaC,
+                    respuestaD,
+                    respuestaCorrecta,
+                    categoria,
                 };
             },
         }).then(async (result) => {
@@ -680,8 +659,14 @@ export async function sweetCuestionarioEditar(id) {
                 const datos = result.value;
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
-                formData.append('nombre', datos.nombre);
                 formData.append('id', datos.id);
+                formData.append('pregunta', datos.pregunta);
+                formData.append('respuestaA', datos.respuestaA);
+                formData.append('respuestaB', datos.respuestaB);
+                formData.append('respuestaC', datos.respuestaC);
+                formData.append('respuestaD', datos.respuestaD);
+                formData.append('respuestaCorrecta', datos.respuestaCorrecta);
+                formData.append('categoria', datos.categoria);
                 //? Solicitud de datos a controller
                 const json = await fetch('../../controller/cuestionarios/controllerCuestionarioEditar.php', {
                     method: 'POST',
