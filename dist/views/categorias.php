@@ -13,12 +13,11 @@ $mysql = new MySQL();
 $mysql->conectar();
 $sql = "SELECT categorias.id_categoria, categorias.nombre_categoria, COUNT(cuestionario.categorias_id_categoria) as conteo, categorias.estado_categoria 
 FROM categorias LEFT JOIN cuestionario ON cuestionario.categorias_id_categoria = categorias.id_categoria
-GROUP BY cuestionario.categorias_id_categoria;";
+GROUP BY categorias.id_categoria;";
 $stmt = $mysql->getConexion()->query($sql);
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $categorias = [];
-while ($row = $stmt->fetch()) {
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $categorias[] = $row;
 }
 $mysql->desconectar();
@@ -96,7 +95,7 @@ $mysql->desconectar();
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Crear juego
+                            Configurar Juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse show" id="collapseJuegos" data-bs-parent="#sidenavAccordion">

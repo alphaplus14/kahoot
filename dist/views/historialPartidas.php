@@ -93,13 +93,13 @@ $mysql->desconectar();
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseJuegos"
                             aria-expanded="true" aria-controls="collapseJuegos">
                             <div class="sb-nav-link-icon"><i class="bi bi-patch-plus"></i></div>
-                            Configurar juego
+                            Configurar Juego
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
                         <div class="collapse" id="collapseJuegos" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Categorias</a>
-                                <a class="nav-link" href="#">Banco de Preguntas</a>
+                                <a class="nav-link" href="categorias.php">Categorias</a>
+                                <a class="nav-link" href="bancoPreguntas.php">Banco de Preguntas</a>
                             </nav>
                         </div>
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePartidas"
@@ -122,7 +122,7 @@ $mysql->desconectar();
                         </a>
                         <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="#">Reportes por juego</a>
+                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
                             </nav>
                         </div>
                     </div>

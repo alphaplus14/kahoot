@@ -1,18 +1,19 @@
 'use strict';
+
 // #region //* Funciones Generales
 //! /////////////////////////////////////////////////////////
 //! Funciones Generales
 //! /////////////////////////////////////////////////////////
 
-// #region //* Traer Datos Categoria (por id)
-//TODO Inicio Funcion Traer Datos Usuario (por id)
-export async function traerDatosCategoriaPorID(id) {
+// #region //* Traer Datos Cuestionario (por id)
+//TODO Inicio Funcion Traer Datos Cuestionario (por id)
+export async function traerDatosCuestionarioPorID(id) {
     try {
         //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/categorias/controllerDatosCategoriaPorID.php`, {
+        const json = await fetch(`../../controller/cuestionarios/controllerDatosCuestionarioPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -26,21 +27,15 @@ export async function traerDatosCategoriaPorID(id) {
         return false;
     }
 }
-//TODO Fin Funcion Traer Datos Usuario (por id)
+//TODO Fin Funcion Traer Datos Cuestionario (por id)
 // #endregion
 
-// #region //* Verificar Nombre Categoria
-//TODO Inicio Verificar Nombre Categoria
-export async function verificarNombreCategoria(nombre) {
+// #region //* Traer Datos Categorias
+//TODO Inicio Funcion Traer Datos Categorias
+export async function traerDatosCategorias() {
     try {
-        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
-        const formData = new FormData();
-        formData.append('nombre', nombre);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/verify/controllerVerifyNombreCategoria.php`, {
-            method: 'POST',
-            body: formData,
-        });
+        const json = await fetch(`../../controller/categorias/controllerDatosCategorias.php`);
         //? Conversion a JSON valido
         const datos = await json.json();
         //? Retorno de datos
@@ -51,7 +46,7 @@ export async function verificarNombreCategoria(nombre) {
         return false;
     }
 }
-//TODO Fin Verificar Nombre Categoria
+//TODO Fin Funcion Traer Datos Categorias
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -270,10 +265,34 @@ function crearLi(text) {
     try {
         //? Creacion de elemento Lista
         const li = document.createElement('li');
+        li.classList.add("text-start")
         //? Texto li
         li.textContent = text;
         //? Retorno de elemento
         return li;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Crear Lista
+// #endregion
+
+// #region //* Crear textArea
+//TODO Inicio Crear textArea
+function crearTextArea(id, text) {
+    try {
+        //? Creacion de elemento TextArea
+        const preguntaText = document.createElement('textarea');
+        preguntaText.classList.add('form-control', 'mb-2');
+        preguntaText.setAttribute('style', 'height: 100px');
+        //? id
+        preguntaText.setAttribute('id', id);
+        //? texto
+        preguntaText.textContent = text;
+        //? Retorno de elemento
+        return preguntaText;
     } catch (e) {
         //? Control de errores
         console.log(e);
@@ -289,25 +308,59 @@ function crearLi(text) {
 
 // #endregion
 
-// #region //* Definicion de Funciones createElement
+// #region //* Contenido SweetAlert
 //! /////////////////////////////////////////////////////////
 //! Definicion de Funciones createElement
 //! /////////////////////////////////////////////////////////
 
-// #region //* Contenido Categoria Insertar
-//TODO Inicio Contenido Categoria Insertar
-export async function contenidoCategoriaInsertar() {
+// #region //* Contenido Cuestionario Insertar
+//TODO Inicio Contenido Cuestionario Insertar
+export async function contenidoCuestionarioInsertar() {
     try {
+        //? Traer categorias
+        const categorias = await traerDatosCategorias();
+        console.log(categorias);
         //? Inicio Formulario
         const form = crearForm();
-        //? Nombre
-        const nombreDiv = crearDivForm();
-        const nombreLabel = crearLabelForm('nombreCategoria', 'Nombre');
-        const nombreInput = crearInputForm('nombreCategoria', 'text', '');
-        nombreDiv.append(nombreLabel);
-        nombreDiv.append(nombreInput);
-        //? Asignacion final Form
-        form.append(nombreDiv);
+        //? Pregunta
+        const preguntaDiv = crearDivPersonalizado('', 'form-floating');
+        const preguntaText = crearTextArea('inputPregunta', '');
+        const preguntaLabel = crearLabelForm('inputPregunta', 'Ingresa la pregunta');
+        //? Asignaciones
+        preguntaDiv.append(preguntaText);
+        preguntaDiv.append(preguntaLabel);
+        form.append(preguntaDiv);
+        //? Respuestas
+        const letras = ['A', 'B', 'C', 'D'];
+        for (let i = 0; i < 4; i++) {
+            const respuestaDiv = crearDivPersonalizado('', 'form-floating');
+            const textPregunta = crearTextArea('inputRespuesta' + letras[i], '');
+            const labelPregunta = crearLabelForm('inputRespuesta' + letras[i], 'Ingresa la respuesta ' + letras[i]);
+            //? Asignaciones
+            respuestaDiv.append(textPregunta);
+            respuestaDiv.append(labelPregunta);
+            form.append(respuestaDiv);
+        }
+        //? Respuesta Correcta
+        const respuestaCorrectaDiv = crearSelectForm('selectRespuestaCorrecta');
+        respuestaCorrectaDiv.classList.add('mb-2');
+        const respuestaCorrectaOptionCheck = crearOptionForm('', 'Selecciona la opcion correcta', true);
+        respuestaCorrectaDiv.append(respuestaCorrectaOptionCheck);
+        for (let i = 0; i < 4; i++) {
+            const option = crearOptionForm(letras[i], 'Respuesta ' + letras[i], false);
+            respuestaCorrectaDiv.append(option);
+        }
+        form.append(respuestaCorrectaDiv);
+        //? Categorias
+        const categoriasDiv = crearSelectForm('selectCategorias');
+        const categoriasOptionCheck = crearOptionForm('', 'Selecciona una categoria', true);
+        categoriasDiv.append(categoriasOptionCheck);
+        for (let i = 0; i < categorias.length; i++) {
+            const option = crearOptionForm(categorias[i].id_categoria, categorias[i].nombre_categoria, false);
+            categoriasDiv.append(option);
+        }
+        categoriasDiv.classList.add('mb-2');
+        form.append(categoriasDiv);
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -316,25 +369,73 @@ export async function contenidoCategoriaInsertar() {
         return false;
     }
 }
-//TODO Fin Contenido Categoria Insertar
+//TODO Fin Contenido Cuestionario Insertar
 // #endregion
 
-// #region //* Contenido Categoria Editar
-//TODO Inicio Contenido Categoria Editar
-export async function contenidoCategoriaEditar(id) {
+// #region //* Contenido Cuestionario Editar
+//TODO Inicio Contenido Cuestionario Editar
+export async function contenidoCuestionarioEditar(id) {
     try {
-        //? Se traen datos de usuario por ID
-        const datosCategoria = await traerDatosCategoriaPorID(id);
+        //? Traer categorias
+        const categorias = await traerDatosCategorias();
+        const cuestionario = await traerDatosCuestionarioPorID(id);
         //? Inicio Formulario
         const form = crearForm();
-        //? Nombre
-        const nombreDiv = crearDivForm();
-        const nombreLabel = crearLabelForm('nombreCategoria', 'Nombre');
-        const nombreInput = crearInputForm('nombreCategoria', 'text', datosCategoria.nombre_categoria);
-        nombreDiv.append(nombreLabel);
-        nombreDiv.append(nombreInput);
-        //? Asignacion final Form
-        form.append(nombreDiv);
+        //? Pregunta
+        const preguntaDiv = crearDivPersonalizado('', 'form-floating');
+        const preguntaText = crearTextArea('inputPregunta', cuestionario.pregunta);
+        const preguntaLabel = crearLabelForm('inputPregunta', 'Ingresa la pregunta');
+        //? Asignaciones
+        preguntaDiv.append(preguntaText);
+        preguntaDiv.append(preguntaLabel);
+        form.append(preguntaDiv);
+        //? Respuestas
+        const letras = ['A', 'B', 'C', 'D'];
+        const respuestas = [
+            cuestionario.respuesta_A,
+            cuestionario.respuesta_B,
+            cuestionario.respuesta_C,
+            cuestionario.respuesta_D,
+        ];
+        for (let i = 0; i < 4; i++) {
+            const respuestaDiv = crearDivPersonalizado('', 'form-floating');
+            const textPregunta = crearTextArea('inputRespuesta' + letras[i], respuestas[i]);
+            const labelPregunta = crearLabelForm('inputRespuesta' + letras[i], 'Ingresa la respuesta ' + letras[i]);
+            //? Asignaciones
+            respuestaDiv.append(textPregunta);
+            respuestaDiv.append(labelPregunta);
+            form.append(respuestaDiv);
+        }
+        //? Respuesta Correcta
+        const respuestaCorrectaDiv = crearSelectForm('selectRespuestaCorrecta');
+        respuestaCorrectaDiv.classList.add('mb-2');
+        const respuestaCorrectaOptionCheck = crearOptionForm('', 'Selecciona la opcion correcta', false);
+        respuestaCorrectaDiv.append(respuestaCorrectaOptionCheck);
+        for (let i = 0; i < 4; i++) {
+            if (cuestionario.respuesta_correcta == respuestas[i]) {
+                const option = crearOptionForm(letras[i], 'Respuesta ' + letras[i], true);
+                respuestaCorrectaDiv.append(option);
+            } else {
+                const option = crearOptionForm(letras[i], 'Respuesta ' + letras[i], false);
+                respuestaCorrectaDiv.append(option);
+            }
+        }
+        form.append(respuestaCorrectaDiv);
+        //? Categorias
+        const categoriasDiv = crearSelectForm('selectCategorias');
+        const categoriasOptionCheck = crearOptionForm('', 'Selecciona una categoria', false);
+        categoriasDiv.append(categoriasOptionCheck);
+        for (let i = 0; i < categorias.length; i++) {
+            if (cuestionario.categorias_id_categoria == categorias[i].id_categoria) {
+                const option = crearOptionForm(categorias[i].id_categoria, categorias[i].nombre_categoria, true);
+                categoriasDiv.append(option);
+            } else {
+                const option = crearOptionForm(categorias[i].id_categoria, categorias[i].nombre_categoria, false);
+                categoriasDiv.append(option);
+            }
+        }
+        categoriasDiv.classList.add('mb-2');
+        form.append(categoriasDiv);
         //? Retorno de HTML
         return form;
     } catch (e) {
@@ -343,20 +444,20 @@ export async function contenidoCategoriaEditar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Categoria Editar
+//TODO Fin Contenido Cuestionario Editar
 // #endregion
 
-// #region //* Contenido Categoria Activar
-//TODO Inicio Contenido Categoria Activar
-export async function contenidoCategoriaActivar(id) {
+// #region //* Contenido Cuestionario Activar
+//TODO Inicio Contenido Cuestionario Activar
+export async function contenidoCuestionarioActivar(id) {
     try {
-        //? Se traen datos de Categoria por ID
-        const categoria = await traerDatosCategoriaPorID(id);
+        //? Se traen datos de Cuestionario por ID
+        const Cuestionario = await traerDatosCuestionarioPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea activar la categoria ${categoria.nombre_categoria} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea activar la Cuestionario ${Cuestionario.nombre_Cuestionario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -368,20 +469,20 @@ export async function contenidoCategoriaActivar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Categoria Activar
+//TODO Fin Contenido Cuestionario Activar
 // #endregion
 
-// #region //* Contenido Categoria Desctivar
-//TODO Inicio Contenido Categoria Desactivar
-export async function contenidoCategoriaDesctivar(id) {
+// #region //* Contenido Cuestionario Desctivar
+//TODO Inicio Contenido Cuestionario Desactivar
+export async function contenidoCuestionarioDesctivar(id) {
     try {
         //? Se traen datos de usuario por ID
-        const categoria = await traerDatosCategoriaPorID(id);
+        const Cuestionario = await traerDatosCuestionarioPorID(id);
         //? Inicio Formulario
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar la categoria ${categoria.nombre_categoria} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar la Cuestionario ${Cuestionario.nombre_Cuestionario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);
@@ -393,7 +494,40 @@ export async function contenidoCategoriaDesctivar(id) {
         return false;
     }
 }
-//TODO Fin Contenido Categoria Desactivar
+//TODO Fin Contenido Cuestionario Desactivar
+// #endregion
+
+// #region //* Contenido Cuestionario Ver Respuestas
+//TODO Inicio Contenido Cuestionario Ver Respuestas
+export async function contenidoCuestionarioVerRespuestas(id) {
+    try {
+        //? Se traen datos de usuario por ID
+        const cuestionario = await traerDatosCuestionarioPorID(id);
+        //? Inicio Formulario
+        const form = crearForm();
+        //? Respuestas
+        const lista = crearLista('ol', 'listaRespuestas');
+        const liRptA = crearLi('Respuesta A: ' + cuestionario.respuesta_A);
+        const liRptB = crearLi('Respuesta B: ' + cuestionario.respuesta_B);
+        const liRptC = crearLi('Respuesta C: ' + cuestionario.respuesta_C);
+        const liRptD = crearLi('Respuesta D: ' + cuestionario.respuesta_D);
+        const liRptCorrecta = crearLi('Respuesta Correcta: ' + cuestionario.respuesta_correcta);
+        lista.append(liRptA);
+        lista.append(liRptB);
+        lista.append(liRptC);
+        lista.append(liRptD);
+        lista.append(liRptCorrecta);
+        //? Asignacion final Form
+        form.append(lista);
+        //? Retorno de HTML
+        return form;
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin Contenido Cuestionario Ver Respuestas
 // #endregion
 
 //! /////////////////////////////////////////////////////////
@@ -407,14 +541,14 @@ export async function contenidoCategoriaDesctivar(id) {
 //! Funciones SweetAlert (SweetAlert2 Principales)
 //! /////////////////////////////////////////////////////////
 
-// #region //* Sweet Categoria Insertar
-//TODO Inicio SweetAlert Categoria Insertar
-export async function sweetCategoriaInsertar() {
+// #region //* Sweet Cuestionario Insertar
+//TODO Inicio SweetAlert Cuestionario Insertar
+export async function sweetCuestionarioInsertar() {
     try {
         Swal.fire({
-            title: 'Crear Nuevo Categoria', //? Titulo Modal
+            title: 'Crear Nuevo Cuestionario', //? Titulo Modal
             showLoaderOnConfirm: true, //? Muestra loader mientras espera el preConfirm
-            html: await contenidoCategoriaInsertar(), //? Contenido HTML
+            html: await contenidoCuestionarioInsertar(), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -423,21 +557,44 @@ export async function sweetCategoriaInsertar() {
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
-                const nombre = document.querySelector('#nombreCategoria').value.trim();
+                const pregunta = document.querySelector('#inputPregunta').value.trim();
+                const respuestaA = document.querySelector('#inputRespuestaA').value.trim();
+                const respuestaB = document.querySelector('#inputRespuestaB').value.trim();
+                const respuestaC = document.querySelector('#inputRespuestaC').value.trim();
+                const respuestaD = document.querySelector('#inputRespuestaD').value.trim();
+                let respuestaCorrecta = document.querySelector('#selectRespuestaCorrecta').value.trim();
+                const categoria = document.querySelector('#selectCategorias').value.trim();
                 //? Verificar que los campos esten llenos
-                if (!nombre) {
+                if (!pregunta || !respuestaA || !respuestaB || !respuestaC || !respuestaD || !respuestaCorrecta || !categoria) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
                 }
-                //? Verificar si esta disponible el nombre
-                let bool = await verificarNombreCategoria(nombre);
-                if (bool == false) {
-                    Swal.showValidationMessage('¡Nombre no disponible!');
-                    return false;
+                //? Asignar respuesta correcta
+                switch (respuestaCorrecta) {
+                    case 'A':
+                        respuestaCorrecta = respuestaA;
+                        break;
+                    case 'B':
+                        respuestaCorrecta = respuestaB;
+                        break;
+                    case 'C':
+                        respuestaCorrecta = respuestaC;
+                        break;
+                    case 'D':
+                        respuestaCorrecta = respuestaD;
+                        break;
+                    default:
+                        break;
                 }
                 //? Retornar valores finales
                 return {
-                    nombre,
+                    pregunta,
+                    respuestaA,
+                    respuestaB,
+                    respuestaC,
+                    respuestaD,
+                    respuestaCorrecta,
+                    categoria,
                 };
             },
         }).then(async (result) => {
@@ -447,9 +604,15 @@ export async function sweetCategoriaInsertar() {
                 const datos = result.value;
                 //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                 let formData = new FormData();
-                formData.append('nombre', datos.nombre);
+                formData.append('pregunta', datos.pregunta);
+                formData.append('respuestaA', datos.respuestaA);
+                formData.append('respuestaB', datos.respuestaB);
+                formData.append('respuestaC', datos.respuestaC);
+                formData.append('respuestaD', datos.respuestaD);
+                formData.append('respuestaCorrecta', datos.respuestaCorrecta);
+                formData.append('categoria', datos.categoria);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaInsertar.php', {
+                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioInsertar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -480,14 +643,14 @@ export async function sweetCategoriaInsertar() {
 //TODO Fin SweetAlert Usuario Insertar
 // #endregion
 
-// #region //* Sweet Categoria Editar
-//TODO Inicio SweetAlert Categoria Editar
-export async function sweetCategoriaEditar(id) {
+// #region //* Sweet Cuestionario Editar
+//TODO Inicio SweetAlert Cuestionario Editar
+export async function sweetCuestionarioEditar(id) {
     try {
         Swal.fire({
-            title: 'Editar Categoria', //? Titulo Modal
+            title: 'Editar Cuestionario', //? Titulo Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoCategoriaEditar(id), //? Contenido HTML
+            html: await contenidoCuestionarioEditar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -495,22 +658,14 @@ export async function sweetCategoriaEditar(id) {
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
             preConfirm: async () => {
-                //? Se traen datos de Categoria por ID
-                const datosCategoria = await traerDatosCategoriaPorID(id);
+                //? Se traen datos de Cuestionario por ID
+                const datosCuestionario = await traerDatosCuestionarioPorID(id);
                 //? Se capturan los datos del formulario
-                const nombre = document.querySelector('#nombreCategoria').value.trim();
+                const nombre = document.querySelector('#nombreCuestionario').value.trim();
                 //? Verificar que los campos esten llenos
                 if (!nombre) {
                     Swal.showValidationMessage('¡Todos los campos son requeridos!');
                     return false;
-                }
-                //? Verificar si esta disponible el nombre
-                if (datosCategoria.nombre_categoria != nombre) {
-                    let bool = await verificarNombreCategoria(nombre);
-                    if (bool == false) {
-                        Swal.showValidationMessage('¡Nombre no disponible!');
-                        return false;
-                    }
                 }
                 //? Retornar valores finales
                 return {
@@ -528,7 +683,7 @@ export async function sweetCategoriaEditar(id) {
                 formData.append('nombre', datos.nombre);
                 formData.append('id', datos.id);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaEditar.php', {
+                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -556,18 +711,18 @@ export async function sweetCategoriaEditar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Categoria Editar
+//TODO Fin SweetAlert Cuestionario Editar
 // #endregion
 
-// #region //* Sweet Categoria Activar
-//TODO Inicio SweetAlert Activar Categoria
-export async function sweetCategoriaActivar(id) {
+// #region //* Sweet Cuestionario Activar
+//TODO Inicio SweetAlert Activar Cuestionario
+export async function sweetCuestionarioActivar(id) {
     try {
         Swal.fire({
-            title: 'Activar Categoria', //? Titulo Modal
+            title: 'Activar Cuestionario', //? Titulo Modal
             icon: 'question', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoCategoriaActivar(id), //? Contenido HTML
+            html: await contenidoCuestionarioActivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -587,7 +742,7 @@ export async function sweetCategoriaActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaActivar.php', {
+                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -615,18 +770,18 @@ export async function sweetCategoriaActivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Activar Categoria
+//TODO Fin SweetAlert Activar Cuestionario
 // #endregion
 
-// #region //* Sweet Categoria Desactivar
-//TODO Inicio SweetAlert Desactivar Categoria
-export async function sweetCategoriaDesactivar(id) {
+// #region //* Sweet Cuestionario Desactivar
+//TODO Inicio SweetAlert Desactivar Cuestionario
+export async function sweetCuestionarioDesactivar(id) {
     try {
         Swal.fire({
-            title: 'Desactivar Categoria', //? Titulo Modal
+            title: 'Desactivar Cuestionario', //? Titulo Modal
             icon: 'warning', //? Icono Modal
             showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
-            html: await contenidoCategoriaDesctivar(id), //? Contenido HTML
+            html: await contenidoCuestionarioDesctivar(id), //? Contenido HTML
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             showCancelButton: true, //? Mostrar boton cancelar
             cancelButtonText: 'Cancelar', //? Texto boton cancelar
@@ -646,7 +801,7 @@ export async function sweetCategoriaDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaDesactivar.php', {
+                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -674,7 +829,28 @@ export async function sweetCategoriaDesactivar(id) {
         return false;
     }
 }
-//TODO Fin SweetAlert Desactivar Categoria
+//TODO Fin SweetAlert Desactivar Cuestionario
+// #endregion
+
+// #region //* SweetAlert Cuestionario Ver Respuestas
+//TODO Inicio SweetAlert Cuestionario Ver Respuestas
+export async function sweetCuestionarioVerRespuestas(id) {
+    try {
+        Swal.fire({
+            title: 'Respuestas del Cuestionario', //? Titulo Modal
+            icon: 'info', //? Icono Modal
+            html: await contenidoCuestionarioVerRespuestas(id), //? Contenido HTML
+            confirmButtonText: 'Confirmar', //? Texto boton confirmar
+            focusConfirm: false, //? Desactivar focus al boton crear
+            confirmButtonColor: '#007bff', //? Color boton confirmar
+        });
+    } catch (e) {
+        //? Control de errores
+        console.log(e);
+        return false;
+    }
+}
+//TODO Fin SweetAlert Cuestionario Ver Respuestas
 // #endregion
 
 //! /////////////////////////////////////////////////////////
