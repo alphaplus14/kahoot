@@ -13,13 +13,6 @@
 </head>
 
 <body class="bg-primary d-flex flex-column min-vh-100">
-    <div class="container-fluid">
-        <header class="row align-items-center">
-            <div class="col-12 d-flex justify-content-end p-3">
-                <a href="login.php" class="btn btn-dark">Iniciar Sesión</a>
-            </div>
-        </header>
-    </div>
 
     <main class="flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="container-fluid">
@@ -32,10 +25,9 @@
                 <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
                     <form action="procesar_pin.php" method="post">
                         <div class="mb-2">
-                            <input class="form-control text-center p-3" id="pinIngresado" type="text" pattern="\d{6}" maxlength="6" placeholder="PIN de partida" name="pinIngresado" required />
-                        </div>
-                        <div class="d-flex align-items-center justify-content-end mt-3 mb-0">
-                            <button type="button" id="ingresar" class="btn btn-dark btnIngresar w-100 p-2 fs-5">Ingresar</button>
+                            <label class="form-label"> Nombre </label>
+                            <input class="form-control" type="text" placeholder="Ingrese Su nombre">
+
                         </div>
                     </form>
                 </div>
@@ -46,8 +38,7 @@
     <footer id="nopin" class="position-fixed bottom-0 w-100">
     </footer>
 
-    <script src="../js/lobby/lobby.js"></script>
-
+    <script src="../js/lobby/lobby.js" type="module"></script>
 </body>
 
 </html>
