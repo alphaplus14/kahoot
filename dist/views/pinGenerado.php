@@ -53,10 +53,8 @@ $mysql->conectar();
         </div>
         </div>
     </main>
-
-    <footer id="nopin" class="position-fixed bottom-0 w-100">
-    </footer>
     <script src="../js/mostrarPin/mostrarPin.js"></script>
+    <sc
 </body>
 
 </html>
