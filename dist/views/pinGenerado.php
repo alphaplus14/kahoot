@@ -32,8 +32,24 @@ $mysql->conectar();
             <div class="col-6 d-flex justify-content-start p-3">
                 <a href="generarPin.php" class="btn btn-dark">Volver</a>
             </div>
-            <div class="col-6 d-flex justify-content-end   p-3">
-                <button id="terminarJuego" data-id="" class="btn btn-dark">Terminar Juego</button>
+            <div class="col-6 d-flex justify-content-end align-items-center gap-2 p-3">
+
+                <div id="cronometro"
+                    style="
+            padding: 8px 14px;
+            background: #000000cc;
+            color: white;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+        ">
+                    10:00
+                </div>
+
+                <button id="terminarJuego" data-id="" class="btn btn-dark">
+                    Terminar Juego
+                </button>
+
             </div>
         </header>
     </div>
