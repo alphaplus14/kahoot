@@ -29,8 +29,11 @@ $mysql->conectar();
 <body class="bg-primary d-flex flex-column min-vh-100">
     <div class="container-fluid">
         <header class="row align-items-center">
-            <div class="col-12 d-flex justify-content-start p-3">
+            <div class="col-6 d-flex justify-content-start p-3">
                 <a href="generarPin.php" class="btn btn-dark">Volver</a>
+            </div>
+            <div class="col-6 d-flex justify-content-end   p-3">
+                <button id="terminarJuego"  data-id="" class="btn btn-dark">Terminar Juego</button>
             </div>
         </header>
     </div>
