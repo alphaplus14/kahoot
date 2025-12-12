@@ -20,52 +20,45 @@ if ($verificacion == false) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego - ¿Y esa pregunta?</title>
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 
 <body>
     <div class="container-fluid" style="height: 500px;">
-        <div class="row justify-content-center mt-5 h-100">
-            <div class="col-md-8 bg bg-info border rounded-3 text-white px-4 pt-4">
-                <div class="row">
-                    <div class="col-md-8 text-start">
-                        <label for="" id="contador" class="mb-4 badge bg-dark rounded-2">Tiempo Restante: 0</label>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <label for="" id="puntos" class="mb-4 badge bg-dark rounded-2">Puntos 0</label>
-                    </div>
-                </div>
-                <div class="col-mb-4 text-center bg bg-dark p-3 border border-dark rounded-3 align-items-center justify-content-center d-flex" style="height: 200px;">
-                    <h1 id="pregunta"></h1>
-                </div>
-                <form class="p-2 formPreguntas align-items-end mt-5">
-                    <div class="row text-center">
-                        <div class="col-md p-0">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-dark respuestaA w-75"></button>
-                            </div>
-                        </div>
-                        <div class="col-md p-0">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-dark respuestaB w-75"></button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row text-center">
-                        <div class="col-md p-0">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-dark respuestaC w-75"></button>
-                            </div>
-                        </div>
-                        <div class="col-md p-0">
-                            <div class="mb-3">
-                                <button type="button" class="btn btn-dark respuestaD w-75"></button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+        <div class="row mt-2 align-items-center text-white">
+            <div class="col-md text-start">
+                <img src="../assets/media/1.png" alt="Logo Sena" class="img-fluid">
+            </div>
+            <div class="col-md text-end">
+                <label for="" id="contador" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Tiempo Restante: 0</label>
+                <label for="" id="puntos" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Puntos 0</label>
             </div>
         </div>
-
+        <div class="row text-white mt-4">
+            <div class="col-mb-4 text-center bg bg-dark p-3 border border-dark align-items-center justify-content-center d-flex" style="height: 200px;">
+                <h1 id="pregunta"></h1>
+            </div>
+        </div>
+        <form class="formPreguntas mt-5 bg">
+            <div class="row h-100 p-5">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-danger respuestaA w-100 fs-2 rounded-4 shadow"></button>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-warning respuestaC w-100 fs-2 rounded-4 shadow"></button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-primary respuestaB w-100 fs-2 rounded-4 shadow"></button>
+                    </div>
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-success respuestaD w-100 fs-2 rounded-4 shadow"></button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
     <script src="../js/juego/juego.js"></script>
 </body>
