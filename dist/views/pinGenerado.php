@@ -33,7 +33,7 @@ $mysql->conectar();
                 <a href="generarPin.php" class="btn btn-dark">Volver</a>
             </div>
             <div class="col-6 d-flex justify-content-end   p-3">
-                <button id="terminarJuego"  data-id="" class="btn btn-dark">Terminar Juego</button>
+                <button id="terminarJuego" data-id="" class="btn btn-dark">Terminar Juego</button>
             </div>
         </header>
     </div>
@@ -56,6 +56,7 @@ $mysql->conectar();
         </div>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/mostrarPin/mostrarPin.js"></script>
 </body>
 

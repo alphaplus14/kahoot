@@ -22,7 +22,7 @@ try {
     } else {
         echo json_encode([
             'success' => false,
-            'message' => 'PIN inválido'
+            'message' => 'PIN inválido o partida no disponible'
         ]);
     }
 } catch (Exception $e) {
