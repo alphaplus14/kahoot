@@ -28,10 +28,10 @@ if (
         $stmt->execute();
         //? Retorno de datos aplicando JSON
         header("Content-Type: application/json");
-        echo json_encode(['success' => true, 'message' => 'Empleado creado exitosamente!']);
+        echo json_encode(['success' => true, 'message' => 'Usuario creado exitosamente!']);
     } catch (\Throwable $th) {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Error al crear empleado', 'error' => $th]);
+        echo json_encode(['success' => false, 'message' => 'Error al crear Usuario', 'error' => $th]);
     };
 } else {
     header("Content-Type: application/json");

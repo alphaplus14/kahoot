@@ -70,11 +70,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     <i class="fas fa-user fa-fw"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><button class="dropdown-item text-success" id="configuracionPerfil" name="<?php echo $_SESSION['id_usuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
+                    <li><button class="dropdown-item text-success d-flex justify-content-center align-items-center" id="configuracionPerfil" name="<?php echo $_SESSION['id_usuario'] ?>"><i class="bi bi-person-gear fs-3"></i> Configuracion de perfil</button></li>
                     <li>
                         <hr class="dropdown-divider" />
                     </li>
-                    <li><a class="dropdown-item text-danger" href="../../controller/controllerLogout.php"><i class="bi bi-box-arrow-in-right fs-3"></i> Cerrar Sesión</a></li>
+                    <li>
+                        <a href="../../controller/controllerLogout.php"
+                            class="dropdown-item text-danger d-flex justify-content-center align-items-center position-relative ps-4">
+
+                            <i class="bi bi-box-arrow-in-right fs-3"
+                                style="position: absolute; left: 15px;"></i>
+                            Cerrar Sesión
+                        </a>
+                    </li>
+
                 </ul>
             </li>
         </ul>
@@ -114,17 +123,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
-                            aria-expanded="true" aria-controls="collapseReportes">
-                            <div class="sb-nav-link-icon"><i class="bi-bar-chart-fill"></i></div>
-                            Reportes
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
-                            </nav>
-                        </div>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -158,7 +156,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     <label for="limitePreguntas" class="form-label">Limite de Preguntas</label>
                                     <input type="number" class="form-control limitePreguntasInput" id="limitePreguntas" name="limitePreguntas" min="0">
                                 </div>
-                                <button type="button" class="btn btn-primary" id="buttonEnviarForm">Generar PIN</button>
+                                <button type="button" class="btn btn-success" id="buttonEnviarForm">Generar PIN</button>
                             </form>
                         </div>
                     </div>
