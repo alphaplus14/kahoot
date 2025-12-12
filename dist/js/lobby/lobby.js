@@ -23,7 +23,7 @@ input.addEventListener('input', (e) => {
     }
 });
 
-// para evitar que se ingreen letras
+// para evitar que se ingresen letras
 const inputPin = document.querySelector('#pinIngresado');
 
 inputPin.addEventListener('input', function () {
@@ -63,7 +63,7 @@ btnIngresarPartida.addEventListener('click', (e) => {
     validarPin();
 });
 
-//permite ingresar a ldar enter
+//permite ingresar al dar enter
 pinIngresado.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
@@ -94,12 +94,12 @@ async function validarPin() {
         const data = await res.json();
         console.log('Respuesta:', data);
 
-
         if (data.success === true) {
             mostrarExito('¡PIN correcto! Ingresando...');
 
             // Guardar datos de la partida
             sessionStorage.setItem('partida', JSON.stringify(data.data));
+            sessionStorage.setItem('idPartida', JSON.stringify(data.data.id_partida));
 
             setTimeout(() => {
                 window.location.href = 'partida.php';
