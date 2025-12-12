@@ -1,17 +1,15 @@
+// #region //* Funcion Ver Detalle Partida con Jugadores 
 //TODO Inicio Funcion Ver Detalle Partida con Jugadores
 async function verDetallePartida(idPartida) {
     try {
         const res = await traerDatosPartida(idPartida);
-
         // Verificar si hubo error
         if (res.error || !res.success) {
             Swal.fire('Sin resultados', res.message || 'No se encontraron datos de la partida.', 'warning');
             return;
         }
-
         const partida = res.data.partida;
         const jugadores = res.data.jugadores;
-
         let info = `
             <div class="mb-3 text-start">
                 <p><strong>PIN:</strong> <span class="badge bg-primary fs-6">${partida.pin_partida || 'N/A'}</span></p>
@@ -21,7 +19,6 @@ async function verDetallePartida(idPartida) {
             </div>
             <hr>
         `;
-
         let tabla = `
             <table class="table table-striped align-middle" style="width:100%; text-align:left;">
                 <thead class="table-dark">
@@ -34,7 +31,6 @@ async function verDetallePartida(idPartida) {
                 </thead>
                 <tbody>
         `;
-
         // Iterar sobre los jugadores
         jugadores.forEach((jugador, index) => {
             tabla += `
@@ -46,12 +42,10 @@ async function verDetallePartida(idPartida) {
                 </tr>
             `;
         });
-
         tabla += `
                 </tbody>
             </table>
         `;
-
         Swal.fire({
             title: `<i class="bi bi-controller"></i> Detalle de la Partida #${idPartida}`,
             html: info + tabla,
@@ -68,7 +62,6 @@ async function verDetallePartida(idPartida) {
         Swal.fire('Error', 'No se pudo obtener la información de la partida.', 'error');
     }
 }
-
 window.verDetallePartida = verDetallePartida;
-
 //TODO Fin Funcion Ver Detalle Partida con Jugadores
+// #endregion

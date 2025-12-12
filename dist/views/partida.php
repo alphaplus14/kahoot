@@ -23,7 +23,7 @@
             </div>
             <div class="container-body row justify-content-center">
                 <div class="col-10 col-sm-6 col-md-4 col-lg-3 card-lobby">
-                    <form action="" method="post">
+                    <form id="frmEntrarPartida">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
                             <label for="nombre">Nombre</label>
@@ -34,7 +34,7 @@
                             <label for="ficha">Ficha</label>
                         </div>
                         <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
-                            <button type="submit" class="btn btn-dark w-100">Entrar al juego</button>
+                            <button type="button" class="btn btn-dark w-100 btnEntrarPartida">Entrar al juego</button>
                         </div>
                         <div class="d-flex align-items-center justify-content-end mt-2 mb-0">
                             <a href="index.php" class="btn btn-danger w-100">Cancelar</a>
@@ -47,8 +47,8 @@
 
     <footer id="nopin" class="position-fixed bottom-0 w-100">
     </footer>
-
-    <script src="../js/lobby/lobby.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="../js/partidas/partidasUsuario.js"></script>
 </body>
 
 </html>
