@@ -70,20 +70,26 @@ buttonEnviarForm.addEventListener('click', async () => {
         }
         form.append(label);
     } else {
-        if (inputSegundos.value < 5 || inputSegundos.value > 1200) {
-            inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
-            let label = document.createElement('label');
-            label.classList.add('fs-3');
-            if (inputSegundos.value < 5) {
-                label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
-            } else {
-                label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
+        if (inputSegundos.value) {
+            if (inputSegundos.value < 5 || inputSegundos.value > 1200) {
+                inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
+                let label = document.createElement('label');
+                label.classList.add('fs-3');
+                if (inputSegundos.value < 5) {
+                    label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
+                } else {
+                    label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
+                }
+                form.append(label);
             }
-            form.append(label);
         } else {
             inputLimite.removeAttribute('class');
-            inputLimite.classList.add('form-control', 'limitePreguntasInput');
-
+            inputLimite.classList.add('form-control');
+            inputSegundos.removeAttribute('class');
+            inputSegundos.classList.add('form-control');
+            if (!inputSegundos.value) {
+                inputSegundos.value = 15;
+            }
             const formDataGenerarPIN = new FormData();
             formDataGenerarPIN.append('segundos', inputSegundos.value);
             formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
