@@ -24,16 +24,38 @@ const TIEMPO_LIMITE = 10 * 60 * 1000;
 
 // Obtener tiempo con session storage
 let tiempoInicio = sessionStorage.getItem('tiempoInicio');
+const pinAlmacenado = sessionStorage.getItem('pinAlmacenadoParaTiempo');
 
-if (!tiempoInicio) {
+if (!tiempoInicio || pinAlmacenado !== pin) {
     tiempoInicio = Date.now();
     sessionStorage.setItem('tiempoInicio', tiempoInicio);
+    sessionStorage.setItem('pinAlmacenadoParaTiempo', pin);
 } else {
     tiempoInicio = Number(tiempoInicio);
 }
+
 function limpiarSessionStorage() {
     sessionStorage.removeItem('tiempoInicio');
     sessionStorage.removeItem('pinGenerado');
+    sessionStorage.removeItem('pinAlmacenadoParaTiempo');
+}
+
+async function finalizarPinAnterior(pinAnterior) {
+    if (!pinAnterior) return;
+
+    try {
+        const formData = new FormData();
+        formData.append('pin', pinAnterior);
+
+        await fetch('../../controller/partidas/controllerTerminarPartida.php', {
+            method: 'POST',
+            body: formData,
+        });
+
+        console.log('PIN anterior finalizado:', pinAnterior);
+    } catch (error) {
+        console.error('Error al finalizar PIN anterior:', error);
+    }
 }
 
 function notificarActualizacionHistorial() {
@@ -72,9 +94,7 @@ function terminarAutomatico() {
                 icon: 'info',
                 confirmButtonColor: '#007bff',
             }).then(() => {
-                setTimeout(() => {
-                    window.location.href = `../views/generarPin.php`;
-                }, 1500);
+                window.location.href = `../views/generarPin.php`;
             });
         });
 }
@@ -107,7 +127,7 @@ if (btnVolver) {
 
         const resultado = await Swal.fire({
             title: '¿Salir del juego?',
-            text: 'Si vuelves ahora, el juego seguirá activo hasta que termine el tiempo.',
+            text: 'El juego actual será finalizado. ¿Deseas continuar?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#007bff',
@@ -117,7 +137,9 @@ if (btnVolver) {
         });
 
         if (resultado.isConfirmed) {
+            await finalizarPinAnterior(pin);
             limpiarSessionStorage();
+            notificarActualizacionHistorial();
             window.location.href = 'generarPin.php';
         }
     });
@@ -156,6 +178,7 @@ btnTerminar.addEventListener('click', async () => {
     const data = await res.json();
     if (data.success) {
         limpiarSessionStorage();
+        notificarActualizacionHistorial();
         Swal.fire({
             title: 'Exito!',
             text: data.message,
