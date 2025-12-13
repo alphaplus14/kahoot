@@ -5,6 +5,7 @@ $mysql = new MySQL();
 $mysql->conectar();
 $idPartida = $_SESSION['idPartida'];
 $stmt = $mysql->getConexion()->query("SELECT 
+partidas.segundos_pregunta_partida,
 c.pregunta,
 c.respuesta_A, 
 c.respuesta_B, 
@@ -18,6 +19,7 @@ WHERE partidas.id_partida = $idPartida;");
 
 $preguntas = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $row['segundos_pregunta_partida'] = (int)$row['segundos_pregunta_partida'];
     $preguntas[] = $row;
 }
 echo json_encode($preguntas);

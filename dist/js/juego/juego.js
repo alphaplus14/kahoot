@@ -1,6 +1,7 @@
 fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
     .then((response) => response.json())
     .then((datos) => {
+        console.log(datos);
         //? Captura de elementos HTML para realizar distintas funcionalidades
         const pregunta = document.querySelector('#pregunta');
         const A = document.querySelector('.respuestaA');
@@ -10,16 +11,20 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         const contador = document.querySelector('#contador');
         const puntosJugador = document.querySelector('#puntos');
         //! Declaracion de variables
+        //? Booleanos
+        let boolRpta = false;
         //? Indice de preguntas
         let i = 0;
         //? Segundos de duracion pr pregunta
-        const segundos = 5;
+        // const segundos = datos[0].segundos_pregunta_partida;
+        const segundos = 3;
         let tiempoRestante = segundos;
         //? variable intervalo (contador de segundos restantes)
         let intervaloContador;
         //? Inidice de preguntas para verificaciones
         let contadorPreguntas = 0;
         //? Puntaje de jugador
+        let valorPuntosPorSegundo = 10000 / datos[0].segundos_pregunta_partida;
         let puntos = 0;
 
         //* Funcion para cargar la siguiente pregunta
@@ -39,8 +44,9 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                 B.textContent = 'B: ' + datos[i].respuesta_B;
                 C.textContent = 'C: ' + datos[i].respuesta_C;
                 D.textContent = 'D: ' + datos[i].respuesta_D;
-                // Pasar a la siguiente pregunta
+                //? Pasar a la siguiente pregunta
                 i++;
+                boolRpta = false;
                 iniciarContador();
             }
         }
@@ -57,6 +63,38 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     B.setAttribute('disabled', 'disabled');
                     C.setAttribute('disabled', 'disabled');
                     D.setAttribute('disabled', 'disabled');
+                    if (boolRpta == false) {
+                        boolRpta = true;
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_A:
+                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_B:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_C:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_D:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+                            default:
+                                break;
+                        }
+                        contadorPreguntas++;
+                    }
                     //! Detener el intervalo
                     clearInterval(intervaloContador);
                     contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
@@ -77,10 +115,18 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         form.addEventListener('click', (e) => {
             if (contadorPreguntas < datos.length) {
                 //? Deshabilitar botones
-                A.setAttribute('disabled', 'disabled');
-                B.setAttribute('disabled', 'disabled');
-                C.setAttribute('disabled', 'disabled');
-                D.setAttribute('disabled', 'disabled');
+                if (
+                    e.target.classList.contains('respuestaA') ||
+                    e.target.classList.contains('respuestaB') ||
+                    e.target.classList.contains('respuestaC') ||
+                    e.target.classList.contains('respuestaD')
+                ) {
+                    boolRpta = true;
+                    A.setAttribute('disabled', 'disabled');
+                    B.setAttribute('disabled', 'disabled');
+                    C.setAttribute('disabled', 'disabled');
+                    D.setAttribute('disabled', 'disabled');
+                }
                 if (e.target.classList.contains('respuestaA')) {
                     //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_A == datos[contadorPreguntas].respuesta_correcta) {
@@ -88,7 +134,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
@@ -124,7 +170,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                         B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
@@ -160,7 +206,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
@@ -196,7 +242,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
