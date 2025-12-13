@@ -1,0 +1,49 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.formPreguntas {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.container-juego {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #7F3FF0, #3C8CFF);
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+}
+
+.container-juego::before {
+    content: "";
+    position: fixed;
+    top: -50px;
+    left: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+    border-radius: 10px;
+    z-index: 0;
+}
+
+.container-juego::after {
+    content: "";
+    position: fixed;
+    bottom: -80px;
+    right: -80px;
+    width: 250px;
+    height: 250px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(-25deg);
+    border-radius: 10px;
+    z-index: 0;
+}

@@ -12,7 +12,7 @@ require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$stmt = $mysql->getConexion()->query("SELECT * FROM partidas");
+$stmt = $mysql->getConexion()->query("SELECT * FROM partidas order by id_partida desc;");
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $partidas = [];

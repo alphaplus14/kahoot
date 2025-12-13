@@ -31,6 +31,25 @@ if (!tiempoInicio) {
 } else {
     tiempoInicio = Number(tiempoInicio);
 }
+function limpiarSessionStorage() {
+    sessionStorage.removeItem('tiempoInicio');
+    sessionStorage.removeItem('pinGenerado');
+}
+
+function notificarActualizacionHistorial() {
+    try {
+        if (window.opener && !window.opener.closed) {
+            window.opener.postMessage({ type: 'actualizarHistorial' }, '*');
+        }
+
+        localStorage.setItem('actualizarHistorial', Date.now().toString());
+        setTimeout(() => {
+            localStorage.removeItem('actualizarHistorial');
+        }, 1000);
+    } catch (error) {
+        console.log('No se pudo notificar la actualización:', error);
+    }
+}
 
 function terminarAutomatico() {
     const formData = new FormData();
@@ -42,6 +61,7 @@ function terminarAutomatico() {
     })
         .then((res) => res.json())
         .then((data) => {
+            limpiarSessionStorage();
             Swal.fire({
                 title: 'Tiempo terminado',
                 text: 'La partida ha sido finalizada automáticamente.',
@@ -50,7 +70,7 @@ function terminarAutomatico() {
             }).then(() => {
                 setTimeout(() => {
                     window.location.href = `../views/generarPin.php`;
-                }, 2500);
+                }, 1500);
             });
         });
 }
@@ -76,12 +96,49 @@ function actualizarTimer() {
 setInterval(actualizarTimer, 1000);
 actualizarTimer();
 
+const btnVolver = document.querySelector('a[href="generarPin.php"]');
+if (btnVolver) {
+    btnVolver.addEventListener('click', async (e) => {
+        e.preventDefault();
+
+        const resultado = await Swal.fire({
+            title: '¿Salir del juego?',
+            text: 'Si vuelves ahora, el juego seguirá activo hasta que termine el tiempo.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#007bff',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, volver',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (resultado.isConfirmed) {
+            limpiarSessionStorage();
+            window.location.href = 'generarPin.php';
+        }
+    });
+}
 const btnTerminar = document.querySelector('#terminarJuego');
 
 if (btnTerminar) {
     btnTerminar.dataset.id = pin;
 }
 btnTerminar.addEventListener('click', async () => {
+    const resultado = await Swal.fire({
+        title: '¿Estas seguro?',
+        text: '¿Deseas terminar el juego? Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#007bff',
+        cancelButtonColor: '#7d6c6cff',
+        confirmButtonText: 'Sí, terminar',
+        cancelButtonText: 'Cancelar',
+    });
+
+    if (!resultado.isConfirmed) {
+        return;
+    }
+
     const dataPin = btnTerminar.dataset.id;
     console.log('PIN enviado:', dataPin);
 
@@ -94,6 +151,7 @@ btnTerminar.addEventListener('click', async () => {
     });
     const data = await res.json();
     if (data.success) {
+        limpiarSessionStorage();
         Swal.fire({
             title: 'Exito!',
             text: data.message,
@@ -102,9 +160,10 @@ btnTerminar.addEventListener('click', async () => {
         }).then(() => {
             setTimeout(() => {
                 window.location.href = `../views/generarPin.php`;
-            }, 1500);
+            }, 1000);
         });
     } else {
+        limpiarSessionStorage();
         Swal.fire({
             title: '¡Error!',
             text: data.message,
