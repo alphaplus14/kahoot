@@ -1,49 +1,117 @@
+// #region //* Convertir texto de Base de datos a Texto legible
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+function convertirTextoBD(text) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+// #endregion
+
 fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
     .then((response) => response.json())
     .then((datos) => {
         console.log(datos);
+        //? Captura de elementos HTML para realizar distintas funcionalidades
         const pregunta = document.querySelector('#pregunta');
         const A = document.querySelector('.respuestaA');
         const B = document.querySelector('.respuestaB');
         const C = document.querySelector('.respuestaC');
         const D = document.querySelector('.respuestaD');
-        const contador = document.querySelector('#contador'); // ← elemento HTML del contador
+        const contador = document.querySelector('#contador');
         const puntosJugador = document.querySelector('#puntos');
-        let i = 0; // índice de pregunta
-        const segundos = 5; // duración por pregunta
+        //! Declaracion de variables
+        //? Booleanos
+        let boolRpta = false;
+        //? Indice de preguntas
+        let i = 0;
+        //? Segundos de duracion pr pregunta
+        const segundos = datos[0].segundos_pregunta_partida;
+        // const segundos = 2;
         let tiempoRestante = segundos;
+        //? variable intervalo (contador de segundos restantes)
         let intervaloContador;
+        //? Inidice de preguntas para verificaciones
         let contadorPreguntas = 0;
+        //? Puntaje de jugador
+        let valorPuntosPorSegundo = 10000 / datos[0].segundos_pregunta_partida;
         let puntos = 0;
+
+        //* Funcion para cargar la siguiente pregunta
         function mostrarPregunta() {
             if (i >= datos.length) {
                 setInterval(() => {
                     window.location.href = '#';
                 }, 2000);
             } else {
-                pregunta.textContent = datos[i].pregunta;
-                A.textContent = 'A: ' + datos[i].respuesta_A;
-                B.textContent = 'B: ' + datos[i].respuesta_B;
-                C.textContent = 'C: ' + datos[i].respuesta_C;
-                D.textContent = 'D: ' + datos[i].respuesta_D;
-                // Pasar a la siguiente pregunta
+                //? Habilitar botones
+                A.removeAttribute('disabled');
+                B.removeAttribute('disabled');
+                C.removeAttribute('disabled');
+                D.removeAttribute('disabled');
+                pregunta.textContent = convertirTextoBD(datos[i].pregunta);
+                A.textContent = 'A: ' + convertirTextoBD(datos[i].respuesta_A);
+                B.textContent = 'B: ' + convertirTextoBD(datos[i].respuesta_B);
+                C.textContent = 'C: ' + convertirTextoBD(datos[i].respuesta_C);
+                D.textContent = 'D: ' + convertirTextoBD(datos[i].respuesta_D);
+                //? Pasar a la siguiente pregunta
                 i++;
+                boolRpta = false;
                 iniciarContador();
             }
         }
+
+        //* Funcion contador de juego
         function iniciarContador() {
             contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
-            // limpiar contador anterior
+            //! limpiar contador anterior
             clearInterval(intervaloContador);
             intervaloContador = setInterval(() => {
                 if (tiempoRestante <= 0) {
-                    // 1. Detener el intervalo
+                    //? Deshabilitar botones
+                    A.setAttribute('disabled', 'disabled');
+                    B.setAttribute('disabled', 'disabled');
+                    C.setAttribute('disabled', 'disabled');
+                    D.setAttribute('disabled', 'disabled');
+                    if (boolRpta == false) {
+                        boolRpta = true;
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_A:
+                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_B:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_C:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_D:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+                            default:
+                                break;
+                        }
+                        contadorPreguntas++;
+                    }
+                    //! Detener el intervalo
                     clearInterval(intervaloContador);
                     contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
-                    // 2. Esperar 2 segundos antes de mostrar pregunta
+                    //! Esperar 2 segundos antes de mostrar pregunta
                     setTimeout(() => {
-                        tiempoRestante = segundos; // reiniciar tiempo
-                        mostrarPregunta(); // 3. Mostrar pregunta
+                        tiempoRestante = segundos; //! Reiniciar tiempo
+                        mostrarPregunta(); //!  Mostrar pregunta
                     }, 5000);
                 } else {
                     tiempoRestante--;
@@ -51,61 +119,164 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                 }
             }, 1000);
         }
+
+        //* Formulario (con evento click para los botones)
         const form = document.querySelector('.formPreguntas');
         form.addEventListener('click', (e) => {
             if (contadorPreguntas < datos.length) {
+                //? Deshabilitar botones
+                if (
+                    e.target.classList.contains('respuestaA') ||
+                    e.target.classList.contains('respuestaB') ||
+                    e.target.classList.contains('respuestaC') ||
+                    e.target.classList.contains('respuestaD')
+                ) {
+                    boolRpta = true;
+                    A.setAttribute('disabled', 'disabled');
+                    B.setAttribute('disabled', 'disabled');
+                    C.setAttribute('disabled', 'disabled');
+                    D.setAttribute('disabled', 'disabled');
+                }
                 if (e.target.classList.contains('respuestaA')) {
+                    //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_A == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
+                        A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_B:
+                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_C:
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_D:
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+
+                            default:
+                                break;
+                        }
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     }
                 }
                 if (e.target.classList.contains('respuestaB')) {
+                    //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_B == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
+                        B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_A:
+                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_C:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_D:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+
+                            default:
+                                break;
+                        }
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     }
                 }
                 if (e.target.classList.contains('respuestaC')) {
+                    //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_C == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
+                        C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_A:
+                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_B:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_D:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+
+                            default:
+                                break;
+                        }
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     }
                 }
                 if (e.target.classList.contains('respuestaD')) {
+                    //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_D == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         B.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         C.innerHTML += '   <i class="bi bi-x-circle"></i>';
                         D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        puntos += 100;
+                        puntos += valorPuntosPorSegundo * tiempoRestante;
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     } else {
+                        D.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                        switch (datos[contadorPreguntas].respuesta_correcta) {
+                            case datos[contadorPreguntas].respuesta_A:
+                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_B:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                break;
+                            case datos[contadorPreguntas].respuesta_C:
+                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
+                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
+                                break;
+
+                            default:
+                                break;
+                        }
                         tiempoRestante = 0;
                         contadorPreguntas++;
                     }
@@ -113,6 +284,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
             }
             puntosJugador.textContent = 'Puntos: ' + puntos;
         });
-        // Mostrar primera pregunta
+
+        //* Cargar primera pregunta
         mostrarPregunta();
     });
