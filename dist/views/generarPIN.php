@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!$_SESSION || $_SESSION['estado_usuario'] != 'Activo') {
-    header('Location: login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+    header('Location: index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
 if (!empty($_GET['error']) && isset($_GET['error'])) {

@@ -4,7 +4,6 @@ header('Content-Type: application/json');
 
 
 require_once '../../models/MySQL.php';
-
 try {
     $mysql = new MySQL();
     $mysql->conectar();
@@ -14,6 +13,7 @@ try {
     $stmt->bindParam(':pin_partida', $pinPartida, PDO::PARAM_INT);
     $stmt->execute();
     $partida = $stmt->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['pinPartida'] = $pinPartida;
     if ($partida) {
         echo json_encode([
             'success' => true,
