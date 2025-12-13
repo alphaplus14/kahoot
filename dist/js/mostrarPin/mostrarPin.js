@@ -38,11 +38,15 @@ function limpiarSessionStorage() {
 
 function notificarActualizacionHistorial() {
     try {
+        //condicion para verificar que se abrion la ventana y no se ha cerrado para mandar un mensaje y comunicarse a otra pestaña
         if (window.opener && !window.opener.closed) {
             window.opener.postMessage({ type: 'actualizarHistorial' }, '*');
         }
 
+        //manda la señal al evento storage en historialPartida.js para que detecte el cambio
         localStorage.setItem('actualizarHistorial', Date.now().toString());
+
+        //limpiar el local storage para que no se llene de datos
         setTimeout(() => {
             localStorage.removeItem('actualizarHistorial');
         }, 1000);
