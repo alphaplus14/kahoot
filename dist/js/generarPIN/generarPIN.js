@@ -55,87 +55,112 @@ buttonEnviarForm.addEventListener('click', async () => {
     if (form.children[4]) {
         form.children[4].remove();
     }
-    //? Verificar el limite de preguntas que ingreso el usuario
-    if (inputLimite.value < 1 || inputLimite.value > limitePreguntas) {
+    //? Verificacion existe categoria
+    if (!opcion.getAttribute('value')) {
+        select.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
+        let label = document.createElement('label');
+        label.classList.add('fs-3');
+        label.textContent = '¡Selecciona una categoria!';
+        form.append(label);
+        return;
+    } else {
+        select.removeAttribute('class');
+        select.classList.add('form-control');
+    }
+    //? Verificacion si existe limite de preguntas
+    if (!inputLimite.value) {
         inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
         let label = document.createElement('label');
         label.classList.add('fs-3');
-        if (inputLimite.value < 1) {
-            label.textContent = '¡Cuidado, ingresaste un valor errado!';
-        } else {
-            label.textContent =
-                '¡Cuidado, ingresaste un valor errado, solo hay ' +
-                limitePreguntas +
-                ' preguntas disponibles para la categoria seleccionada!';
-        }
+        label.textContent = '¡Ingresa un limite de preguntas!';
         form.append(label);
+        return;
     } else {
-        if (inputSegundos.value) {
-            if (inputSegundos.value < 5 || inputSegundos.value > 1200) {
-                inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
-                let label = document.createElement('label');
-                label.classList.add('fs-3');
-                if (inputSegundos.value < 5) {
-                    label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
-                } else {
-                    label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
-                }
-                form.append(label);
+        //? Verificar el limite de preguntas que ingreso el usuario
+        if (inputLimite.value < 1 || inputLimite.value > limitePreguntas) {
+            inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
+            let label = document.createElement('label');
+            label.classList.add('fs-3');
+            if (inputLimite.value < 1) {
+                label.textContent = '¡Ingresa un dato mayor a 0!';
+            } else {
+                label.textContent =
+                    '¡Cuidado, ingresaste un valor errado, solo hay ' +
+                    limitePreguntas +
+                    ' preguntas disponibles para la categoria seleccionada!';
             }
+            form.append(label);
+            return;
         } else {
             inputLimite.removeAttribute('class');
             inputLimite.classList.add('form-control');
-            inputSegundos.removeAttribute('class');
-            inputSegundos.classList.add('form-control');
-            if (!inputSegundos.value) {
-                inputSegundos.value = 15;
-            }
-            const formDataGenerarPIN = new FormData();
-            formDataGenerarPIN.append('segundos', inputSegundos.value);
-            formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
-            const jsonGenerarPIN = await fetch('../../controller/pin/controllerGenerarPIN.php', {
-                method: 'POST',
-                body: formDataGenerarPIN,
-            });
-            const responseGenerarPIN = await jsonGenerarPIN.json();
-            if (responseGenerarPIN.success == true) {
-                const categoria = opcion.getAttribute('value');
-                const formDataPreguntasPivote = new FormData();
-                formDataPreguntasPivote.append('categoria', categoria);
-                formDataPreguntasPivote.append('limitePreguntas', inputLimite.value);
-                formDataPreguntasPivote.append('pin', responseGenerarPIN.pin);
-                const jsonInsertarPivote = await fetch('../../controller/pin/controllerInsertarPreguntasPivote.php', {
-                    method: 'POST',
-                    body: formDataPreguntasPivote,
-                });
-                const responseInsertarPivote = await jsonInsertarPivote.json();
-                if (responseInsertarPivote.success == true) {
-                    Swal.fire({
-                        title: 'Exito!',
-                        text: responseInsertarPivote.message,
-                        icon: 'success',
-                        confirmButtonColor: '#007bff',
-                    }).then(() => {
-                        // Guardar PIN en sessionStorage
-                        sessionStorage.setItem('pinGenerado', responseGenerarPIN.pin);
-                        window.location.href = `../views/pinGenerado.php`;
-                    });
-                } else {
-                    Swal.fire({
-                        title: '¡Error!',
-                        text: responseInsertarPivote.message,
-                        icon: 'error',
-                        confirmButtonColor: '#007bff',
-                    });
-                }
-            } else {
-                Swal.fire({
-                    title: '¡Error!',
-                    text: responseGenerarPIN.message,
-                    icon: 'error',
-                    confirmButtonColor: '#007bff',
-                });
-            }
         }
+    }
+    //? Verificar si ingreso dato o no
+    if (!inputSegundos.value) {
+        inputSegundos.value = 15;
+    } else {
+        if (inputSegundos.value < 5 || inputSegundos.value > 1200) {
+            inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
+            let label = document.createElement('label');
+            label.classList.add('fs-3');
+            if (inputSegundos.value < 5) {
+                label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
+            } else {
+                label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
+            }
+            form.append(label);
+            return;
+        }
+    }
+    inputLimite.removeAttribute('class');
+    inputLimite.classList.add('form-control');
+    inputSegundos.removeAttribute('class');
+    inputSegundos.classList.add('form-control');
+    const formDataGenerarPIN = new FormData();
+    formDataGenerarPIN.append('segundos', inputSegundos.value);
+    formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
+    const jsonGenerarPIN = await fetch('../../controller/pin/controllerGenerarPIN.php', {
+        method: 'POST',
+        body: formDataGenerarPIN,
+    });
+    const responseGenerarPIN = await jsonGenerarPIN.json();
+    if (responseGenerarPIN.success == true) {
+        const categoria = opcion.getAttribute('value');
+        const formDataPreguntasPivote = new FormData();
+        formDataPreguntasPivote.append('categoria', categoria);
+        formDataPreguntasPivote.append('limitePreguntas', inputLimite.value);
+        formDataPreguntasPivote.append('pin', responseGenerarPIN.pin);
+        const jsonInsertarPivote = await fetch('../../controller/pin/controllerInsertarPreguntasPivote.php', {
+            method: 'POST',
+            body: formDataPreguntasPivote,
+        });
+        const responseInsertarPivote = await jsonInsertarPivote.json();
+        if (responseInsertarPivote.success == true) {
+            Swal.fire({
+                title: 'Exito!',
+                text: responseInsertarPivote.message,
+                icon: 'success',
+                confirmButtonColor: '#007bff',
+            }).then(() => {
+                // Guardar PIN en sessionStorage
+                sessionStorage.setItem('pinGenerado', responseGenerarPIN.pin);
+                window.location.href = `../views/pinGenerado.php`;
+            });
+        } else {
+            Swal.fire({
+                title: '¡Error!',
+                text: responseInsertarPivote.message,
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            });
+        }
+    } else {
+        Swal.fire({
+            title: '¡Error!',
+            text: responseGenerarPIN.message,
+            icon: 'error',
+            confirmButtonColor: '#007bff',
+        });
     }
 });
