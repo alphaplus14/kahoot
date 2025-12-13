@@ -33,6 +33,7 @@ $('#tablaHistorialPartida').DataTable({
     responsive: true,
     autoWidth: false,
     pageLength: 10,
+    order: [[0, 'desc']],
     lengthMenu: [5, 10, 20, 50, 100],
     language: {
         url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',

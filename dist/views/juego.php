@@ -21,10 +21,11 @@ if ($verificacion == false) {
     <title>Juego - ¿Y esa pregunta?</title>
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../css/juego.css">
 </head>
 
 <body>
-    <div class="container-fluid" style="height: 500px;">
+    <div class="container-fluid vh-100 d-flex flex-column">
         <div class="row mt-2 align-items-center text-white">
             <div class="col-md text-start">
                 <img src="../assets/media/1.png" alt="Logo Sena" class="img-fluid">
@@ -39,8 +40,8 @@ if ($verificacion == false) {
                 <h1 id="pregunta"></h1>
             </div>
         </div>
-        <form class="formPreguntas mt-5 bg">
-            <div class="row h-100 p-5">
+        <form class="formPreguntas">
+            <div class="container-juego row p-5">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <button type="button" class="btn btn-danger respuestaA w-100 fs-2 rounded-4 shadow"></button>

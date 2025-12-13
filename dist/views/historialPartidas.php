@@ -12,7 +12,7 @@ require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 
-$stmt = $mysql->getConexion()->query("SELECT * FROM partidas");
+$stmt = $mysql->getConexion()->query("SELECT * FROM partidas order by id_partida desc;");
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 $partidas = [];
@@ -114,17 +114,6 @@ $mysql->desconectar();
                                 <a class="nav-link active" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
-                            aria-expanded="true" aria-controls="collapseReportes">
-                            <div class="sb-nav-link-icon"><i class="bi-bar-chart-fill"></i></div>
-                            Reportes
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
-                            </nav>
-                        </div>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -154,7 +143,7 @@ $mysql->desconectar();
                                         <th>PIN Partida</th>
                                         <th>Preguntas</th>
                                         <th>Estado</th>
-                                        <th>Acciones</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -163,7 +152,7 @@ $mysql->desconectar();
                                             <td><?php echo $filaPartida['id_partida']; ?></td>
                                             <td><?php echo $filaPartida['pin_partida']; ?></td>
                                             <td><?php echo $filaPartida['preguntas_limite_partida']; ?></td>
-                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Terminado') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Finalizada') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
                                             <td class="d-flex justify-content-center gap-1">
                                                 <button class="btn btn-info btn-sm btnVerDetalle" data-id="<?php echo $filaPartida['id_partida']; ?>">
                                                     <i class="bi bi-eye"></i>

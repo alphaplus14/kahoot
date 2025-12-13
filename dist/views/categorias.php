@@ -116,17 +116,6 @@ $mysql->desconectar();
                                 <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseReportes"
-                            aria-expanded="true" aria-controls="collapseReportes">
-                            <div class="sb-nav-link-icon"><i class="bi-bar-chart-fill"></i></div>
-                            Reportes
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse" id="collapseReportes" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="reportesJuegos.php">Reportes por juego</a>
-                            </nav>
-                        </div>
                     </div>
                 </div>
                 <div class="sb-sidenav-footer">
@@ -157,7 +146,7 @@ $mysql->desconectar();
                                         <th>Nombre</th>
                                         <th>Preguntas asociadas</th>
                                         <th>Estado</th>
-                                        <th>Acciones</th>
+                                        <th class="text-center">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
