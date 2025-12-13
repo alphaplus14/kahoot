@@ -1,5 +1,14 @@
 <?php
 session_start();
+if (!empty($_GET['error']) && isset($_GET['error'])) {
+    $error = $_GET['error'];
+    $message = $_GET['message'];
+    $title = $_GET['title'];
+}
+if (!isset($_SESSION['pinPartida'])) {
+    header('Location: index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
+    exit;
+}
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -7,7 +16,7 @@ $idPartida = $_SESSION['idPartida'];
 $stmt = $mysql->getConexion()->query("SELECT * FROM partidas WHERE id_partida = $idPartida AND estado_partida = 'Esperando' OR estado_partida = 'Jugando';");
 $verificacion = $stmt->fetch(PDO::FETCH_ASSOC);
 if ($verificacion == false) {
-    header("Location: idndex.php");
+    header("Location: index.php");
     $mysql->desconectar();
     exit;
 }
@@ -25,6 +34,9 @@ if ($verificacion == false) {
 </head>
 
 <body>
+    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
+        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
+    <?php } ?>
     <div class="container-fluid vh-100 d-flex flex-column">
         <div class="row mt-2 align-items-center text-white">
             <div class="col-md text-start">
@@ -61,7 +73,10 @@ if ($verificacion == false) {
             </div>
         </form>
     </div>
-    <script src="../js/juego/juego.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/login/login.js"></script>
+    <script type="module" src="../js/juego/juego.js"></script>
 </body>
 
 </html>

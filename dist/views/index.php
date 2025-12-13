@@ -1,3 +1,12 @@
+<?php
+if (!empty($_GET['error']) && isset($_GET['error'])) {
+    $error = $_GET['error'];
+    $message = $_GET['message'];
+    $title = $_GET['title'];
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -13,6 +22,9 @@
 </head>
 
 <body class="bg-primary d-flex flex-column min-vh-100">
+    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
+        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
+    <?php } ?>
     <div class="container-fluid">
         <header class="row align-items-center">
             <div class="col-12 d-flex justify-content-end p-3">
@@ -45,7 +57,9 @@
 
     <footer id="nopin" class="position-fixed bottom-0 w-100">
     </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/login/login.js"></script>
     <script src="../js/lobby/lobby.js"></script>
 
 </body>

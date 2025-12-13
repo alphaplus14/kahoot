@@ -1,3 +1,4 @@
+import { sweetCargarDatosJuego } from './sweetAlerts.js';
 // #region //* Convertir texto de Base de datos a Texto legible
 //TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
 function convertirTextoBD(text) {
@@ -27,22 +28,27 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         let i = 0;
         //? Segundos de duracion pr pregunta
         const segundos = datos[0].segundos_pregunta_partida;
+        //* Variable prueba
         // const segundos = 2;
         let tiempoRestante = segundos;
         //? variable intervalo (contador de segundos restantes)
         let intervaloContador;
         //? Inidice de preguntas para verificaciones
         let contadorPreguntas = 0;
+        //! Datos del jugador a mostrar
         //? Puntaje de jugador
         let valorPuntosPorSegundo = 10000 / datos[0].segundos_pregunta_partida;
         let puntos = 0;
+        //? preguntas correctas
+        let preguntasCorrectas = [];
 
         //* Funcion para cargar la siguiente pregunta
         function mostrarPregunta() {
             if (i >= datos.length) {
-                setInterval(() => {
-                    window.location.href = '#';
-                }, 2000);
+                setTimeout(() => {
+                    sweetCargarDatosJuego(preguntasCorrectas, puntos);
+                    return;
+                }, 100);
             } else {
                 //? Habilitar botones
                 A.removeAttribute('disabled');
@@ -75,6 +81,15 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     D.setAttribute('disabled', 'disabled');
                     if (boolRpta == false) {
                         boolRpta = true;
+                        preguntasCorrectas.push({
+                            pregunta: datos[contadorPreguntas].pregunta,
+                            respuesta_A: datos[contadorPreguntas].respuesta_A,
+                            respuesta_B: datos[contadorPreguntas].respuesta_B,
+                            respuesta_C: datos[contadorPreguntas].respuesta_C,
+                            respuesta_D: datos[contadorPreguntas].respuesta_D,
+                            respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
+                            respuesta_seleccionada: 'Pregunta no respondida',
+                        });
                         switch (datos[contadorPreguntas].respuesta_correcta) {
                             case datos[contadorPreguntas].respuesta_A:
                                 A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
@@ -112,7 +127,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     setTimeout(() => {
                         tiempoRestante = segundos; //! Reiniciar tiempo
                         mostrarPregunta(); //!  Mostrar pregunta
-                    }, 5000);
+                    }, 3000);
                 } else {
                     tiempoRestante--;
                     contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
@@ -138,6 +153,15 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     D.setAttribute('disabled', 'disabled');
                 }
                 if (e.target.classList.contains('respuestaA')) {
+                    preguntasCorrectas.push({
+                        pregunta: datos[contadorPreguntas].pregunta,
+                        respuesta_A: datos[contadorPreguntas].respuesta_A,
+                        respuesta_B: datos[contadorPreguntas].respuesta_B,
+                        respuesta_C: datos[contadorPreguntas].respuesta_C,
+                        respuesta_D: datos[contadorPreguntas].respuesta_D,
+                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
+                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_A,
+                    });
                     //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_A == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
@@ -174,6 +198,15 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     }
                 }
                 if (e.target.classList.contains('respuestaB')) {
+                    preguntasCorrectas.push({
+                        pregunta: datos[contadorPreguntas].pregunta,
+                        respuesta_A: datos[contadorPreguntas].respuesta_A,
+                        respuesta_B: datos[contadorPreguntas].respuesta_B,
+                        respuesta_C: datos[contadorPreguntas].respuesta_C,
+                        respuesta_D: datos[contadorPreguntas].respuesta_D,
+                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
+                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_B,
+                    });
                     //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_B == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';
@@ -210,6 +243,15 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     }
                 }
                 if (e.target.classList.contains('respuestaC')) {
+                    preguntasCorrectas.push({
+                        pregunta: datos[contadorPreguntas].pregunta,
+                        respuesta_A: datos[contadorPreguntas].respuesta_A,
+                        respuesta_B: datos[contadorPreguntas].respuesta_B,
+                        respuesta_C: datos[contadorPreguntas].respuesta_C,
+                        respuesta_D: datos[contadorPreguntas].respuesta_D,
+                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
+                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_C,
+                    });
                     //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_C == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';
@@ -246,6 +288,15 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     }
                 }
                 if (e.target.classList.contains('respuestaD')) {
+                    preguntasCorrectas.push({
+                        pregunta: datos[contadorPreguntas].pregunta,
+                        respuesta_A: datos[contadorPreguntas].respuesta_A,
+                        respuesta_B: datos[contadorPreguntas].respuesta_B,
+                        respuesta_C: datos[contadorPreguntas].respuesta_C,
+                        respuesta_D: datos[contadorPreguntas].respuesta_D,
+                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
+                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_D,
+                    });
                     //! Verificacion de pregunta correcta
                     if (datos[contadorPreguntas].respuesta_D == datos[contadorPreguntas].respuesta_correcta) {
                         A.innerHTML += '   <i class="bi bi-x-circle"></i>';

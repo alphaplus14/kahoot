@@ -1,3 +1,25 @@
+async function verificarDatosJugadorBD(nombre, ficha, idPartida) {
+    try {
+        //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+        const formData = new FormData();
+        formData.append('nombre', nombre);
+        formData.append('ficha', ficha);
+        formData.append('idPartida', idPartida);
+        //? Solicitud de datos a controller
+        const response = await fetch('../../controller/verify/controllerUsuarioVerify.php', {
+            method: 'POST',
+            body: formData,
+        });
+        //? Conversion a JSON valido
+        const resultadoUsuarioVerify = await response.json();
+        //? Retorno de datos
+        return resultadoUsuarioVerify;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
 // #region //* Insertar datos jugador y empezar juego
 
 async function contenidoFaltaDatos() {
@@ -27,7 +49,7 @@ btnIngresarJuego.addEventListener('click', () => {
     async function insertarJugador(params) {
         const nombre = document.querySelector('#nombre').value.trim();
         const ficha = document.querySelector('#ficha').value.trim();
-        const pin = sessionStorage.getItem('idPartida');
+        const idPartida = sessionStorage.getItem('idPartida');
         if (!nombre || !ficha) {
             Swal.fire({
                 title: 'Error!', //? Titulo Modal
@@ -38,10 +60,22 @@ btnIngresarJuego.addEventListener('click', () => {
             });
             return false;
         }
+        //? Verificacion de Email del Usuario
+        let boolDatos = await verificarDatosJugadorBD(nombre, ficha, idPartida);
+        if (boolDatos == false) {
+            Swal.fire({
+                title: '¡Error!',
+                text: 'Ya hay un usuario con estos datos (misma partida), ingresa datos diferentes!',
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+                confirmButtonText: '¡OK!',
+            });
+            return false;
+        }
         const formData = new FormData();
         formData.append('nombreJugador', nombre);
         formData.append('fichaJugador', ficha);
-        formData.append('pinPartida', pin);
+        formData.append('idPartida', idPartida);
         const jsonJuego = await fetch('../../controller/jugadores/controllerInsertarJugador.php', {
             body: formData,
             method: 'POST',
