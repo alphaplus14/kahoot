@@ -160,7 +160,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     <label for="segundosPreguntas" class="form-label">Segundos por pregunta</label>
                                     <input type="number" class="form-control segundosPreguntasInput" id="segundosPreguntas" name="segundosPreguntas" min="0">
                                 </div>
-                                <button type="button" class="btn btn-primary" id="buttonEnviarForm">Generar PIN</button>
+                                <button type="button" class="btn btn-success" id="buttonEnviarForm">Generar PIN</button>
                             </form>
                         </div>
                     </div>
