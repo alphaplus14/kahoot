@@ -1,3 +1,13 @@
+// #region //* Convertir texto de Base de datos a Texto legible
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+function convertirTextoBD(text) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
+// #endregion
+
 fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
     .then((response) => response.json())
     .then((datos) => {
@@ -16,8 +26,8 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         //? Indice de preguntas
         let i = 0;
         //? Segundos de duracion pr pregunta
-        // const segundos = datos[0].segundos_pregunta_partida;
-        const segundos = 3;
+        const segundos = datos[0].segundos_pregunta_partida;
+        // const segundos = 2;
         let tiempoRestante = segundos;
         //? variable intervalo (contador de segundos restantes)
         let intervaloContador;
@@ -39,11 +49,11 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                 B.removeAttribute('disabled');
                 C.removeAttribute('disabled');
                 D.removeAttribute('disabled');
-                pregunta.textContent = datos[i].pregunta;
-                A.textContent = 'A: ' + datos[i].respuesta_A;
-                B.textContent = 'B: ' + datos[i].respuesta_B;
-                C.textContent = 'C: ' + datos[i].respuesta_C;
-                D.textContent = 'D: ' + datos[i].respuesta_D;
+                pregunta.textContent = convertirTextoBD(datos[i].pregunta);
+                A.textContent = 'A: ' + convertirTextoBD(datos[i].respuesta_A);
+                B.textContent = 'B: ' + convertirTextoBD(datos[i].respuesta_B);
+                C.textContent = 'C: ' + convertirTextoBD(datos[i].respuesta_C);
+                D.textContent = 'D: ' + convertirTextoBD(datos[i].respuesta_D);
                 //? Pasar a la siguiente pregunta
                 i++;
                 boolRpta = false;
