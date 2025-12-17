@@ -143,15 +143,7 @@ buttonEnviarForm.addEventListener('click', async () => {
                 icon: 'success',
                 confirmButtonColor: '#007bff',
             }).then(() => {
-                // Guardar PIN en sessionStorage
-                if (!sessionStorage.getItem('pinGenerado')) {
-                    sessionStorage.setItem('pinGenerado', JSON.stringify([responseGenerarPIN.pin]));
-                } else {
-                    let pin = JSON.parse([sessionStorage.getItem('pinGenerado')]);
-                    console.log(pin);
-                    pin.push(responseGenerarPIN.pin);
-                    sessionStorage.setItem('pinGenerado', JSON.stringify(pin));
-                }
+                sessionStorage.setItem('pinGenerado', responseGenerarPIN.pin);
                 window.location.href = `../views/pinGenerado.php`;
             });
         } else {
