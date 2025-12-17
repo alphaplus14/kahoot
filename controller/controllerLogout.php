@@ -9,5 +9,5 @@ session_unset();
 session_destroy();
 
 //* Se redirige al login tras cerrar la sesión
-header("Location: ../dist/views/index.php");
+header("Location: ../index.php");
 exit();

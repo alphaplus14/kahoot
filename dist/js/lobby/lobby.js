@@ -86,7 +86,7 @@ async function validarPin() {
         formData.append('pinIngresado', valorIngresado);
 
         // se crea form data para mandar el pin y verificarlo
-        const res = await fetch('../../controller/partidas/controllerVerificarPin.php', {
+        const res = await fetch('controller/partidas/controllerVerificarPin.php', {
             method: 'POST',
             body: formData,
         });
@@ -102,7 +102,7 @@ async function validarPin() {
             sessionStorage.setItem('idPartida', JSON.stringify(data.data.id_partida));
 
             setTimeout(() => {
-                window.location.href = 'partida.php';
+                window.location.href = 'dist/views/partida.php';
             }, 1500);
         } else {
             mostrarError(data.message || 'PIN incorrecto');
@@ -110,7 +110,7 @@ async function validarPin() {
             pinIngresado.classList.add('bg-danger-subtle', 'border-danger-subtle');
 
             setTimeout(() => {
-                window.location.href = 'index.php';
+                window.location.href = '../../index.php';
             }, 2500);
         }
     } catch (error) {

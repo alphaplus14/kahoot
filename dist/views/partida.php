@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (!isset($_SESSION['pinPartida'])) {
-    header('Location: index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
+    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
     exit;
 }
 ?>
