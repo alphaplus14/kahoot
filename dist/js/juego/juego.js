@@ -49,7 +49,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     puntos;
                     //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                     let formData = new FormData();
-                    formData.append('puntos', puntos); //? Solicitud de datos a controller
+                    formData.append('puntos', Math.round(puntos)); //? Solicitud de datos a controller
                     const json = await fetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
                         method: 'POST',
                         body: formData,
@@ -70,7 +70,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                             location.reload();
                         });
                     }
-                    await sweetCargarDatosJuego(preguntasCorrectas, puntos);
+                    await sweetCargarDatosJuego(preguntasCorrectas, Math.round(puntos));
                 }, 100);
             } else {
                 //? Habilitar botones
@@ -92,7 +92,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
 
         //* Funcion contador de juego
         function iniciarContador() {
-            contador.textContent = 'Tiempo Restante: ' + Math.round(tiempoRestante);
+            contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
             //! limpiar contador anterior
             clearInterval(intervaloContador);
             intervaloContador = setInterval(() => {
@@ -356,7 +356,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     }
                 }
             }
-            puntosJugador.textContent = 'Puntos: ' + puntos;
+            puntosJugador.textContent = 'Puntos: ' + Math.round(puntos);
         });
 
         //* Cargar primera pregunta

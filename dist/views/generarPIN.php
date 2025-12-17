@@ -17,13 +17,16 @@ $mysql->conectar();
 $stmt = $mysql->getConexion()->query("SELECT categorias.nombre_categoria, categorias.id_categoria , COUNT(cuestionario.categorias_id_categoria) as conteo FROM cuestionario 
 JOIN categorias ON categorias.id_categoria = cuestionario.categorias_id_categoria
 WHERE categorias.estado_categoria = 'Activo' AND cuestionario.estado_cuestionario = 'Activo' GROUP BY categorias.nombre_categoria;");
-
 $categorias = [];
-
-
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $row['id_categoria'] = (int)$row['id_categoria'];
     $categorias[] = $row;
+}
+//? Todas las categorias
+$todoCategoriaC = $mysql->getConexion()->query("SELECT COUNT(cuestionario.id_cuestionario) as conteo FROM cuestionario;");
+$todoCategorias = [];
+while ($row = $todoCategoriaC->fetch(PDO::FETCH_ASSOC)) {
+    $todoCategorias[] = $row;
 }
 ?>
 <!DOCTYPE html>
@@ -146,6 +149,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     <label for="categoria" class="form-label">Selecciona una categoria para el juego</label>
                                     <select class="form-select categoriasInput" aria-label="Default select example" id="categoria" name="categoria">
                                         <option selected>Seleccione una categoria</option>
+                                        <?php foreach ($todoCategorias as $rowCategoriaTodo): ?>
+                                            <option value="<?php echo 0; ?>" name="<?php echo $rowCategoriaTodo['conteo']; ?>">Todas las categorias / Preguntas disponibles: <?php echo $rowCategoriaTodo['conteo'] ?></option>
+                                        <?php endforeach; ?>
                                         <?php //? CATEGORIAS
                                         foreach ($categorias as $rowCategoria): ?>
                                             <option value="<?php echo $rowCategoria['id_categoria']; ?>" name="<?php echo $rowCategoria['conteo']; ?>"><?php echo $rowCategoria['nombre_categoria'] . " / Preguntas disponibles: " . $rowCategoria['conteo']; ?></option>
