@@ -277,9 +277,9 @@ export async function sweetCargarDatosJuego(datos, puntos) {
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
-            preConfirm: ()=>{
-                return window.location.href = "../../index.php";
-            }
+            preConfirm: () => {
+                return (window.location.href = '../../index.php');
+            },
         });
     } catch (e) {
         //? Control de errores
