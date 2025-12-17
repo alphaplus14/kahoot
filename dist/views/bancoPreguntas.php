@@ -156,13 +156,15 @@ $mysql->desconectar();
                                                 <td><?php echo $filaCuestionario['pregunta']; ?></td>
                                                 <td><button type="button" class="btn btn-info verRespuestas"><i class="bi bi-eye"></i> Respuestas</button></td>
                                                 <td><?php echo $filaCuestionario['nombre_categoria']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaCuestionario['estado_cuestionario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCuestionario['estado_cuestionario'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaCuestionario['estado_cuestionario'] == "Activo") {
-                                                                                                    echo '<button class="btn btn-danger cuestionarioDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                                } else {
-                                                                                                    echo '<button class="btn btn-success cuestionarioActivar btn-sm w-100">✔ Activar</a>';
-                                                                                                }; ?>
-                                                    <?php echo '<button class="btn btn-warning ms-2 cuestionarioEditar btn-sm">📝 Editar</button>'; ?>
+                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 bg-' . (($filaCuestionario['estado_cuestionario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCuestionario['estado_cuestionario'] . '</span>' ?></td>
+                                                <td class="text-center acciones">
+                                                    <div class="d-flex flex-column flex-md-row justify-content-center gap-1"><?php if ($filaCuestionario['estado_cuestionario'] == "Activo") {
+                                                                                                                                    echo '<button class="btn btn-danger cuestionarioDesactivar btn-sm">❌ Desactivar</button>';
+                                                                                                                                } else {
+                                                                                                                                    echo '<button class="btn btn-success cuestionarioActivar btn-sm">✔ Activar</a>';
+                                                                                                                                }; ?>
+                                                        <?php echo '<button class="btn btn-warning ms-2 cuestionarioEditar btn-sm">📝 Editar</button>'; ?>
+                                                    </div>
                                                 </td>
                                             </tr>
                                     <?php  }

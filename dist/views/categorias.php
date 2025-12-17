@@ -155,13 +155,15 @@ $mysql->desconectar();
                                             <td><?php echo $filaCategoria['id_categoria']; ?></td>
                                             <td><?php echo $filaCategoria['nombre_categoria']; ?></td>
                                             <td><?php echo $filaCategoria['conteo']; ?></td>
-                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaCategoria['estado_categoria'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCategoria['estado_categoria'] . '</span>' ?></td>
-                                            <td class="d-flex justify-content-center gab-1"><?php if ($filaCategoria['estado_categoria'] == "Activo") {
-                                                                                                echo '<button class="btn btn-danger categoriaDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                            } else {
-                                                                                                echo '<button class="btn btn-success categoriaActivar btn-sm w-100">✔ Activar</a>';
-                                                                                            }; ?>
-                                                <?php echo '<button class="btn btn-warning ms-2 categoriaEditar btn-sm">📝 Editar</button>'; ?>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 bg-' . (($filaCategoria['estado_categoria'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaCategoria['estado_categoria'] . '</span>' ?></td>
+                                            <td class="text-center acciones">
+                                                <div class="d-flex flex-column flex-md-row justify-content-center gap-1"><?php if ($filaCategoria['estado_categoria'] == "Activo") {
+                                                                                                                                echo '<button class="btn btn-danger categoriaDesactivar btn-sm w-100">❌ Desactivar</button>';
+                                                                                                                            } else {
+                                                                                                                                echo '<button class="btn btn-success categoriaActivar btn-sm w-100">✔ Activar</a>';
+                                                                                                                            }; ?>
+                                                    <?php echo '<button class="btn btn-warning ms-2 categoriaEditar btn-sm">📝 Editar</button>'; ?>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

@@ -126,10 +126,12 @@ $mysql->desconectar();
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <h1 class="mt-4">Historial de Partidas</h1>
-                    <ol class="breadcrumb mb-4">
-                        <li class="breadcrumb-item active">Historial</li>
-                    </ol>
+                    <div>
+                        <h1 class="mt-4">Historial de Partidas</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Historial</li>
+                        </ol>
+                    </div>
                     <div class="card mb-4">
                         <div class="card-header">
                             <i class="fas fa-table me-1"></i>
@@ -152,11 +154,13 @@ $mysql->desconectar();
                                             <td><?php echo $filaPartida['id_partida']; ?></td>
                                             <td><?php echo $filaPartida['pin_partida']; ?></td>
                                             <td><?php echo $filaPartida['preguntas_limite_partida']; ?></td>
-                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaPartida['estado_partida'] === 'Finalizada') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
-                                            <td class="d-flex justify-content-center gap-1">
-                                                <button class="btn btn-info btn-sm btnVerDetalle" data-id="<?php echo $filaPartida['id_partida']; ?>">
-                                                    <i class="bi bi-eye"></i>
-                                                </button>
+                                            <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 bg-' . (($filaPartida['estado_partida'] === 'Finalizada') ? 'success">✔ ' : 'dark">... ')  . $filaPartida['estado_partida'] . '</span>' ?></td>
+                                            <td class="text-center acciones">
+                                                <div class="d-flex flex-column flex-md-row justify-content-center gap-1">
+                                                    <button class="btn btn-info btn-sm btnVerDetalle" data-id="<?php echo $filaPartida['id_partida']; ?>">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

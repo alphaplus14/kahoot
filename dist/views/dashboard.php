@@ -137,36 +137,40 @@ $mysql->desconectar();
                             Administradores
                         </div>
                         <div class="card-body">
-                            <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nombre</th>
-                                        <th>Correo</th>
-                                        <th>Estado</th>
-                                        <th class="text-center">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($usuario as $filaUsuario) {
-                                        if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
-                                            <tr>
-                                                <td><?php echo $filaUsuario['id_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
-                                                <td><?php echo $filaUsuario['correo_usuario']; ?></td>
-                                                <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 w-100 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
-                                                <td class="d-flex justify-content-center gab-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
-                                                                                                    echo '<button class="btn btn-danger usuarioDesactivar btn-sm w-100">❌ Desactivar</button>';
-                                                                                                } else {
-                                                                                                    echo '<button class="btn btn-success usuarioActivar btn-sm w-100">✔ Activar</a>';
-                                                                                                }; ?>
-                                                    <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
-                                                </td>
-                                            </tr>
-                                    <?php endif;
-                                    } ?>
-                                </tbody>
-                            </table>
+                            <div class="table-responsive">
+                                <table id="tablaAdministradores" class="table table-striped table-hover table-bordered table-sm align-middle text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nombre</th>
+                                            <th>Correo</th>
+                                            <th>Estado</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($usuario as $filaUsuario) {
+                                            if ($filaUsuario['id_usuario'] != $_SESSION['id_usuario']): ?>
+                                                <tr>
+                                                    <td><?php echo $filaUsuario['id_usuario']; ?></td>
+                                                    <td><?php echo $filaUsuario['nombre_usuario']; ?></td>
+                                                    <td><?php echo $filaUsuario['correo_usuario']; ?></td>
+                                                    <td class="justify-content-center"><?php echo '<span class="badge p-2 fs-6 bg-' . (($filaUsuario['estado_usuario'] === 'Activo') ? 'success">✔ ' : 'danger">❌ ')  . $filaUsuario['estado_usuario'] . '</span>' ?></td>
+                                                    <td class="text-center acciones">
+                                                        <div class="d-flex flex-column flex-md-row justify-content-center gap-1"><?php if ($filaUsuario['estado_usuario'] == "Activo") {
+                                                                                                                                        echo '<button class="btn btn-danger usuarioDesactivar btn-sm">❌ Desactivar</button>';
+                                                                                                                                    } else {
+                                                                                                                                        echo '<button class="btn btn-success usuarioActivar btn-sm">✔ Activar</a>';
+                                                                                                                                    }; ?>
+                                                            <?php echo '<button class="btn btn-warning ms-2 usuarioEditar btn-sm">📝 Editar</button>'; ?>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                        <?php endif;
+                                        } ?>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
