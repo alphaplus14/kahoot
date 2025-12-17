@@ -15,8 +15,8 @@ try {
     $stmt->execute();
     //? Retorno de datos aplicando JSON
     header('Content-Type: application/json');
-    echo json_encode(['success' => true, 'message' => 'Categoria desactivada exitosamente!']);
+    echo json_encode(['success' => true, 'message' => 'Cuestionario desactivado exitosamente!']);
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al desactivar la Categoria!', 'error' => $th]);
+    echo json_encode(['success' => false, 'message' => 'Error al desactivar el Cuestionario!', 'error' => $th]);
 };

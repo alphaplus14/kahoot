@@ -16,7 +16,7 @@ try {
     $stmt->execute();
 } catch (\Throwable $th) {
     header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al traer datos de categoria por ID', 'error' => $th]);
+    echo json_encode(['success' => false, 'message' => 'Error al traer datos de Cuestionario por ID', 'error' => $th]);
 }
 $datos = $stmt->fetch(PDO::FETCH_ASSOC);
 header('Content-Type: application/json');

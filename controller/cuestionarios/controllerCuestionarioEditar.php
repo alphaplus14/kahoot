@@ -55,10 +55,10 @@ if (
         $stmt->execute();
         //? Retorno de datos aplicando JSON
         header("Content-Type: application/json");
-        echo json_encode(['success' => true, 'message' => 'Categoria creada exitosamente!']);
+        echo json_encode(['success' => true, 'message' => 'Cuestionario editado exitosamente!']);
     } catch (\Throwable $th) {
         header('Content-Type: application/json');
-        echo json_encode(['success' => false, 'message' => 'Error al crear categoria', 'error' => $th]);
+        echo json_encode(['success' => false, 'message' => 'Error al editar Cuestionario', 'error' => $th]);
     };
 } else {
     header("Content-Type: application/json");

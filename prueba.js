@@ -1,0 +1,16 @@
+sessionStorage.setItem('prueba', JSON.stringify(['a']));
+let elemento = JSON.parse(sessionStorage.getItem('prueba'));
+// elemento = ["c"];
+elemento.push("b");
+console.log(elemento);
+// elemento.push("hola2");
+// sessionStorage.setItem('prueba', JSON.stringify(elemento));
+// let elemento2 = JSON.parse([sessionStorage.getItem('prueba')]);
+// console.log(elemento2);
+// let array = [elemento];
+// array.push('hols');
+// console.log(array);
+// sessionStorage.setItem('prueba', JSON.stringify(array));
+// let array2 = JSON.parse(sessionStorage.getItem('prueba'));
+// console.log(array2);
+// // sessionStorage.removeItem('prueba');

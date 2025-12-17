@@ -277,42 +277,6 @@ export async function sweetCargarDatosJuego(datos, puntos) {
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
-            preConfirm: () => {
-                //? Retornar valores finales
-                return {
-                    puntos,
-                };
-            },
-        }).then(async (result) => {
-            //? Verificar click en boton confirmar
-            if (result.isConfirmed) {
-                //? Traer datos retornados del preConfirm
-                const datos = result.value;
-                //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
-                let formData = new FormData();
-                formData.append('puntos', datos.puntos);
-                //? Solicitud de datos a controller
-                const json = await fetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
-                    method: 'POST',
-                    body: formData,
-                });
-                //? Conversion a JSON valido
-                const response = await json.json();
-                //? Verificacion de proceso (success = True: Exito, success = False: Error)
-                if (response.success) {
-                    Swal.fire({ title: '¡Éxito!', text: response.message, icon: 'success', confirmButtonColor: '#007bff' }).then(
-                        () => {
-                            window.location.href = 'index.php';
-                        },
-                    );
-                } else {
-                    Swal.fire({ title: '¡Error!', text: response.message, icon: 'error', confirmButtonColor: '#007bff' }).then(
-                        () => {
-                            location.reload();
-                        },
-                    );
-                }
-            }
         });
     } catch (e) {
         //? Control de errores

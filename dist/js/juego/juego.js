@@ -45,9 +45,32 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         //* Funcion para cargar la siguiente pregunta
         function mostrarPregunta() {
             if (i >= datos.length) {
-                setTimeout(() => {
-                    sweetCargarDatosJuego(preguntasCorrectas, puntos);
-                    return;
+                setTimeout(async () => {
+                    puntos;
+                    //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
+                    let formData = new FormData();
+                    formData.append('puntos', puntos); //? Solicitud de datos a controller
+                    const json = await fetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    //? Conversion a JSON valido
+                    // const responseText = await json.text();
+                    // console.log(responseText);
+                    // return false;
+                    const response = await json.json();
+                    //? Verificacion de proceso (success = True: Exito, success = False: Error)
+                    if (!response.success) {
+                        Swal.fire({
+                            title: '¡Error!',
+                            text: response.message,
+                            icon: 'error',
+                            confirmButtonColor: '#007bff',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                    await sweetCargarDatosJuego(preguntasCorrectas, puntos);
                 }, 100);
             } else {
                 //? Habilitar botones
@@ -69,7 +92,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
 
         //* Funcion contador de juego
         function iniciarContador() {
-            contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
+            contador.textContent = 'Tiempo Restante: ' + Math.round(tiempoRestante);
             //! limpiar contador anterior
             clearInterval(intervaloContador);
             intervaloContador = setInterval(() => {
