@@ -24,7 +24,6 @@ async function traerDatosPartida(idPartida) {
             success: false,
             error: true,
             message: 'Error inesperado.',
-            
         };
     }
 }
@@ -33,7 +32,7 @@ window.traerDatosPartida = traerDatosPartida;
 
 async function DatosRankingGlobal() {
     try {
-        const response = await fetch(`../../controller/partidas/controllerDatosRanking.php`, {
+        const response = await fetch(`../../controller/partidas/controllerDatosRankingGlobal.php`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -100,7 +100,7 @@ async function verRankingGlobal() {
             <table class="table table-hover align-middle" style="width:100%; text-align:left;">
                 <thead class="table-dark">
                     <tr>
-                        <th style="width: 60px;" class="text-center">Posición</th>
+                        <th style="width: 90px;" class="text-center">Posición</th>
                         <th>Nombre</th>
                         <th class="text-center">Puntuación</th>
                         <th class="text-center">Ficha</th>
@@ -146,9 +146,8 @@ async function verRankingGlobal() {
         `;
 
         Swal.fire({
-            title: '<i class="bi bi-trophy-fill text-warning"></i> Ranking Global',
+            title: '<i class="bi bi-globe text-warning"></i> Ranking Global',
             html: info + tabla,
-            icon: 'success',
             confirmButtonText: '<i class="bi bi-x-circle"></i> Cerrar',
             confirmButtonColor: '#3085d6',
             width: 900,
