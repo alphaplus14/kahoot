@@ -102,7 +102,7 @@ async function validarPin() {
             sessionStorage.setItem('idPartida', JSON.stringify(data.data.id_partida));
 
             setTimeout(() => {
-                window.location.href = 'partida.php';
+                window.location.href = 'dist/views/partida.php';
             }, 1500);
         } else {
             mostrarError(data.message || 'PIN incorrecto');
