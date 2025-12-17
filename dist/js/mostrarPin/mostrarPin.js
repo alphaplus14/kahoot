@@ -94,7 +94,7 @@ function terminarAutomatico() {
                 icon: 'info',
                 confirmButtonColor: '#007bff',
             }).then(() => {
-                window.location.href = "../views/generarPin.php";
+                window.location.href = `../views/generarPin.php`;
             });
         });
 }
