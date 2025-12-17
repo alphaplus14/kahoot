@@ -46,10 +46,10 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
         function mostrarPregunta() {
             if (i >= datos.length) {
                 setTimeout(async () => {
-                    puntos;
                     //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
                     let formData = new FormData();
-                    formData.append('puntos', Math.round(puntos)); //? Solicitud de datos a controller
+                    puntos = Math.round(puntos);
+                    formData.append('puntos', puntos); //? Solicitud de datos a controller
                     const json = await fetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
                         method: 'POST',
                         body: formData,
@@ -60,7 +60,7 @@ fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
                     // return false;
                     const response = await json.json();
                     //? Verificacion de proceso (success = True: Exito, success = False: Error)
-                    if (!response.success) {
+                    if (response.success == false) {
                         Swal.fire({
                             title: '¡Error!',
                             text: response.message,

@@ -1,7 +1,7 @@
 <?php
 if (
-    isset($_POST['puntos']) &&
-    !empty($_POST['puntos'])
+    isset($_POST['puntos'])
+    // !empty($_POST['puntos'])
 ) {
     session_start();
     $nombre = $_SESSION['nombreJugador'];
