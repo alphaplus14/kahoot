@@ -1,11 +1,11 @@
 <?php
 session_start();
 if (!isset($_SESSION['id_usuario'])) {
-    header('Location: index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
     exit;
 }
 if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo') {
-    header("Location: index.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
+    header("Location: ../../index.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
     exit;
 }
 require_once '../../models/MySQL.php';

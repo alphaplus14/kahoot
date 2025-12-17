@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (PDOException $e) {
             $mysql->desconectar();
             error_log("Error en login: " . $e->getMessage());
-            header("Location: ../index.html?error=500");
+            header("Location: ../index.php?error=500");
             exit();
         }
     } else {

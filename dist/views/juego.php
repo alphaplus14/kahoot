@@ -6,7 +6,7 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
     $title = $_GET['title'];
 }
 if (!isset($_SESSION['pinPartida'])) {
-    header('Location: index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
+    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
     exit;
 }
 require_once '../../models/MySQL.php';
@@ -16,7 +16,7 @@ $idPartida = $_SESSION['idPartida'];
 $stmt = $mysql->getConexion()->query("SELECT * FROM partidas WHERE id_partida = $idPartida AND estado_partida = 'Esperando' OR estado_partida = 'Jugando';");
 $verificacion = $stmt->fetch(PDO::FETCH_ASSOC);
 if ($verificacion == false) {
-    header("Location: index.php");
+    header("Location: ../../index.php");
     $mysql->desconectar();
     exit;
 }

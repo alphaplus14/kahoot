@@ -86,7 +86,7 @@ async function validarPin() {
         formData.append('pinIngresado', valorIngresado);
 
         // se crea form data para mandar el pin y verificarlo
-        const res = await fetch('../../controller/partidas/controllerVerificarPin.php', {
+        const res = await fetch('controller/partidas/controllerVerificarPin.php', {
             method: 'POST',
             body: formData,
         });
@@ -110,7 +110,7 @@ async function validarPin() {
             pinIngresado.classList.add('bg-danger-subtle', 'border-danger-subtle');
 
             setTimeout(() => {
-                window.location.href = 'index.php';
+                window.location.href = '../../index.php';
             }, 2500);
         }
     } catch (error) {
