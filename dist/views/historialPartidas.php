@@ -126,10 +126,17 @@ $mysql->desconectar();
         <div id="layoutSidenav_content">
             <main>
                 <div class="container-fluid px-4">
-                    <div>
-                        <h1 class="mt-4">Historial de Partidas</h1>
+                    <div class="mt-4">
+                        <h1>Historial de Partidas</h1>
                         <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Historial</li>
+                            <div class="col">
+                                <li class="breadcrumb-item active">Historial</li>
+                            </div>
+
+                            <div class="col d-flex justify-content-end me-1">
+                                <button class="btn btn-info btn-sm btnVerGlobal"> <i class="fas fa-globe"></i> Ranking </button>
+                            </div>
+
                         </ol>
                     </div>
                     <div class="card mb-4">

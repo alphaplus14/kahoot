@@ -8,6 +8,11 @@ class MySQL
     // Método para establecer la conexión
     public function conectar()
     {
+        // $host = 'u810917883_yesapregunta';
+        // $dbname = 'kahoot';
+        // $usuario = 'u810917883_yesapregunta';
+        // $contrasena = 'Y6!lSAQ5';
+
         $host = 'localhost';
         $dbname = 'kahoot';
         $usuario = 'root';

@@ -271,12 +271,14 @@ export async function sweetCargarDatosJuego(datos, puntos) {
     try {
         Swal.fire({
             title: 'Resumen de juego', //? Titulo Modal
-            icon: 'info', //? Icono Modal
-            showLoaderOnConfirm: true, //? muestra loader mientras espera el preConfirm
+            icon: 'info', //? Icono Modal/?
             html: await contenidoCargarDatosJuego(datos, puntos), //? Contenido HTML
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
+            preConfirm: async () => {
+                return (window.location.href = 'index.php');
+            },
         });
     } catch (e) {
         //? Control de errores
