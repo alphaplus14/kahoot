@@ -28,11 +28,16 @@ try {
     echo json_encode(['success' => false, 'message' => 'Error ' . $th]);
 }
 
-//? Traer preguntas por categoria
+//? Traer preguntas
 try {
-    $sql = "SELECT * FROM cuestionario WHERE categorias_id_categoria = :categoria";
-    $stmt = $mysql->getConexion()->prepare($sql);
-    $stmt->bindParam(':categoria', $categoriaJuego, PDO::PARAM_INT);
+    if ($categoriaJuego == 0) {
+        $sql = "SELECT * FROM cuestionario;";
+        $stmt = $mysql->getConexion()->prepare($sql);
+    } else {
+        $sql = "SELECT * FROM cuestionario WHERE categorias_id_categoria = :categoria";
+        $stmt = $mysql->getConexion()->prepare($sql);
+        $stmt->bindParam(':categoria', $categoriaJuego, PDO::PARAM_INT);
+    }
     $stmt->execute();
 
     $preguntas = [];
