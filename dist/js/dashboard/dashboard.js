@@ -1,33 +1,33 @@
-import * as sweetAlert from './sweetAlertsDashboard.js';
+import * as sweetAlerts from './sweetAlertsDashboard.js';
 
 const tablaAdmins = document.querySelector('#tablaAdministradores');
 
 tablaAdmins.addEventListener('click', (e) => {
-    if (e.target.classList.contains('usuarioDesactivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
-        sweetAlert.sweetUsuarioDesactivar(id);
+    const btn = e.target.closest('.usuarioDesactivar, .usuarioEditar, .usuarioActivar');
+    if (!btn) return;
+    let fila = btn.closest('tr');
+    if (fila.classList.contains('child')) {
+        fila = fila.previousElementSibling;
     }
-    if (e.target.classList.contains('usuarioActivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
-        sweetAlert.sweetUsuarioActivar(id);
+    const primeraColumna = fila.querySelector('td:first-child');
+    if (!primeraColumna) {
+        console.error('No se encontró la primera columna en la fila:', fila);
+        return;
     }
-    if (e.target.classList.contains('usuarioEditar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
-        sweetAlert.sweetUsuarioEditar(id);
+    const id = primeraColumna.innerText.trim();
+    if (btn.classList.contains('usuarioDesactivar')) {
+        sweetAlerts.sweetUsuarioDesactivar(id);
+    }
+    if (btn.classList.contains('usuarioActivar')) {
+        sweetAlerts.sweetUsuarioActivar(id);
+    }
+    if (btn.classList.contains('usuarioEditar')) {
+        sweetAlerts.sweetUsuarioEditar(id);
     }
 });
 
 const usuarioInsertar = document.querySelector('#usuarioInsertar');
 
 usuarioInsertar.addEventListener('click', () => {
-    sweetAlert.sweetUsuarioInsertar();
-});
-
-const usuarioEditarPerfil = document.querySelector('#usuarioInsertar');
-
-usuarioInsertar.addEventListener('click', () => {
-    sweetAlert.sweetUsuarioInsertar();
+    sweetAlerts.sweetUsuarioInsertar();
 });

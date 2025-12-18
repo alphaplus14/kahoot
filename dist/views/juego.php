@@ -37,14 +37,18 @@ if ($verificacion == false) {
     <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
         <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
     <?php } ?>
-    <div class="container-fluid vh-100 d-flex flex-column">
+    <div class="container-fluid h-100 d-flex flex-column">
         <div class="row mt-2 align-items-center text-white">
-            <div class="col-md text-start">
+            <div class="col-md-6 text-start">
                 <img src="../assets/media/1.png" alt="Logo Sena" class="img-fluid">
+                <p>hola</p>
             </div>
-            <div class="col-md text-end">
-                <label for="" id="contador" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Tiempo Restante: 0</label>
-                <label for="" id="puntos" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Puntos 0</label>
+
+            <div class="col-md-6 text-end">
+                <div class="row">
+                    <div class="col-md-6"><label for="" id="contador" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Tiempo: 0</label></div>
+                    <div class="col-md-6"><label for="" id="puntos" class="mb-2 mt-0 badge bg-success rounded-2 fs-4">Puntos 0</label></div>
+                </div>
             </div>
         </div>
         <div class="row text-white mt-4">
@@ -53,7 +57,7 @@ if ($verificacion == false) {
             </div>
         </div>
         <form class="formPreguntas">
-            <div class="container-juego row p-5">
+            <div class="container-juego row p-4">
                 <div class="col-md-6">
                     <div class="mb-3">
                         <button type="button" class="btn btn-danger respuestaA w-100 fs-2 rounded-4 shadow"></button>

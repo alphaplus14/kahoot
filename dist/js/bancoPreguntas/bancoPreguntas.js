@@ -1,32 +1,37 @@
-import * as sweetAlerts from "./sweetAlertsBancoPreguntas.js";
-
+import * as sweetAlerts from './sweetAlertsBancoPreguntas.js';
 const tablaAdmins = document.querySelector('#tablaCuestionarios');
-
 tablaAdmins.addEventListener('click', (e) => {
-    if (e.target.classList.contains('cuestionarioDesactivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    const btn = e.target.closest('.cuestionarioDesactivar, .cuestionarioEditar, .cuestionarioActivar, .verRespuestas');
+    if (!btn) return;
+
+    let fila = btn.closest('tr');
+    if (fila.classList.contains('child')) {
+        fila = fila.previousElementSibling;
+    }
+
+    //Obtener el ID de la primera celda
+    const primeraColumna = fila.querySelector('td:first-child');
+    if (!primeraColumna) {
+        console.error('No se encontró la primera columna en la fila:', fila);
+        return;
+    }
+    const id = primeraColumna.innerText.trim();
+
+    if (btn.classList.contains('cuestionarioDesactivar')) {
         sweetAlerts.sweetCuestionarioDesactivar(id);
     }
-    if (e.target.classList.contains('cuestionarioActivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    if (btn.classList.contains('cuestionarioActivar')) {
         sweetAlerts.sweetCuestionarioActivar(id);
     }
-    if (e.target.classList.contains('cuestionarioEditar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    if (btn.classList.contains('cuestionarioEditar')) {
         sweetAlerts.sweetCuestionarioEditar(id);
     }
-    if (e.target.classList.contains('verRespuestas')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    if (btn.classList.contains('verRespuestas')) {
         sweetAlerts.sweetCuestionarioVerRespuestas(id);
     }
 });
 
 const CuestionarioInsertar = document.querySelector('#cuestionarioInsertar');
-
 CuestionarioInsertar.addEventListener('click', () => {
     sweetAlerts.sweetCuestionarioInsertar();
 });

@@ -2,11 +2,10 @@ html,
 body {
     height: 100%;
     margin: 0;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .formPreguntas {
-    flex: 1;
     display: flex;
     flex-direction: column;
 }
