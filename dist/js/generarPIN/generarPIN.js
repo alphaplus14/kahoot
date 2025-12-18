@@ -77,11 +77,11 @@ buttonEnviarForm.addEventListener('click', async () => {
         return;
     } else {
         //? Verificar el limite de preguntas que ingreso el usuario
-        if (inputLimite.value < 1 || inputLimite.value > limitePreguntas) {
+        if (parseInt(inputLimite.value) < 1 || parseInt(inputLimite.value) > limitePreguntas) {
             inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
             let label = document.createElement('label');
             label.classList.add('fs-3');
-            if (inputLimite.value < 1) {
+            if (parseInt(inputLimite.value) < 1) {
                 label.textContent = '¡Ingresa un dato mayor a 0!';
             } else {
                 label.textContent =
@@ -100,11 +100,11 @@ buttonEnviarForm.addEventListener('click', async () => {
     if (!inputSegundos.value) {
         inputSegundos.value = 15;
     } else {
-        if (inputSegundos.value < 5 || inputSegundos.value > 1200) {
+        if (parseInt(inputSegundos).value < 5 || parseInt(inputSegundos).value > 1200) {
             inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
             let label = document.createElement('label');
             label.classList.add('fs-3');
-            if (inputSegundos.value < 5) {
+            if (parseInt(inputSegundos).value < 5) {
                 label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
             } else {
                 label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
