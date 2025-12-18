@@ -20,12 +20,13 @@ async function verDetallePartida(idPartida) {
             <hr>
         `;
         let tabla = `
-            <table class="table table-striped align-middle" style="width:100%; text-align:left;">
+          <div class="table-responsive">
+            <table class="table table-striped align-middle text-nowrap" style="width:100%; text-align:left;">
                 <thead class="table-dark">
                     <tr>
                         <th>#</th>
                         <th>Nombre</th>
-                        <th>Puntuación</th>
+                        <th>Puntaje</th>
                         <th>Ficha</th>
                     </tr>
                 </thead>
@@ -45,6 +46,7 @@ async function verDetallePartida(idPartida) {
         tabla += `
                 </tbody>
             </table>
+        </div>
         `;
         Swal.fire({
             title: `<i class="bi bi-controller"></i> Detalle de la Partida #${idPartida}`,
@@ -52,7 +54,9 @@ async function verDetallePartida(idPartida) {
             icon: 'info',
             confirmButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
             confirmButtonColor: '#3085d6',
-            width: 1000,
+            width: '95%',
+            padding: '1rem',
+            heightAuto: false,
             customClass: {
                 popup: 'text-start',
             },
@@ -97,12 +101,13 @@ async function verRankingGlobal() {
         `;
 
         let tabla = `
-            <table class="table table-hover align-middle" style="width:100%; text-align:left;">
+          <div class="table-responsive">
+            <table class="table table-striped align-middle text-nowrap" style="width:100%; text-align:left;">
                 <thead class="table-dark">
                     <tr>
                         <th style="width: 90px;" class="text-center">Posición</th>
                         <th>Nombre</th>
-                        <th class="text-center">Puntuación</th>
+                        <th class="text-center">Puntaje</th>
                         <th class="text-center">Ficha</th>
                     </tr>
                 </thead>
@@ -143,6 +148,7 @@ async function verRankingGlobal() {
         tabla += `
                 </tbody>
             </table>
+        </div>
         `;
 
         Swal.fire({
@@ -150,7 +156,9 @@ async function verRankingGlobal() {
             html: info + tabla,
             confirmButtonText: '<i class="bi bi-x-circle"></i> Cerrar',
             confirmButtonColor: '#3085d6',
-            width: 900,
+            width: '95%',
+            padding: '1rem',
+            heightAuto: false,
             customClass: {
                 popup: 'text-start',
             },

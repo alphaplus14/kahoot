@@ -16,7 +16,7 @@ if (pin) {
     document.querySelector('#pin-display').textContent = 'Error: PIN no encontrado';
 
     setTimeout(() => {
-        window.location.href = 'generarPin.php';
+        window.location.href = 'generarPIN.php';
     }, 2000);
 }
 // Tiempo maximo que el pin va a estar habilitado para actualizar el estado del juego
@@ -94,7 +94,7 @@ function terminarAutomatico() {
                 icon: 'info',
                 confirmButtonColor: '#007bff',
             }).then(() => {
-                window.location.href = `../views/generarPin.php`;
+                window.location.href = `../views/generarPIN.php`;
             });
         });
 }
@@ -120,11 +120,10 @@ function actualizarTimer() {
 setInterval(actualizarTimer, 1000);
 actualizarTimer();
 
-const btnVolver = document.querySelector('a[href="generarPin.php"]');
-if (btnVolver) {
-    btnVolver.addEventListener('click', async (e) => {
-        e.preventDefault();
+const btnVolver = document.querySelector('#btnVolver');
 
+if (btnVolver) {
+    btnVolver.addEventListener('click', async () => {
         const resultado = await Swal.fire({
             title: '¿Salir del juego?',
             text: 'El juego actual será finalizado. ¿Deseas continuar?',
@@ -140,7 +139,7 @@ if (btnVolver) {
             await finalizarPinAnterior(pin);
             limpiarSessionStorage();
             notificarActualizacionHistorial();
-            window.location.href = 'generarPin.php';
+            window.location.href = 'generarPIN.php';
         }
     });
 }
@@ -186,7 +185,7 @@ btnTerminar.addEventListener('click', async () => {
             confirmButtonColor: '#007bff',
         }).then(() => {
             setTimeout(() => {
-                window.location.href = "../views/generarPin.php";
+                window.location.href = '../views/generarPIN.php';
             }, 1000);
         });
     } else {
@@ -197,7 +196,7 @@ btnTerminar.addEventListener('click', async () => {
             icon: 'error',
             confirmButtonColor: '#007bff',
         }).then(() => {
-            window.location.href = "../views/generarPin.php";
-        });
-    }
+            window.location.href = '../views/generarPIN.php';
+        });
+    }
 });

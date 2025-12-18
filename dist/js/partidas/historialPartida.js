@@ -1,28 +1,28 @@
-// funcion para los eventos
+// función para los eventos
 function inicializarEventos() {
-    // Botones para ver detalle de partida específica
-    document.querySelectorAll('.btnVerDetalle').forEach((btn) => {
-        btn.addEventListener('click', async (e) => {
-            const idPartida = e.currentTarget.getAttribute('data-id');
+    //para que no se oculte el boton en pantallas pequeñas
+    document.querySelector('#tablaHistorialPartida').addEventListener('click', async (e) => {
+        const btnDetalle = e.target.closest('.btnVerDetalle');
+        if (!btnDetalle) return;
 
-            if (!idPartida) {
-                console.error('ID de partida no encontrado');
-                Swal.fire('Error', 'No se pudo identificar la partida.', 'error');
-                return;
-            }
+        const idPartida = btnDetalle.getAttribute('data-id');
 
-            await verDetallePartida(idPartida);
-        });
+        if (!idPartida) {
+            console.error('ID de partida no encontrado');
+            Swal.fire('Error', 'No se pudo identificar la partida.', 'error');
+            return;
+        }
+
+        await verDetallePartida(idPartida);
     });
 
-    // Boton para ver ranking global
+    // Boton ranking global
     document.querySelectorAll('.btnVerGlobal').forEach((btn) => {
         btn.addEventListener('click', async () => {
             await verRankingGlobal();
         });
     });
 }
-
 // Inicializar cuando el DOM esta listo
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', inicializarEventos);

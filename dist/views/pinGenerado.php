@@ -30,7 +30,7 @@ $mysql->conectar();
     <div class="container-fluid">
         <header class="row align-items-center">
             <div class="col-6 d-flex justify-content-start p-3">
-                <a href="generarPin.php" class="btn btn-dark">Volver</a>
+                <button id="btnVolver" class="btn btn-dark">Volver</button>
             </div>
             <div class="col-6 d-flex justify-content-end align-items-center gap-2 p-3">
 

@@ -3540,6 +3540,31 @@ fieldset:disabled .btn {
   letter-spacing: 4px;
 }
 
+.swal-partida-popup {
+  max-width: 1000px;
+}
+
+@media (max-width: 576px) {
+  .swal-partida-popup {
+    width: 95% !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+.swal2-popup {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+}
+
+@media (max-width: 576px) {
+
+  .swal2-popup table th:nth-child(4),
+  .swal2-popup table td:nth-child(4) {
+    display: none;
+  }
+}
+
 .btn-outline-primary {
   --bs-btn-color: #0d6efd;
   --bs-btn-border-color: #0d6efd;
