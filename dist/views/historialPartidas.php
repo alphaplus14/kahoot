@@ -85,7 +85,7 @@ $mysql->desconectar();
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Administracion</div>
-                        <a class="nav-link" href="dashboard.php">
+                        <a class="nav-link active" href="dashboard.php">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Panel de Administracion
                         </a>
@@ -108,10 +108,10 @@ $mysql->desconectar();
                             Partidas
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse show" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
+                        <div class="collapse" id="collapsePartidas" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link" href="generarPIN.php">Generar PIN</a>
-                                <a class="nav-link active" href="historialPartidas.php">Historial de partidas</a>
+                                <a class="nav-link" href="historialPartidas.php">Historial de partidas</a>
                             </nav>
                         </div>
                     </div>
@@ -200,6 +200,7 @@ $mysql->desconectar();
     <script src="../js/partidas/sweetAlerts.js"></script>
     <script src="../js/partidas/historialPartida.js"></script>
     <script src="../js/partidas/traerDatosPartida.js"></script>
+    <script src=""></script>
 </body>
 
 </html>

@@ -3,19 +3,21 @@ import * as sweetAlert from './sweetAlertsCategorias.js';
 const tablaAdmins = document.querySelector('#tablaCategorias');
 
 tablaAdmins.addEventListener('click', (e) => {
-    if (e.target.classList.contains('categoriaDesactivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    const btn = e.target.closest('.categoriaDesactivar, .categoriaActivar, .categoriaEditar');
+    if (!btn) return;
+    let fila = btn.closest('tr');
+    console.log(fila);
+    if (fila.classList.contains('child')) {
+        fila = fila.previousElementSibling;
+    }
+    const id = fila.dataset.id;
+    if (btn.classList.contains('categoriaDesactivar')) {
         sweetAlert.sweetCategoriaDesactivar(id);
     }
-    if (e.target.classList.contains('categoriaActivar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    if (btn.classList.contains('categoriaActivar')) {
         sweetAlert.sweetCategoriaActivar(id);
     }
-    if (e.target.classList.contains('categoriaEditar')) {
-        const fila = e.target.closest('tr');
-        const id = fila.cells[0].innerText;
+    if (btn.classList.contains('categoriaEditar')) {
         sweetAlert.sweetCategoriaEditar(id);
     }
 });

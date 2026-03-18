@@ -2,29 +2,35 @@ html,
 body {
     height: 100%;
     margin: 0;
-    overflow: hidden;
 }
 
 .formPreguntas {
     flex: 1;
+    /* min-height: 100vh; */
     display: flex;
     flex-direction: column;
 }
 
 .container-juego {
     flex: 1;
+    /* min-height: 100vh; */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
     display: flex;
+    flex-direction: column;
+
+    justify-content: flex-start;
     align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #7F3FF0, #3C8CFF);
+
+    background: linear-gradient(135deg, #7f3ff0, #3c8cff);
     position: relative;
-    overflow: hidden;
     padding: 2rem;
 }
 
 .container-juego::before {
-    content: "";
-    position: fixed;
+    content: '';
+    position: absolute;
     top: -50px;
     left: -50px;
     width: 200px;
@@ -36,8 +42,8 @@ body {
 }
 
 .container-juego::after {
-    content: "";
-    position: fixed;
+    content: '';
+    position: absolute;
     bottom: -80px;
     right: -80px;
     width: 250px;
