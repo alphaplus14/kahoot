@@ -37,11 +37,10 @@ if ($verificacion == false) {
     <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
         <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
     <?php } ?>
-    <div class="container-fluid h-100 d-flex flex-column">
-        <div class="row mt-2 align-items-center text-white">
+    <div class="container-fluid h-100 d-flex flex-column px-0">
+        <div class="row mt-5 align-items-center text-white">
             <div class="col-md-6 text-start">
                 <img src="../assets/media/1.png" alt="Logo Sena" class="img-fluid">
-                <p>hola</p>
             </div>
 
             <div class="col-md-6 text-end">
@@ -52,28 +51,16 @@ if ($verificacion == false) {
             </div>
         </div>
         <div class="row text-white mt-4">
-            <div class="col-mb-4 text-center bg bg-dark p-3 border border-dark align-items-center justify-content-center d-flex" style="height: 200px;">
+           <div class="col-mb-4 text-center bg bg-dark p-3 border border-dark align-items-center justify-content-center d-flex" style="min-height: 145px; max-height: 170px;">
                 <h1 id="pregunta"></h1>
             </div>
         </div>
         <form class="formPreguntas">
-            <div class="container-juego row p-4">
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-danger respuestaA w-100 fs-2 rounded-4 shadow"></button>
-                    </div>
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-warning respuestaB w-100 fs-2 rounded-4 shadow"></button>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-primary respuestaC w-100 fs-2 rounded-4 shadow"></button>
-                    </div>
-                    <div class="mb-3">
-                        <button type="button" class="btn btn-success respuestaD w-100 fs-2 rounded-4 shadow"></button>
-                    </div>
-                </div>
+            <div class="container-juego">
+                <button type="button" class="btn btn-danger respuestaA w-100 rounded-4 shadow"></button>
+                <button type="button" class="btn btn-warning respuestaB w-100 rounded-4 shadow"></button>
+                <button type="button" class="btn btn-primary respuestaC w-100 rounded-4 shadow"></button>
+                <button type="button" class="btn btn-success respuestaD w-100 rounded-4 shadow"></button>
             </div>
         </form>
     </div>
