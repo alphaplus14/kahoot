@@ -50,7 +50,7 @@ if ($verificacion == false) {
                 </div>
             </div>
         </div>
-        <div class="row text-white mt-4">
+        <div class="row text-white mt-5">
            <div class="col-mb-4 text-center bg bg-dark p-3 border border-dark align-items-center justify-content-center d-flex" style="min-height: 145px; max-height: 170px;">
                 <h1 id="pregunta"></h1>
             </div>
