@@ -2,35 +2,21 @@ import * as sweetAlert from './sweetAlertsCategorias.js';
 
 const tablaCategoriasDOM = document.querySelector('#tablaCategorias');
 
-// DataTable
-const tablaCategoriasDT = $('#tablaCategorias').DataTable();
-
-tablaCategoriasDOM.addEventListener('click', (e) => {
-    const btn = e.target.closest('.categoriaDesactivar, .categoriaEditar, .categoriaActivar');
+tablaAdmins.addEventListener('click', (e) => {
+    const btn = e.target.closest('.categoriaDesactivar, .categoriaActivar, .categoriaEditar');
     if (!btn) return;
-
-    let tr = btn.closest('tr');
-
-    // Si es fila responsive (child), usar la padre
-    if (tr.classList.contains('child')) {
-        tr = tr.previousElementSibling;
+    let fila = btn.closest('tr');
+    console.log(fila);
+    if (fila.classList.contains('child')) {
+        fila = fila.previousElementSibling;
     }
-
-    // Obtener datos reales desde DataTables
-    const data = tablaCategoriasDT.row(tr).data();
-
-    if (!data) return;
-
-    const id = data[0];
-
+    const id = fila.dataset.id;
     if (btn.classList.contains('categoriaDesactivar')) {
         sweetAlert.sweetCategoriaDesactivar(id);
     }
-
     if (btn.classList.contains('categoriaActivar')) {
         sweetAlert.sweetCategoriaActivar(id);
     }
-
     if (btn.classList.contains('categoriaEditar')) {
         sweetAlert.sweetCategoriaEditar(id);
     }

@@ -63,12 +63,12 @@ if ($verificacion == false) {
                         <button type="button" class="btn btn-danger respuestaA w-100 fs-2 rounded-4 shadow"></button>
                     </div>
                     <div class="mb-3">
-                        <button type="button" class="btn btn-warning respuestaC w-100 fs-2 rounded-4 shadow"></button>
+                        <button type="button" class="btn btn-warning respuestaB w-100 fs-2 rounded-4 shadow"></button>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="mb-3">
-                        <button type="button" class="btn btn-primary respuestaB w-100 fs-2 rounded-4 shadow"></button>
+                        <button type="button" class="btn btn-primary respuestaC w-100 fs-2 rounded-4 shadow"></button>
                     </div>
                     <div class="mb-3">
                         <button type="button" class="btn btn-success respuestaD w-100 fs-2 rounded-4 shadow"></button>

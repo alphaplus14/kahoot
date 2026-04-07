@@ -434,7 +434,7 @@ export async function contenidoCuestionarioDesctivar(id) {
         const form = crearForm();
         //? Label (texto)
         const labelDiv = crearDivForm();
-        const label = crearLabelForm('', `¿Desea desactivar la Cuestionario ${Cuestionario.nombre_Cuestionario} con ID ${id}?`);
+        const label = crearLabelForm('', `¿Desea desactivar la Cuestionario ${Cuestionario.nombre_cuestionario} con ID ${id}?`);
         labelDiv.append(label);
         //? Asignacion final Form
         form.append(labelDiv);

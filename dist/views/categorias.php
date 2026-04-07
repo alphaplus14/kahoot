@@ -151,7 +151,7 @@ $mysql->desconectar();
                                 </thead>
                                 <tbody>
                                     <?php foreach ($categorias as $filaCategoria): ?>
-                                        <tr>
+                                        <tr data-id="<?php echo $filaCategoria['id_categoria']; ?>">
                                             <td><?php echo $filaCategoria['id_categoria']; ?></td>
                                             <td><?php echo $filaCategoria['nombre_categoria']; ?></td>
                                             <td><?php echo $filaCategoria['conteo']; ?></td>

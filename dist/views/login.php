@@ -30,8 +30,8 @@ if (!empty($_GET['error']) && isset($_GET['error'])) {
                     <h2 class="text-center mb-4">Inicio de sesión</h2>
                     <form action="../../controller/controllerLogin.php" method="post">
                         <div class="form-floating mb-3">
-                            <input class="form-control" id="usuarioLogin" type="text" placeholder="Usuario" name="usuarioLogin" />
-                            <label for="usuarioLogin">Usuario</label>
+                            <input class="form-control" id="correoLogin" type="text" placeholder="Usuario" name="correoLogin" />
+                            <label for="correoLogin">Usuario</label>
                         </div>
                         <div class="form-floating mb-3">
                             <input class="form-control" id="passLogin" type="password" placeholder="Contraseña" name="passLogin" />
