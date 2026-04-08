@@ -257,6 +257,7 @@ async function contenidoCargarDatosJuego(datos, puntos) {
             divPreguntas.append(lista);
             form.append(divPreguntas);
         });
+        form.addEventListener();
         return form;
     } catch (error) {
         console.log(error);
@@ -265,8 +266,8 @@ async function contenidoCargarDatosJuego(datos, puntos) {
 }
 // #endregion
 
-// #region //* Sweet Usuario Desactivar
-//TODO Inicio SweetAlert Desactivar Usuario
+// #region //* Sweet Cargar Datos Juego
+//TODO Inicio SweetAlert Cargar Datos Juego
 export async function sweetCargarDatosJuego(datos, puntos) {
     try {
         Swal.fire({
@@ -276,6 +277,11 @@ export async function sweetCargarDatosJuego(datos, puntos) {
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
+            allowOutsideClick: () => {
+                console.log('Click afuera detectado');
+                return false;
+            },
+            allowEscapeKey: false, // Opcional: evita cerrar con la tecla Esc
             preConfirm: () => {
                 return (window.location.href = '../../index.php');
             },
@@ -286,5 +292,5 @@ export async function sweetCargarDatosJuego(datos, puntos) {
         return false;
     }
 }
-//TODO Fin SweetAlert Desactivar Usuario
+//TODO Fin SweetAlert Cargar Datos Juego
 // #endregion

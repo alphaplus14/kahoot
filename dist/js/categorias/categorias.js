@@ -2,7 +2,7 @@ import * as sweetAlert from './sweetAlertsCategorias.js';
 
 const tablaCategoriasDOM = document.querySelector('#tablaCategorias');
 
-tablaAdmins.addEventListener('click', (e) => {
+tablaCategoriasDOM.addEventListener('click', (e) => {
     const btn = e.target.closest('.categoriaDesactivar, .categoriaActivar, .categoriaEditar');
     if (!btn) return;
     let fila = btn.closest('tr');
