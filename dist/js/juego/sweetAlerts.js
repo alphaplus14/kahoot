@@ -257,7 +257,6 @@ async function contenidoCargarDatosJuego(datos, puntos) {
             divPreguntas.append(lista);
             form.append(divPreguntas);
         });
-        form.addEventListener();
         return form;
     } catch (error) {
         console.log(error);

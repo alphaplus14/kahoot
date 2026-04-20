@@ -6,7 +6,7 @@ async function verificarDatosJugadorBD(nombre, ficha, idPartida) {
         formData.append('ficha', ficha);
         formData.append('idPartida', idPartida);
         //? Solicitud de datos a controller
-        const response = await fetch('../../controller/verify/controllerUsuarioVerify.php', {
+        const response = await csrfFetch('../../controller/verify/controllerUsuarioVerify.php', {
             method: 'POST',
             body: formData,
         });
@@ -49,14 +49,15 @@ btnIngresarJuego.addEventListener('click', () => {
     async function insertarJugador(params) {
         const nombre = document.querySelector('#nombre').value.trim();
         const ficha = document.querySelector('#ficha').value.trim();
-        const idPartida = sessionStorage.getItem('idPartida');
-        if (!nombre || !ficha) {
+        const rawId = sessionStorage.getItem('idPartida');
+        const idPartida = rawId ? String(rawId).replace(/\D/g, '') : '';
+        if (!nombre || !ficha || !idPartida) {
             Swal.fire({
                 title: 'Error!', //? Titulo Modal
                 icon: 'error', //? Icono Modal
                 html: await contenidoFaltaDatos(), //? Contenido HTML
                 confirmButtonText: 'Confirmar', //? Texto boton confirmar
-                confirmButtonColor: '#007bff', //? Color boton confirmar
+                confirmButtonColor: '#2563eb', //? Color boton confirmar
             });
             return false;
         }
@@ -67,7 +68,7 @@ btnIngresarJuego.addEventListener('click', () => {
                 title: '¡Error!',
                 text: 'Ya hay un usuario con estos datos (misma partida), ingresa datos diferentes!',
                 icon: 'error',
-                confirmButtonColor: '#007bff',
+                confirmButtonColor: '#2563eb',
                 confirmButtonText: '¡OK!',
             });
             return false;
@@ -76,7 +77,7 @@ btnIngresarJuego.addEventListener('click', () => {
         formData.append('nombreJugador', nombre);
         formData.append('fichaJugador', ficha);
         formData.append('idPartida', idPartida);
-        const jsonJuego = await fetch('../../controller/jugadores/controllerInsertarJugador.php', {
+        const jsonJuego = await csrfFetch('../../controller/jugadores/controllerInsertarJugador.php', {
             body: formData,
             method: 'POST',
         });
@@ -84,19 +85,19 @@ btnIngresarJuego.addEventListener('click', () => {
         if (responseJuego.success == true) {
             Swal.fire({
                 title: '¡Exito!',
-                text: '¡Datos registrados, preparate para responder!',
+                text: '¡Entraste a la sala! Espera a que el organizador inicie el juego.',
                 icon: 'success',
-                confirmButtonColor: '#007bff',
-                confirmButtonText: '¡Empezar!',
+                confirmButtonColor: '#2563eb',
+                confirmButtonText: 'Ir al lobby',
             }).then(() => {
-                window.location.href = 'juego.php';
+                window.location.href = 'lobbyJugador.php';
             });
         } else {
             Swal.fire({
                 title: '¡Error!',
                 text: 'Ah ocurrido un error, intenta nuevamente!',
                 icon: 'error',
-                confirmButtonColor: '#007bff',
+                confirmButtonColor: '#2563eb',
                 confirmButtonText: '¡OK!',
             }).then(() => {
                 window.location.href = '#';

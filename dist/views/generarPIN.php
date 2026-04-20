@@ -1,14 +1,9 @@
 <?php
-session_start();
-if (!$_SESSION || $_SESSION['estado_usuario'] != 'Activo') {
-    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
-    exit;
-}
-if (!empty($_GET['error']) && isset($_GET['error'])) {
-    $error = $_GET['error'];
-    $message = $_GET['message'];
-    $title = $_GET['title'];
-}
+require_once '../../includes/auth.php';
+requireActiveUser();
+$hasError = !empty($_GET['error']);
+$message  = $hasError ? (string)($_GET['message'] ?? '') : '';
+$title    = $hasError ? (string)($_GET['title']   ?? '') : '';
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -38,6 +33,7 @@ while ($row = $todoCategoriaC->fetch(PDO::FETCH_ASSOC)) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
+    <?php csrf_meta(); ?>
     <title>Generar PIN - ¿Y esa Pregunta?</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="../css/styles.css" rel="stylesheet" />
@@ -49,8 +45,10 @@ while ($row = $todoCategoriaC->fetch(PDO::FETCH_ASSOC)) {
 </head>
 
 <body class="sb-nav-fixed">
-    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
-        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
+    <?php if ($hasError) { ?>
+        <button class="visually-hidden" id="alertasErrores"
+            data-message="<?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>"
+            data-title="<?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?>"></button>
     <?php } ?>
     <!-- Barra de navegación superior -->
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -188,6 +186,7 @@ while ($row = $todoCategoriaC->fetch(PDO::FETCH_ASSOC)) {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/general/csrf.js"></script>
     <script src="../js/generarPIN/generarPIN.js"></script>
     <script src="../js/scripts.js"></script>
     <script src="../js/general/scriptsGenerales.js" type="module"></script>

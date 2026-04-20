@@ -1,78 +1,86 @@
 <?php
-session_start();
-if (!isset($_SESSION['id_usuario'])) {
-    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
-    exit;
-}
-if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo') {
-    header("Location: ../../index.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
-    exit;
-}
+require_once '../../includes/auth.php';
+requireActiveUser();
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
 ?>
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="pin-lobby-root">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php csrf_meta(); ?>
+    <?php csrf_inline_script(); ?>
     <title>Pin - ¿Y esa pregunta?</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link rel="stylesheet" href="../css/pin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="../css/pin.css">
 </head>
 
-<body class="bg-primary d-flex flex-column min-vh-100">
-    <div class="container-fluid">
-        <header class="row align-items-center">
-            <div class="col-6 d-flex justify-content-start p-3">
-                <button id="btnVolver" class="btn btn-dark">Volver</button>
-            </div>
-            <div class="col-6 d-flex justify-content-end align-items-center gap-2 p-3">
+<body class="pin-lobby-page">
+    <div class="pin-lobby-decor" aria-hidden="true"></div>
 
-                <div id="cronometro"
-                    style="
-            padding: 8px 14px;
-            background: #000000cc;
-            color: white;
-            border-radius: 10px;
-            font-size: 17px;
-            font-weight: bold;
-        ">
-                    10:00
-                </div>
-
-                <button id="terminarJuego" data-id="" class="btn btn-dark">
-                    Terminar Juego
+    <header class="pin-header">
+        <div class="pin-header__bar">
+            <div class="pin-header__left">
+                <button id="btnVolver" type="button" class="pin-btn pin-btn--ghost">
+                    <span class="pin-btn__icon" aria-hidden="true">←</span> Volver
                 </button>
-
             </div>
-        </header>
-    </div>
-
-    <main class="flex-grow-1 d-flex justify-content-center align-items-center">
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex justify-content-center align-items-center mb-4">
-                    <img class="logo img-fluid p-2" src="../assets/img/logo.png" alt="¿Y esa Pregunta?">
-                </div>
+            <div class="pin-header__center">
+                <span id="estadoPartidaBadge" class="pin-badge pin-badge--waiting">Lobby</span>
+                <div id="cronometro" class="pin-timer" role="timer" aria-live="polite">45:00</div>
             </div>
-            <div class="container-body row justify-content-center">
-                <div class="pin-container col-10 col-sm-6 col-md-4 col-lg-3 p-3 border border-dark border-2 rounded shadow">
-                    <div class="mb-2">
-                        <label class="form-label"> <small class="fw-semibold"> Game PIN:</small> </label>
-                        <h1 id="pin-display" class="text-center ls-4 fw-bold pin-grueso">Cargando...</h1>
-                    </div>
-                </div>
+            <div class="pin-header__right">
+                <button id="btnIniciarJuego" type="button" class="pin-btn pin-btn--success">
+                    Iniciar juego
+                </button>
+                <button id="terminarJuego" type="button" class="pin-btn pin-btn--danger" data-id="">
+                    Terminar partida
+                </button>
             </div>
         </div>
+    </header>
+
+    <main class="pin-main">
+        <div class="pin-main__inner">
+            <section class="pin-hero pin-hero--enter" aria-labelledby="pin-hero-title">
+                <img class="pin-hero__logo" src="../assets/img/logo.png" alt="¿Y esa Pregunta?">
+                <h1 id="pin-hero-title" class="pin-hero__title">
+                    Comparte el PIN con los jugadores
+                </h1>
+                <p class="pin-hero__subtitle">
+                    Podrán unirse desde la pantalla principal. Cuando esten listos, inicia el juego.
+                </p>
+            </section>
+
+            <div class="pin-cards-grid">
+                <section class="pin-card pin-card--pin" aria-labelledby="pin-label">
+                    <span id="pin-label" class="pin-card__eyebrow">Game PIN</span>
+                    <p id="pin-display" class="pin-display-num">Cargando…</p>
+                </section>
+
+                <section class="pin-card pin-card--roster" aria-labelledby="roster-title">
+                    <div class="pin-card__head">
+                        <h2 id="roster-title" class="pin-card__title">Jugadores en el lobby</h2>
+                        <span id="contadorJugadores" class="pin-count" title="Jugadores conectados">0</span>
+                    </div>
+                    <ul id="listaJugadores" class="pin-player-list">
+                        <li class="pin-player-empty" id="mensajeSinJugadores">
+                            Esperando a que se unan jugadores…
+                        </li>
+                    </ul>
+                </section>
+            </div>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/general/csrf.js"></script>
     <script src="../js/mostrarPin/mostrarPin.js"></script>
 </body>
 

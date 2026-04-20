@@ -1,18 +1,9 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../includes/auth.php';
 header('Content-Type: application/json');
+requireActiveUserJson();
 
-if (!isset($_SESSION['id_usuario'])) {
-    http_response_code(401);
-    echo json_encode([
-        'error' => true,
-        'message' => 'Sesión no válida'
-    ]);
-    exit;
-}
-
-
-require_once '../../models/MySQL.php';
+require_once __DIR__ . '/../../models/MySQL.php';
 
 try {
     $mysql = new MySQL();

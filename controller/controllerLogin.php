@@ -1,9 +1,10 @@
 <?php
 //! Funcion para iniciar sesion
-session_start();
+require_once __DIR__ . '/../includes/auth.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_validate_redirect('../dist/views/login.php?error=true&message=' . urlencode('Sesión expirada, vuelve a intentarlo.') . '&title=' . urlencode('Error de sesión'));
     if (isset($_POST['passLogin'], $_POST['correoLogin']) && !empty($_POST['passLogin']) && !empty($_POST['correoLogin'])) {
-        require_once '../models/MySQL.php';
+        require_once __DIR__ . '/../models/MySQL.php';
         $mysql = new MySQL();
         $mysql->conectar();
         //* Sanitizacion de email (la PassWord no se sanitiza nunca)
@@ -24,8 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($usuario_data['estado_usuario'] == 'Activo') {
                     // Verificar contraseña usando password_verify
                     if (password_verify($pass, $usuario_data['password_usuario'])) {
-                        // Guardar datos en sesión
-                        //* Se guardan credenciales en variable global $_SESSION
+                        // Prevenir session fixation tras login exitoso
+                        session_regenerate_id(true);
+                        unset($_SESSION['csrf_token']); // forzar nuevo token
                         $_SESSION['id_usuario'] = $usuario_data['id_usuario'];
                         $_SESSION['correo_usuario'] = $usuario_data['correo_usuario'];
                         $_SESSION['nombre_usuario'] = $usuario_data['nombre_usuario'];

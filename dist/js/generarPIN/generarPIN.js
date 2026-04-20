@@ -33,11 +33,13 @@ async function sweetAlertasError(message, title) {
 
 // #region //* Lanzar sweet errores
 //TODO Inicio Lanzar sweet errores
-window.onload = function () {
-    try {
-        document.getElementById('alertasErrores').click();
-    } catch (error) {}
-};
+window.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('alertasErrores');
+    if (!btn) return;
+    const message = btn.dataset.message || '';
+    const title = btn.dataset.title || '';
+    sweetAlertasError(message, title);
+});
 //TODO Fin Lanzar sweet errores
 // #endregion
 
@@ -120,7 +122,7 @@ buttonEnviarForm.addEventListener('click', async () => {
     const formDataGenerarPIN = new FormData();
     formDataGenerarPIN.append('segundos', inputSegundos.value);
     formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
-    const jsonGenerarPIN = await fetch('../../controller/pin/controllerGenerarPIN.php', {
+    const jsonGenerarPIN = await csrfFetch('../../controller/pin/controllerGenerarPIN.php', {
         method: 'POST',
         body: formDataGenerarPIN,
     });
@@ -131,7 +133,7 @@ buttonEnviarForm.addEventListener('click', async () => {
         formDataPreguntasPivote.append('categoria', categoria);
         formDataPreguntasPivote.append('limitePreguntas', inputLimite.value);
         formDataPreguntasPivote.append('pin', responseGenerarPIN.pin);
-        const jsonInsertarPivote = await fetch('../../controller/pin/controllerInsertarPreguntasPivote.php', {
+        const jsonInsertarPivote = await csrfFetch('../../controller/pin/controllerInsertarPreguntasPivote.php', {
             method: 'POST',
             body: formDataPreguntasPivote,
         });
@@ -143,7 +145,10 @@ buttonEnviarForm.addEventListener('click', async () => {
                 icon: 'success',
                 confirmButtonColor: '#007bff',
             }).then(() => {
-                sessionStorage.setItem('pinGenerado', responseGenerarPIN.pin);
+                sessionStorage.setItem('pinGenerado', String(responseGenerarPIN.pin));
+                if (responseGenerarPIN.id_partida != null) {
+                    sessionStorage.setItem('idPartidaOrganizador', String(responseGenerarPIN.id_partida));
+                }
                 window.location.href = `../views/pinGenerado.php`;
             });
         } else {

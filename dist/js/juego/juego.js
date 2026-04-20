@@ -1,364 +1,219 @@
 import { sweetCargarDatosJuego } from './sweetAlerts.js';
-// #region //* Convertir texto de Base de datos a Texto legible
-//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
-function convertirTextoBD(text) {
+
+// Decodifica entidades HTML que vienen almacenadas en la BD.
+function decodificarTextoBD(texto) {
     const txt = document.createElement('textarea');
-    txt.innerHTML = text;
+    txt.innerHTML = texto ?? '';
     return txt.value;
 }
-//TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
-// #endregion
 
-fetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php')
-    .then((response) => response.json())
-    .then((datos) => {
-        console.log(datos);
-        //? Captura de elementos HTML para realizar distintas funcionalidades
-        const pregunta = document.querySelector('#pregunta');
-        const A = document.querySelector('.respuestaA');
-        const B = document.querySelector('.respuestaB');
-        const C = document.querySelector('.respuestaC');
-        const D = document.querySelector('.respuestaD');
-        const contador = document.querySelector('#contador');
-        const puntosJugador = document.querySelector('#puntos');
-        //! Declaracion de variables
-        //? Booleanos
-        let boolRpta = false;
-        //? Indice de preguntas
-        let i = 0;
-        //? Segundos de duracion pr pregunta
-        const segundos = datos[0].segundos_pregunta_partida;
-        //* Variable prueba
-        // const segundos = 2;
-        let tiempoRestante = segundos;
-        //? variable intervalo (contador de segundos restantes)
-        let intervaloContador;
-        //? Inidice de preguntas para verificaciones
-        let contadorPreguntas = 0;
-        //! Datos del jugador a mostrar
-        //? Puntaje de jugador
-        let valorPuntosPorSegundo = 10000 / datos[0].segundos_pregunta_partida;
-        let puntos = 0;
-        //? preguntas correctas
-        let preguntasCorrectas = [];
+const SELECTORES = {
+    pregunta: '#pregunta',
+    A: '.respuestaA',
+    B: '.respuestaB',
+    C: '.respuestaC',
+    D: '.respuestaD',
+    contador: '#contador',
+    puntos: '#puntos',
+    form: '.formPreguntas',
+};
 
-        //* Funcion para cargar la siguiente pregunta
-        function mostrarPregunta() {
-            if (i >= datos.length) {
-                setTimeout(async () => {
-                    //? Se añaden Datos a FormData (Se usa para que el fetch acepte los datos correctamente)
-                    let formData = new FormData();
-                    puntos = Math.round(puntos);
-                    formData.append('puntos', puntos); //? Solicitud de datos a controller
-                    const json = await fetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
-                        method: 'POST',
-                        body: formData,
-                    });
-                    //? Conversion a JSON valido
-                    // const responseText = await json.text();
-                    // console.log(responseText);
-                    // return false;
-                    const response = await json.json();
-                    //? Verificacion de proceso (success = True: Exito, success = False: Error)
-                    if (response.success == false) {
-                        Swal.fire({
-                            title: '¡Error!',
-                            text: response.message,
-                            icon: 'error',
-                            confirmButtonColor: '#007bff',
-                        }).then(() => {
-                            location.reload();
-                        });
-                    }
-                    await sweetCargarDatosJuego(preguntasCorrectas, Math.round(puntos));
-                }, 100);
-            } else {
-                //? Habilitar botones
-                A.removeAttribute('disabled');
-                B.removeAttribute('disabled');
-                C.removeAttribute('disabled');
-                D.removeAttribute('disabled');
-                pregunta.textContent = convertirTextoBD(datos[i].pregunta);
-                A.textContent = 'A: ' + convertirTextoBD(datos[i].respuesta_A);
-                B.textContent = 'B: ' + convertirTextoBD(datos[i].respuesta_B);
-                C.textContent = 'C: ' + convertirTextoBD(datos[i].respuesta_C);
-                D.textContent = 'D: ' + convertirTextoBD(datos[i].respuesta_D);
-                //? Pasar a la siguiente pregunta
-                i++;
-                boolRpta = false;
-                iniciarContador();
-            }
+const ICONO_OK = '   <i class="bi bi-check2-circle"></i>';
+const ICONO_X  = '   <i class="bi bi-x-circle"></i>';
+
+const el = {
+    pregunta: document.querySelector(SELECTORES.pregunta),
+    A:        document.querySelector(SELECTORES.A),
+    B:        document.querySelector(SELECTORES.B),
+    C:        document.querySelector(SELECTORES.C),
+    D:        document.querySelector(SELECTORES.D),
+    contador: document.querySelector(SELECTORES.contador),
+    puntos:   document.querySelector(SELECTORES.puntos),
+    form:     document.querySelector(SELECTORES.form),
+};
+
+const botones = { A: el.A, B: el.B, C: el.C, D: el.D };
+
+let preguntas = [];
+let segundosPorPregunta = 0;
+let indiceActual = 0;
+let tiempoRestante = 0;
+let intervaloContador = null;
+let bloqueado = false;           // True cuando ya se procesó la respuesta o timeout
+let historialResumen = [];       // Se usa al terminar para el sweetCargarDatosJuego
+let puntosTotales = 0;
+
+function deshabilitarBotones() {
+    Object.values(botones).forEach((b) => b.setAttribute('disabled', 'disabled'));
+}
+
+function habilitarBotones() {
+    Object.values(botones).forEach((b) => b.removeAttribute('disabled'));
+}
+
+function renderIconos(letraCorrecta, letraElegida) {
+    // Pinta el check sobre la opción correcta y X sobre las demás.
+    for (const letra of ['A', 'B', 'C', 'D']) {
+        if (letra === letraCorrecta) {
+            botones[letra].innerHTML += ICONO_OK;
+        } else if (letra === letraElegida || letraElegida === '' || letraElegida === null) {
+            // Cuando no hubo respuesta (timeout) marcamos el resto con X.
+            botones[letra].innerHTML += ICONO_X;
+        } else {
+            botones[letra].innerHTML += ICONO_X;
         }
+    }
+}
 
-        //* Funcion contador de juego
-        function iniciarContador() {
-            contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
-            //! limpiar contador anterior
+function pintarPregunta() {
+    const actual = preguntas[indiceActual];
+    el.pregunta.textContent = decodificarTextoBD(actual.pregunta);
+    el.A.textContent = 'A: ' + decodificarTextoBD(actual.respuesta_A);
+    el.B.textContent = 'B: ' + decodificarTextoBD(actual.respuesta_B);
+    el.C.textContent = 'C: ' + decodificarTextoBD(actual.respuesta_C);
+    el.D.textContent = 'D: ' + decodificarTextoBD(actual.respuesta_D);
+    habilitarBotones();
+    bloqueado = false;
+    tiempoRestante = segundosPorPregunta;
+    iniciarContador();
+}
+
+function iniciarContador() {
+    clearInterval(intervaloContador);
+    el.contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
+    intervaloContador = setInterval(() => {
+        if (bloqueado) return;
+        tiempoRestante -= 1;
+        if (tiempoRestante <= 0) {
+            tiempoRestante = 0;
+            el.contador.textContent = 'Tiempo Restante: 0';
             clearInterval(intervaloContador);
-            intervaloContador = setInterval(() => {
-                if (tiempoRestante <= 0) {
-                    //? Deshabilitar botones
-                    A.setAttribute('disabled', 'disabled');
-                    B.setAttribute('disabled', 'disabled');
-                    C.setAttribute('disabled', 'disabled');
-                    D.setAttribute('disabled', 'disabled');
-                    if (boolRpta == false) {
-                        boolRpta = true;
-                        preguntasCorrectas.push({
-                            pregunta: datos[contadorPreguntas].pregunta,
-                            respuesta_A: datos[contadorPreguntas].respuesta_A,
-                            respuesta_B: datos[contadorPreguntas].respuesta_B,
-                            respuesta_C: datos[contadorPreguntas].respuesta_C,
-                            respuesta_D: datos[contadorPreguntas].respuesta_D,
-                            respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
-                            respuesta_seleccionada: 'Pregunta no respondida',
-                        });
-                        switch (datos[contadorPreguntas].respuesta_correcta) {
-                            case datos[contadorPreguntas].respuesta_A:
-                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_B:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_C:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_D:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                break;
-                            default:
-                                break;
-                        }
-                        contadorPreguntas++;
-                    }
-                    //! Detener el intervalo
-                    clearInterval(intervaloContador);
-                    contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
-                    //! Esperar 2 segundos antes de mostrar pregunta
-                    setTimeout(() => {
-                        tiempoRestante = segundos; //! Reiniciar tiempo
-                        mostrarPregunta(); //!  Mostrar pregunta
-                    }, 3000);
-                } else {
-                    tiempoRestante--;
-                    contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
-                }
-            }, 1000);
+            enviarRespuesta(''); // timeout
+            return;
         }
+        el.contador.textContent = 'Tiempo Restante: ' + tiempoRestante;
+    }, 1000);
+}
 
-        //* Formulario (con evento click para los botones)
-        const form = document.querySelector('.formPreguntas');
-        form.addEventListener('click', (e) => {
-            if (contadorPreguntas < datos.length) {
-                //? Deshabilitar botones
-                if (
-                    e.target.classList.contains('respuestaA') ||
-                    e.target.classList.contains('respuestaB') ||
-                    e.target.classList.contains('respuestaC') ||
-                    e.target.classList.contains('respuestaD')
-                ) {
-                    boolRpta = true;
-                    A.setAttribute('disabled', 'disabled');
-                    B.setAttribute('disabled', 'disabled');
-                    C.setAttribute('disabled', 'disabled');
-                    D.setAttribute('disabled', 'disabled');
-                }
-                if (e.target.classList.contains('respuestaA')) {
-                    preguntasCorrectas.push({
-                        pregunta: datos[contadorPreguntas].pregunta,
-                        respuesta_A: datos[contadorPreguntas].respuesta_A,
-                        respuesta_B: datos[contadorPreguntas].respuesta_B,
-                        respuesta_C: datos[contadorPreguntas].respuesta_C,
-                        respuesta_D: datos[contadorPreguntas].respuesta_D,
-                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
-                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_A,
-                    });
-                    //! Verificacion de pregunta correcta
-                    if (datos[contadorPreguntas].respuesta_A == datos[contadorPreguntas].respuesta_correcta) {
-                        A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += valorPuntosPorSegundo * tiempoRestante;
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    } else {
-                        A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        switch (datos[contadorPreguntas].respuesta_correcta) {
-                            case datos[contadorPreguntas].respuesta_B:
-                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_C:
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_D:
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                break;
+async function enviarRespuesta(letra) {
+    if (bloqueado) return;
+    bloqueado = true;
+    clearInterval(intervaloContador);
+    deshabilitarBotones();
 
-                            default:
-                                break;
-                        }
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    }
-                }
-                if (e.target.classList.contains('respuestaB')) {
-                    preguntasCorrectas.push({
-                        pregunta: datos[contadorPreguntas].pregunta,
-                        respuesta_A: datos[contadorPreguntas].respuesta_A,
-                        respuesta_B: datos[contadorPreguntas].respuesta_B,
-                        respuesta_C: datos[contadorPreguntas].respuesta_C,
-                        respuesta_D: datos[contadorPreguntas].respuesta_D,
-                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
-                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_B,
-                    });
-                    //! Verificacion de pregunta correcta
-                    if (datos[contadorPreguntas].respuesta_B == datos[contadorPreguntas].respuesta_correcta) {
-                        A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += valorPuntosPorSegundo * tiempoRestante;
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    } else {
-                        B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        switch (datos[contadorPreguntas].respuesta_correcta) {
-                            case datos[contadorPreguntas].respuesta_A:
-                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_C:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_D:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                break;
+    const formData = new FormData();
+    formData.append('indice', String(indiceActual));
+    formData.append('letra', letra);
+    formData.append('tiempo_restante', String(tiempoRestante));
 
-                            default:
-                                break;
-                        }
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    }
-                }
-                if (e.target.classList.contains('respuestaC')) {
-                    preguntasCorrectas.push({
-                        pregunta: datos[contadorPreguntas].pregunta,
-                        respuesta_A: datos[contadorPreguntas].respuesta_A,
-                        respuesta_B: datos[contadorPreguntas].respuesta_B,
-                        respuesta_C: datos[contadorPreguntas].respuesta_C,
-                        respuesta_D: datos[contadorPreguntas].respuesta_D,
-                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
-                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_C,
-                    });
-                    //! Verificacion de pregunta correcta
-                    if (datos[contadorPreguntas].respuesta_C == datos[contadorPreguntas].respuesta_correcta) {
-                        A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        puntos += valorPuntosPorSegundo * tiempoRestante;
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    } else {
-                        C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        switch (datos[contadorPreguntas].respuesta_correcta) {
-                            case datos[contadorPreguntas].respuesta_A:
-                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_B:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_D:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                break;
-
-                            default:
-                                break;
-                        }
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    }
-                }
-                if (e.target.classList.contains('respuestaD')) {
-                    preguntasCorrectas.push({
-                        pregunta: datos[contadorPreguntas].pregunta,
-                        respuesta_A: datos[contadorPreguntas].respuesta_A,
-                        respuesta_B: datos[contadorPreguntas].respuesta_B,
-                        respuesta_C: datos[contadorPreguntas].respuesta_C,
-                        respuesta_D: datos[contadorPreguntas].respuesta_D,
-                        respuesta_correcta: datos[contadorPreguntas].respuesta_correcta,
-                        respuesta_seleccionada: datos[contadorPreguntas].respuesta_D,
-                    });
-                    //! Verificacion de pregunta correcta
-                    if (datos[contadorPreguntas].respuesta_D == datos[contadorPreguntas].respuesta_correcta) {
-                        A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        D.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                        puntos += valorPuntosPorSegundo * tiempoRestante;
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    } else {
-                        D.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                        switch (datos[contadorPreguntas].respuesta_correcta) {
-                            case datos[contadorPreguntas].respuesta_A:
-                                A.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_B:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                break;
-                            case datos[contadorPreguntas].respuesta_C:
-                                A.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                B.innerHTML += '   <i class="bi bi-x-circle"></i>';
-                                C.innerHTML += '   <i class="bi bi-check2-circle"></i>';
-                                break;
-
-                            default:
-                                break;
-                        }
-                        tiempoRestante = 0;
-                        contadorPreguntas++;
-                    }
-                }
-            }
-            puntosJugador.textContent = 'Puntos: ' + Math.round(puntos);
+    let datos;
+    try {
+        const res = await csrfFetch('../../controller/jugadores/controllerRegistrarRespuesta.php', {
+            method: 'POST',
+            body: formData,
         });
+        datos = await res.json();
+    } catch (err) {
+        console.error('Error al registrar respuesta', err);
+        datos = { success: false, message: 'Error de red' };
+    }
 
-        //* Cargar primera pregunta
-        mostrarPregunta();
+    if (!datos || datos.success === false) {
+        Swal.fire({
+            title: '¡Error!',
+            text: datos?.message || 'No se pudo registrar la respuesta.',
+            icon: 'error',
+            confirmButtonColor: '#007bff',
+        });
+        return;
+    }
+
+    renderIconos(datos.letra_correcta, letra);
+    puntosTotales = datos.puntos_total;
+    el.puntos.textContent = 'Puntos: ' + puntosTotales;
+
+    const actual = preguntas[indiceActual];
+    const textoSeleccionado = letra === '' ? 'Pregunta no respondida' : actual['respuesta_' + letra];
+    const textoCorrecto = actual['respuesta_' + datos.letra_correcta] ?? '';
+    historialResumen.push({
+        pregunta: actual.pregunta,
+        respuesta_A: actual.respuesta_A,
+        respuesta_B: actual.respuesta_B,
+        respuesta_C: actual.respuesta_C,
+        respuesta_D: actual.respuesta_D,
+        respuesta_correcta: textoCorrecto,
+        respuesta_seleccionada: textoSeleccionado,
     });
+
+    indiceActual += 1;
+
+    setTimeout(() => {
+        if (indiceActual >= preguntas.length) {
+            terminarJuego();
+        } else {
+            pintarPregunta();
+        }
+    }, 3000);
+}
+
+async function terminarJuego() {
+    try {
+        const formData = new FormData();
+        const res = await csrfFetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
+            method: 'POST',
+            body: formData,
+        });
+        const data = await res.json();
+        if (data.success === false) {
+            await Swal.fire({
+                title: '¡Error!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            });
+        }
+        if (typeof data.puntos_total === 'number') {
+            puntosTotales = data.puntos_total;
+        }
+    } catch (err) {
+        console.error('Error terminando juego', err);
+    }
+    await sweetCargarDatosJuego(historialResumen, puntosTotales);
+}
+
+function manejarClick(e) {
+    if (bloqueado) return;
+    const target = e.target;
+    let letra = '';
+    if (target.classList.contains('respuestaA')) letra = 'A';
+    else if (target.classList.contains('respuestaB')) letra = 'B';
+    else if (target.classList.contains('respuestaC')) letra = 'C';
+    else if (target.classList.contains('respuestaD')) letra = 'D';
+    else return;
+    enviarRespuesta(letra);
+}
+
+async function iniciar() {
+    try {
+        const res = await csrfFetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php');
+        const datos = await res.json();
+        if (!Array.isArray(datos) || datos.length === 0) {
+            await Swal.fire({
+                title: '¡Error!',
+                text: datos?.message || 'No se pudieron cargar las preguntas.',
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            });
+            location.reload();
+            return;
+        }
+        preguntas = datos;
+        segundosPorPregunta = datos[0].segundos_pregunta_partida;
+        el.form.addEventListener('click', manejarClick);
+        pintarPregunta();
+    } catch (err) {
+        console.error('Error cargando juego', err);
+    }
+}
+
+iniciar();

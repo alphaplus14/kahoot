@@ -13,7 +13,7 @@ export async function traerDatosCuestionarioPorID(id) {
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/cuestionarios/controllerDatosCuestionarioPorID.php`, {
+        const json = await csrfFetch(`../../controller/cuestionarios/controllerDatosCuestionarioPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -35,7 +35,7 @@ export async function traerDatosCuestionarioPorID(id) {
 export async function traerDatosCategorias() {
     try {
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/categorias/controllerDatosCategorias.php`);
+        const json = await csrfFetch(`../../controller/categorias/controllerDatosCategorias.php`);
         //? Conversion a JSON valido
         const datos = await json.json();
         //? Retorno de datos
@@ -564,7 +564,7 @@ export async function sweetCuestionarioInsertar() {
                 formData.append('respuestaCorrecta', datos.respuestaCorrecta);
                 formData.append('categoria', datos.categoria);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioInsertar.php', {
+                const json = await csrfFetch('../../controller/cuestionarios/controllerCuestionarioInsertar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -668,7 +668,7 @@ export async function sweetCuestionarioEditar(id) {
                 formData.append('respuestaCorrecta', datos.respuestaCorrecta);
                 formData.append('categoria', datos.categoria);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioEditar.php', {
+                const json = await csrfFetch('../../controller/cuestionarios/controllerCuestionarioEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -727,7 +727,7 @@ export async function sweetCuestionarioActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioActivar.php', {
+                const json = await csrfFetch('../../controller/cuestionarios/controllerCuestionarioActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -786,7 +786,7 @@ export async function sweetCuestionarioDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/cuestionarios/controllerCuestionarioDesactivar.php', {
+                const json = await csrfFetch('../../controller/cuestionarios/controllerCuestionarioDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });

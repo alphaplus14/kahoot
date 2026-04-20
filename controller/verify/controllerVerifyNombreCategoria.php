@@ -1,27 +1,26 @@
 <?php
-session_start();
-if (!$_SESSION) {
-    header('Location: ../../dist/login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+require_once __DIR__ . '/../../includes/auth.php';
+header('Content-Type: application/json');
+requireActiveUserJson();
+
+$nombre = isset($_POST['nombre']) ? trim(filter_var($_POST['nombre'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)) : '';
+if ($nombre === '') {
+    echo json_encode(false);
     exit;
 }
-require_once '../../models/MySQL.php';
+
+require_once __DIR__ . '/../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-
-$nombreCategoria = $_POST['nombre'];
-
 try {
-    $sql = "SELECT * FROM categorias WHERE nombre_categoria = '$nombreCategoria';";
-    $stmt = $mysql->getConexion()->prepare($sql);
+    $stmt = $mysql->getConexion()->prepare('SELECT 1 FROM categorias WHERE nombre_categoria = :nombre LIMIT 1');
+    $stmt->bindParam(':nombre', $nombre, PDO::PARAM_STR);
     $stmt->execute();
-} catch (\Throwable $th) {
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al traer datos de categoria por ID', 'error' => $th]);
+    echo json_encode($stmt->fetch(PDO::FETCH_ASSOC) === false);
+} catch (Throwable $th) {
+    error_log('Verify nombre categoria: ' . $th->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error al verificar nombre']);
+} finally {
+    $mysql->desconectar();
 }
-$datos = $stmt->fetch(PDO::FETCH_ASSOC);
-$bool = true;
-if ($datos != false) {
-    $bool = false;
-}
-header('Content-Type: application/json');
-echo json_encode($bool);

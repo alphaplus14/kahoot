@@ -1,13 +1,6 @@
 <?php
-session_start();
-if (!isset($_SESSION['id_usuario'])) {
-    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
-    exit;
-}
-if (isset($_SESSION['estado_usuario']) && $_SESSION['estado_usuario'] != 'Activo') {
-    header("Location: ../../index.php?error=true&message=Acceso denegado, solo se aceptan usuarios activos!&title=Acceso denegado!");
-    exit;
-}
+require_once '../../includes/auth.php';
+requireActiveUser();
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -27,6 +20,7 @@ $mysql->desconectar();
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <?php csrf_meta(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
@@ -197,10 +191,10 @@ $mysql->desconectar();
     <script src="../js/datatables/datatables.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/general/csrf.js"></script>
     <script src="../js/partidas/sweetAlerts.js"></script>
     <script src="../js/partidas/historialPartida.js"></script>
     <script src="../js/partidas/traerDatosPartida.js"></script>
-    <script src=""></script>
 </body>
 
 </html>

@@ -1,22 +1,28 @@
 <?php
-session_start();
-if (!$_SESSION) {
-    header('Location: ../../dist/views/login.php?error=true&message=No puedes acceder a esta pagina, inicia sesion con un usuario valido!&title=Acceso denegado');
+require_once __DIR__ . '/../../includes/auth.php';
+header('Content-Type: application/json');
+requireActiveUserJson();
+csrf_validate();
+
+$id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+if (!$id) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'ID inválido']);
     exit;
 }
-require_once '../../models/MySQL.php';
+
+require_once __DIR__ . '/../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$id = $_POST['id'];
 try {
-    $sql = "UPDATE categorias SET estado_categoria = 'Inactivo' WHERE id_categoria = :id;";
-    $stmt = $mysql->getConexion()->prepare($sql);
-    $stmt->bindParam(":id", $id, PDO::PARAM_INT);
+    $stmt = $mysql->getConexion()->prepare("UPDATE categorias SET estado_categoria = 'Inactivo' WHERE id_categoria = :id");
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
-    //? Retorno de datos aplicando JSON
-    header('Content-Type: application/json');
-    echo json_encode(['success' => true, 'message' => 'Categoria desactivada exitosamente!']);
-} catch (\Throwable $th) {
-    header('Content-Type: application/json');
-    echo json_encode(['success' => false, 'message' => 'Error al desactivar la Categoria!', 'error' => $th]);
-};
+    echo json_encode(['success' => true, 'message' => 'Categoría desactivada exitosamente!']);
+} catch (Throwable $th) {
+    error_log('Desactivar categoría: ' . $th->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'message' => 'Error al desactivar la Categoría']);
+} finally {
+    $mysql->desconectar();
+}

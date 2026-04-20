@@ -1,23 +1,34 @@
 <?php
-session_start();
-if (!empty($_GET['error']) && isset($_GET['error'])) {
-    $error = $_GET['error'];
-    $message = $_GET['message'];
-    $title = $_GET['title'];
-}
-if (!isset($_SESSION['pinPartida'])) {
-    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
+require_once '../../includes/auth.php';
+$hasError = !empty($_GET['error']);
+$message  = $hasError ? (string)($_GET['message'] ?? '') : '';
+$title    = $hasError ? (string)($_GET['title']   ?? '') : '';
+if (empty($_SESSION['pinPartida'])) {
+    header('Location: ' . _auth_index_url() . '?error=true&message=' . urlencode('No puedes acceder a esta página, ingresa un pin antes de continuar!') . '&title=' . urlencode('Acceso denegado'));
     exit;
 }
 require_once '../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
-$idPartida = $_SESSION['idPartida'];
-$stmt = $mysql->getConexion()->query("SELECT * FROM partidas WHERE id_partida = $idPartida AND estado_partida = 'Esperando' OR estado_partida = 'Jugando';");
-$verificacion = $stmt->fetch(PDO::FETCH_ASSOC);
-if ($verificacion == false) {
-    header("Location: ../../index.php");
+
+$idPartida = filter_var($_SESSION['idPartida'] ?? null, FILTER_VALIDATE_INT);
+if ($idPartida === false || $idPartida === null) {
     $mysql->desconectar();
+    header('Location: ../../index.php');
+    exit;
+}
+
+$stmt = $mysql->getConexion()->prepare(
+    "SELECT * FROM partidas
+     WHERE id_partida = :id_partida
+       AND estado_partida = 'Jugando'"
+);
+$stmt->bindParam(':id_partida', $idPartida, PDO::PARAM_INT);
+$stmt->execute();
+$verificacion = $stmt->fetch(PDO::FETCH_ASSOC);
+if ($verificacion === false) {
+    $mysql->desconectar();
+    header('Location: lobbyJugador.php');
     exit;
 }
 ?>
@@ -27,6 +38,7 @@ if ($verificacion == false) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php csrf_meta(); ?>
     <title>Juego - ¿Y esa pregunta?</title>
     <link rel="stylesheet" href="../css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
@@ -34,8 +46,10 @@ if ($verificacion == false) {
 </head>
 
 <body>
-    <?php if (!empty($_GET['error']) && isset($_GET['error']) && $error == true) { ?>
-        <button class="visually-hidden" id="alertasErrores" onclick="sweetAlertasError('<?php echo $message ?>', '<?php echo $title ?>')"></button>
+    <?php if ($hasError) { ?>
+        <button class="visually-hidden" id="alertasErrores"
+            data-message="<?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?>"
+            data-title="<?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?>"></button>
     <?php } ?>
     <div class="container-fluid h-100 d-flex flex-column px-0">
         <div class="row mt-5 align-items-center text-white">
@@ -66,6 +80,7 @@ if ($verificacion == false) {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/general/csrf.js"></script>
     <script src="../js/login/login.js"></script>
     <script type="module" src="../js/juego/juego.js"></script>
 </body>

@@ -12,7 +12,7 @@ export async function traerDatosCategoriaPorID(id) {
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/categorias/controllerDatosCategoriaPorID.php`, {
+        const json = await csrfFetch(`../../controller/categorias/controllerDatosCategoriaPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -37,7 +37,7 @@ export async function verificarNombreCategoria(nombre) {
         const formData = new FormData();
         formData.append('nombre', nombre);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/verify/controllerVerifyNombreCategoria.php`, {
+        const json = await csrfFetch(`../../controller/verify/controllerVerifyNombreCategoria.php`, {
             method: 'POST',
             body: formData,
         });
@@ -316,7 +316,7 @@ export async function sweetCategoriaInsertar() {
                 let formData = new FormData();
                 formData.append('nombre', datos.nombre);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaInsertar.php', {
+                const json = await csrfFetch('../../controller/categorias/controllerCategoriaInsertar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -395,7 +395,7 @@ export async function sweetCategoriaEditar(id) {
                 formData.append('nombre', datos.nombre);
                 formData.append('id', datos.id);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaEditar.php', {
+                const json = await csrfFetch('../../controller/categorias/controllerCategoriaEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -454,7 +454,7 @@ export async function sweetCategoriaActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaActivar.php', {
+                const json = await csrfFetch('../../controller/categorias/controllerCategoriaActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -513,7 +513,7 @@ export async function sweetCategoriaDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/categorias/controllerCategoriaDesactivar.php', {
+                const json = await csrfFetch('../../controller/categorias/controllerCategoriaDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });

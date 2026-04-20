@@ -20,7 +20,7 @@ if (pin) {
     }, 2000);
 }
 // Tiempo maximo que el pin va a estar habilitado para actualizar el estado del juego
-const TIEMPO_LIMITE = 10 * 60 * 1000;
+const TIEMPO_LIMITE = 45 * 60 * 1000;
 
 // Obtener tiempo con session storage
 let tiempoInicio = sessionStorage.getItem('tiempoInicio');
@@ -37,20 +37,26 @@ if (!tiempoInicio || pinAlmacenado !== pin) {
 function limpiarSessionStorage() {
     sessionStorage.removeItem('tiempoInicio');
     sessionStorage.removeItem('pinGenerado');
+    sessionStorage.removeItem('idPartidaOrganizador');
     sessionStorage.removeItem('pinAlmacenadoParaTiempo');
+}
+
+function postTerminarPartida(pinValor) {
+    const params = new URLSearchParams();
+    params.set('pin', String(pinValor));
+    return fetch('../../controller/partidas/controllerTerminarPartida.php', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: params.toString(),
+    });
 }
 
 async function finalizarPinAnterior(pinAnterior) {
     if (!pinAnterior) return;
 
     try {
-        const formData = new FormData();
-        formData.append('pin', pinAnterior);
-
-        await fetch('../../controller/partidas/controllerTerminarPartida.php', {
-            method: 'POST',
-            body: formData,
-        });
+        await postTerminarPartida(pinAnterior);
 
         console.log('PIN anterior finalizado:', pinAnterior);
     } catch (error) {
@@ -78,13 +84,7 @@ function notificarActualizacionHistorial() {
 }
 
 function terminarAutomatico() {
-    const formData = new FormData();
-    formData.append('pin', pin);
-
-    fetch('../../controller/partidas/controllerTerminarPartida.php', {
-        method: 'POST',
-        body: formData,
-    })
+    postTerminarPartida(pin)
         .then((res) => res.json())
         .then((data) => {
             limpiarSessionStorage();
@@ -120,6 +120,238 @@ function actualizarTimer() {
 setInterval(actualizarTimer, 1000);
 actualizarTimer();
 
+// #region Polling de jugadores conectados
+// El organizador ve, en tiempo casi real, los jugadores que se van uniendo
+// a la partida. Se consulta al backend cada 3 s; si la pestaña está oculta
+// se salta la consulta para no gastar ancho de banda.
+
+const listaJugadores = document.querySelector('#listaJugadores');
+const contadorJugadores = document.querySelector('#contadorJugadores');
+const mensajeSinJugadores = document.querySelector('#mensajeSinJugadores');
+
+/** Estado actual de la partida (solo lobby permite expulsar). */
+let estadoLobbyActual = 'Esperando';
+
+function escapeHtml(texto) {
+    const txt = document.createElement('textarea');
+    txt.textContent = texto ?? '';
+    return txt.innerHTML;
+}
+
+function renderJugadores(jugadores) {
+    if (!listaJugadores) return;
+
+    const total = Array.isArray(jugadores) ? jugadores.length : 0;
+    if (contadorJugadores) contadorJugadores.textContent = String(total);
+
+    if (total === 0) {
+        listaJugadores.innerHTML = '';
+        const vacio = document.createElement('li');
+        vacio.id = 'mensajeSinJugadores';
+        vacio.className = 'pin-player-empty';
+        vacio.textContent = 'Esperando a que se unan jugadores…';
+        listaJugadores.appendChild(vacio);
+        return;
+    }
+
+    // Render idempotente: se redibuja la lista entera porque es corta (<100 ítems)
+    // y evita tener que diffear ids manualmente.
+    const puedeExpulsar = estadoLobbyActual === 'Esperando';
+    const idOrg = sessionStorage.getItem('idPartidaOrganizador');
+
+    listaJugadores.innerHTML = jugadores
+        .map((j, i) => {
+            const nombre = escapeHtml(j.nombre_jugador);
+            const ficha = escapeHtml(String(j.ficha_jugador ?? ''));
+            const ptsRaw = j.puntaje_jugador;
+            const pts = ptsRaw !== undefined && ptsRaw !== null && ptsRaw !== '' ? Number(ptsRaw) : 0;
+            const puntajeStr = Number.isFinite(pts) ? String(pts) : '0';
+            const jid = Number(j.id_jugador);
+            const firstClass = i === 0 ? ' pin-player-row--first' : '';
+            const btnQuitar =
+                puedeExpulsar && (idOrg || pin)
+                    ? `<div class="pin-player__actions"><button type="button" class="pin-btn pin-btn--outline-danger" data-action="expulsar" data-id-jugador="${jid}">Quitar</button></div>`
+                    : '<div class="pin-player__actions"></div>';
+            const metaFicha = ficha ? `<span class="pin-player__meta">Ficha · ${ficha}</span>` : '';
+            return `
+                <li class="pin-player-row${firstClass}">
+                    <span class="pin-player__rank" title="Posición">#${i + 1}</span>
+                    <div class="pin-player__nameblock">
+                        <span class="pin-player__name">${nombre}</span>
+                        ${metaFicha}
+                    </div>
+                    <div class="pin-player__score">
+                        <span class="pin-player__score-val">${escapeHtml(puntajeStr)}</span>
+                        <span class="pin-player__score-lbl">pts</span>
+                    </div>
+                    ${btnQuitar}
+                </li>
+            `;
+        })
+        .join('');
+}
+
+function actualizarUIEstado(estado) {
+    const badge = document.getElementById('estadoPartidaBadge');
+    const btnIniciar = document.getElementById('btnIniciarJuego');
+    if (!badge) return;
+    const e = estado || 'Esperando';
+    if (e === 'Esperando') {
+        badge.className = 'pin-badge pin-badge--waiting';
+        badge.textContent = 'Lobby';
+        if (btnIniciar) btnIniciar.disabled = false;
+    } else if (e === 'Jugando') {
+        badge.className = 'pin-badge pin-badge--live';
+        badge.textContent = 'En curso';
+        if (btnIniciar) btnIniciar.disabled = true;
+    } else {
+        badge.className = 'pin-badge pin-badge--misc';
+        badge.textContent = e;
+        if (btnIniciar) btnIniciar.disabled = true;
+    }
+}
+
+async function refrescarJugadores() {
+    if (!pin) return;
+    if (document.hidden) return;
+
+    try {
+        const idOrg = sessionStorage.getItem('idPartidaOrganizador');
+        const url =
+            idOrg && idOrg.length > 0
+                ? `../../controller/partidas/controllerDatosJugadoresPorPin.php?id_partida=${encodeURIComponent(idOrg)}`
+                : `../../controller/partidas/controllerDatosJugadoresPorPin.php?pin=${encodeURIComponent(pin)}`;
+        const resp = await fetch(url, { credentials: 'same-origin' });
+        if (!resp.ok) {
+            const errTxt = await resp.text().catch(() => '');
+            console.debug('controllerDatosJugadoresPorPin HTTP', resp.status, errTxt);
+            return;
+        }
+        const data = await resp.json();
+        if (data && data.success) {
+            if (data.estado) {
+                estadoLobbyActual = data.estado;
+                actualizarUIEstado(data.estado);
+            }
+            renderJugadores(data.jugadores || []);
+        }
+    } catch (err) {
+        // No ruidamos al usuario: es un polling. Se reintentará al siguiente ciclo.
+        console.debug('refrescarJugadores:', err);
+    }
+}
+
+refrescarJugadores();
+const INTERVALO_JUGADORES_MS = 3000;
+const pollJugadores = setInterval(refrescarJugadores, INTERVALO_JUGADORES_MS);
+window.addEventListener('beforeunload', () => clearInterval(pollJugadores));
+
+if (listaJugadores) {
+    listaJugadores.addEventListener('click', async (ev) => {
+        const t = ev.target;
+        if (!(t instanceof HTMLElement)) return;
+        const btn = t.closest('[data-action="expulsar"]');
+        if (!btn) return;
+        const idStr = btn.getAttribute('data-id-jugador');
+        const idJugador = idStr ? parseInt(idStr, 10) : NaN;
+        if (!Number.isFinite(idJugador) || idJugador < 1) return;
+
+        const confirmar = await Swal.fire({
+            title: '¿Quitar a este jugador?',
+            text: 'Volverá a la pantalla inicial para elegir otro nombre.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, quitar',
+            cancelButtonText: 'Cancelar',
+        });
+        if (!confirmar.isConfirmed) return;
+
+        const fd = new FormData();
+        fd.append('id_jugador', String(idJugador));
+        const idOrgEv = sessionStorage.getItem('idPartidaOrganizador');
+        if (idOrgEv) fd.append('id_partida', idOrgEv);
+        if (pin) fd.append('pin', String(pin));
+
+        try {
+            const res = await csrfFetch('../../controller/jugadores/controllerExpulsarJugador.php', {
+                method: 'POST',
+                body: fd,
+            });
+            const data = await res.json();
+            if (data.success) {
+                await Swal.fire({
+                    title: 'Listo',
+                    text: data.message || 'Jugador quitado del lobby.',
+                    icon: 'success',
+                    confirmButtonColor: '#007bff',
+                    timer: 1800,
+                    showConfirmButton: true,
+                });
+                refrescarJugadores();
+            } else {
+                Swal.fire({
+                    title: 'No se pudo quitar',
+                    text: data.message || 'Intenta de nuevo.',
+                    icon: 'error',
+                    confirmButtonColor: '#007bff',
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({ title: 'Error de red', icon: 'error', confirmButtonColor: '#007bff' });
+        }
+    });
+}
+// #endregion
+
+const btnIniciarJuego = document.getElementById('btnIniciarJuego');
+if (btnIniciarJuego && pin) {
+    btnIniciarJuego.addEventListener('click', async () => {
+        const confirmar = await Swal.fire({
+            title: '¿Iniciar el juego?',
+            html: 'Los jugadores pasarán de la sala de espera al cuestionario. Podrás seguir viendo el PIN hasta que termines la partida.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#198754',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, iniciar',
+            cancelButtonText: 'Cancelar',
+        });
+        if (!confirmar.isConfirmed) return;
+
+        const formData = new FormData();
+        formData.append('pin', pin);
+        try {
+            const res = await csrfFetch('../../controller/partidas/controllerIniciarPartida.php', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await res.json();
+            if (data.success) {
+                await Swal.fire({
+                    title: 'Listo',
+                    text: data.message || 'Partida iniciada.',
+                    icon: 'success',
+                    confirmButtonColor: '#007bff',
+                });
+                refrescarJugadores();
+            } else {
+                Swal.fire({
+                    title: 'No se pudo iniciar',
+                    text: data.message || 'Intenta de nuevo.',
+                    icon: 'error',
+                    confirmButtonColor: '#007bff',
+                });
+            }
+        } catch (err) {
+            console.error(err);
+            Swal.fire({ title: 'Error de red', icon: 'error', confirmButtonColor: '#007bff' });
+        }
+    });
+}
+
 const btnVolver = document.querySelector('#btnVolver');
 
 if (btnVolver) {
@@ -147,56 +379,50 @@ const btnTerminar = document.querySelector('#terminarJuego');
 
 if (btnTerminar) {
     btnTerminar.dataset.id = pin;
-}
-btnTerminar.addEventListener('click', async () => {
-    const resultado = await Swal.fire({
-        title: '¿Estas seguro?',
-        text: '¿Deseas terminar el juego? Esta acción no se puede deshacer.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#007bff',
-        cancelButtonColor: '#7d6c6cff',
-        confirmButtonText: 'Sí, terminar',
-        cancelButtonText: 'Cancelar',
-    });
-
-    if (!resultado.isConfirmed) {
-        return;
-    }
-
-    const dataPin = btnTerminar.dataset.id;
-    console.log('PIN enviado:', dataPin);
-
-    const formData = new FormData();
-    formData.append('pin', dataPin);
-
-    const res = await fetch('../../controller/partidas/controllerTerminarPartida.php', {
-        method: 'POST',
-        body: formData,
-    });
-    const data = await res.json();
-    if (data.success) {
-        limpiarSessionStorage();
-        notificarActualizacionHistorial();
-        Swal.fire({
-            title: 'Exito!',
-            text: data.message,
-            icon: 'success',
+    btnTerminar.addEventListener('click', async () => {
+        const resultado = await Swal.fire({
+            title: '¿Estas seguro?',
+            text: '¿Deseas terminar el juego? Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
             confirmButtonColor: '#007bff',
-        }).then(() => {
-            setTimeout(() => {
+            cancelButtonColor: '#7d6c6cff',
+            confirmButtonText: 'Sí, terminar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (!resultado.isConfirmed) {
+            return;
+        }
+
+        const dataPin = btnTerminar.dataset.id;
+        console.log('PIN enviado:', dataPin);
+
+        const res = await postTerminarPartida(dataPin);
+        const data = await res.json();
+        if (data.success) {
+            limpiarSessionStorage();
+            notificarActualizacionHistorial();
+            Swal.fire({
+                title: 'Exito!',
+                text: data.message,
+                icon: 'success',
+                confirmButtonColor: '#007bff',
+            }).then(() => {
+                setTimeout(() => {
+                    window.location.href = '../views/generarPIN.php';
+                }, 1000);
+            });
+        } else {
+            limpiarSessionStorage();
+            Swal.fire({
+                title: '¡Error!',
+                text: data.message,
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            }).then(() => {
                 window.location.href = '../views/generarPIN.php';
-            }, 1000);
-        });
-    } else {
-        limpiarSessionStorage();
-        Swal.fire({
-            title: '¡Error!',
-            text: data.message,
-            icon: 'error',
-            confirmButtonColor: '#007bff',
-        }).then(() => {
-            window.location.href = '../views/generarPIN.php';
-        });
-    }
-});
+            });
+        }
+    });
+}

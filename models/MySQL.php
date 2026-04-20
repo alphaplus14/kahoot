@@ -2,41 +2,42 @@
 // Clase para manejar la conexión a la base de datos con PDO
 class MySQL
 {
-    // Variable para almacenar la conexión PDO
     private $conexion;
 
-    // Método para establecer la conexión
     public function conectar()
     {
-        // $host = 'u810917883_yesapregunta';
-        // $dbname = 'kahoot';
-        // $usuario = 'u810917883_yesapregunta';
-        // $contrasena = 'Y6!lSAQ5';
+        $configPath = __DIR__ . '/../config/config.php';
+        if (!file_exists($configPath)) {
+            die('Error de configuración: falta config/config.php. Copia config/config.example.php y ajusta los valores.');
+        }
+        $config = require $configPath;
+        $db = $config['db'] ?? [];
 
-        $host = 'localhost';
-        $dbname = 'kahoot';
-        $usuario = 'root';
-        $contrasena = '';
+        $host     = $db['host']     ?? 'localhost';
+        $dbname   = $db['dbname']   ?? 'kahoot';
+        $usuario  = $db['user']     ?? 'root';
+        $contrasena = $db['password'] ?? '';
+        $charset  = $db['charset']  ?? 'utf8mb4';
 
-        $dsn = "mysql:host=$host;dbname=$dbname;charset=utf8mb4";
+        $dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
 
         try {
-            $this->conexion = new PDO($dsn, $usuario, $contrasena);
-            $this->conexion->setAttribute(
-                PDO::ATTR_ERRMODE,
-                PDO::ERRMODE_EXCEPTION
-            );
+            $this->conexion = new PDO($dsn, $usuario, $contrasena, [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+            ]);
         } catch (PDOException $e) {
-            die("Error de conexión: " . $e->getMessage());
+            error_log('Error de conexión BD: ' . $e->getMessage());
+            die('Error de conexión a la base de datos.');
         }
     }
 
-    // Método para cerrar la conexión
     public function desconectar()
     {
         $this->conexion = null;
     }
-    // Método para obtener la conexión PDO (para consultas preparadas)
+
     public function getConexion()
     {
         return $this->conexion;

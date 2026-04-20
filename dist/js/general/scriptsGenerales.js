@@ -13,7 +13,7 @@ export async function verificarEmail(email) {
         const formData = new FormData();
         formData.append('email', email);
         //? Solicitud de datos a controller
-        const response = await fetch('../../controller/verify/controllerVerifyEmail.php', {
+        const response = await csrfFetch('../../controller/verify/controllerVerifyEmail.php', {
             method: 'POST',
             body: formData,
         });
@@ -38,7 +38,7 @@ export async function traerDatosUsuarioPorID(id) {
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
+        const json = await csrfFetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
             method: 'POST',
             body: formData,
         });

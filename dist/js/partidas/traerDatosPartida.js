@@ -1,6 +1,6 @@
 async function traerDatosPartida(idPartida) {
     try {
-        const response = await fetch(`../../controller/partidas/controllerDatosPartida.php?id_partida=${idPartida}`, {
+        const response = await csrfFetch(`../../controller/partidas/controllerDatosPartida.php?id_partida=${idPartida}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ window.traerDatosPartida = traerDatosPartida;
 
 async function DatosRankingGlobal() {
     try {
-        const response = await fetch(`../../controller/partidas/controllerDatosRankingGlobal.php`, {
+        const response = await csrfFetch(`../../controller/partidas/controllerDatosRankingGlobal.php`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

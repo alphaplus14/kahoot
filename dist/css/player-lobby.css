@@ -1,0 +1,218 @@
+/**
+ * Lobby del jugador (esperando al organizador) — misma línea que index / pinGenerado
+ */
+
+.player-lobby-page {
+    --pl-surface: #ffffff;
+    --pl-text: #0f172a;
+    --pl-muted: #64748b;
+    --pl-border: rgba(15, 23, 42, 0.1);
+    --pl-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+    --pl-radius: 16px;
+
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--pl-text);
+    margin: 0;
+    min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
+    background: linear-gradient(145deg, #5f32c9 0%, #4a28a8 35%, #2563d4 70%, #1d4ed8 100%);
+}
+
+.player-lobby-page *,
+.player-lobby-page *::before,
+.player-lobby-page *::after {
+    box-sizing: border-box;
+}
+
+.pl-decor {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(255, 255, 255, 0.22), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 20%, rgba(120, 200, 255, 0.18), transparent 50%),
+        radial-gradient(ellipse 50% 35% at 50% 100%, rgba(180, 120, 255, 0.15), transparent 45%);
+    filter: saturate(1.05);
+}
+
+.pl-decor::after {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    top: 10%;
+    right: -120px;
+    filter: blur(40px);
+}
+
+.pl-main {
+    position: relative;
+    z-index: 1;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 18px 32px;
+}
+
+.pl-inner {
+    width: 100%;
+    max-width: 420px;
+    animation: plFadeUp 0.55s ease-out both;
+}
+
+.pl-logo {
+    display: block;
+    width: min(140px, 40vw);
+    height: auto;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
+}
+
+.pl-card {
+    background: var(--pl-surface);
+    border-radius: var(--pl-radius);
+    box-shadow: var(--pl-shadow);
+    border: 1px solid var(--pl-border);
+    padding: 28px 24px 24px;
+    text-align: center;
+}
+
+.pl-eyebrow {
+    margin: 0 0 8px;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--pl-muted);
+}
+
+.pl-name {
+    margin: 0 0 14px;
+    font-size: clamp(1.5rem, 5vw, 1.85rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--pl-text);
+    word-break: break-word;
+}
+
+.pl-copy {
+    margin: 0 0 22px;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: #475569;
+}
+
+.pl-copy strong {
+    color: var(--pl-text);
+    font-weight: 700;
+}
+
+.pl-wait {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 40px;
+    margin-bottom: 16px;
+}
+
+.pl-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pl-dots span {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #6366f1, #2563eb);
+    animation: plDot 1.2s ease-in-out infinite;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.pl-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.pl-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes plDot {
+    0%,
+    80%,
+    100% {
+        transform: scale(0.75);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.pl-status {
+    margin: 0 0 22px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: #2563eb;
+    min-height: 1.4em;
+}
+
+.pl-status--ready {
+    color: #16a34a;
+}
+
+.pl-btn-out {
+    display: block;
+    width: 100%;
+    padding: 12px 18px;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    color: #dc2626;
+    background: #fff;
+    border: 2px solid rgba(220, 38, 38, 0.45);
+    border-radius: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.pl-btn-out:hover {
+    background: #fef2f2;
+    border-color: #dc2626;
+    color: #b91c1c;
+}
+
+.pl-btn-out:active {
+    transform: scale(0.99);
+}
+
+@keyframes plFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pl-inner {
+        animation: none;
+    }
+
+    .pl-dots span {
+        animation: none;
+        opacity: 0.85;
+    }
+}

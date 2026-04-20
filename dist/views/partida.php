@@ -1,7 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['pinPartida'])) {
-    header('Location: ../../index.php?error=true&message=No puedes acceder a esta pagina, ingresa un pin antes de continuar!&title=Acceso denegado');
+require_once '../../includes/auth.php';
+if (empty($_SESSION['pinPartida'])) {
+    header('Location: ' . _auth_index_url() . '?error=true&message=' . urlencode('No puedes acceder a esta página, ingresa un pin antes de continuar!') . '&title=' . urlencode('Acceso denegado'));
     exit;
 }
 ?>
@@ -11,50 +11,74 @@ if (!isset($_SESSION['pinPartida'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - ¿Y esa pregunta?</title>
-    <link rel="stylesheet" href="../css/lobby.css">
+    <?php csrf_meta(); ?>
+    <title>Tu nombre — ¿Y esa pregunta?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="../css/styles.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="../css/player-register.css">
 </head>
 
-<body class="bg-primary d-flex flex-column min-vh-100">
+<body class="player-reg-page">
+    <div class="pr-decor" aria-hidden="true"></div>
 
-    <main class="flex-grow-1 d-flex justify-content-center align-items-center">
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col-6 col-sm-4 col-md-3 col-lg-2 d-flex justify-content-center align-items-center mb-4">
-                    <img class="logo img-fluid p-2" src="../assets/img/logo.png" alt="¿Y esa Pregunta?">
-                </div>
-            </div>
-            <div class="container-body row justify-content-center">
-                <div class="col-10 col-sm-6 col-md-4 col-lg-3 card-lobby">
-                    <form id="frmEntrarPartida">
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="nombre" placeholder="Nombre" required>
-                            <label for="nombre">Nombre</label>
-                        </div>
+    <header class="pr-header">
+        <a href="../../index.php" class="pr-back">← Volver al inicio</a>
+    </header>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="ficha" placeholder="Ficha" required>
-                            <label for="ficha">Ficha</label>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-end mt-4 mb-0">
-                            <button type="button" class="btn btn-dark w-100 btnEntrarPartida">Entrar al juego</button>
-                        </div>
-                        <div class="d-flex align-items-center justify-content-end mt-2 mb-0">
-                            <a href="index.php" class="btn btn-danger w-100">Cancelar</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
+    <main class="pr-main">
+        <div class="pr-inner">
+            <img class="pr-logo" src="../assets/img/logo.png" alt="¿Y esa Pregunta?">
+
+            <section class="pr-card" aria-labelledby="pr-title">
+                <h1 id="pr-title" class="pr-title">Datos del jugador</h1>
+                <p class="pr-sub">
+                    Escribe tu <strong>nombre</strong> y N° de <strong>ficha</strong> (número o código corto)
+                    para distinguirte en la partida.
+                </p>
+
+                <form id="frmEntrarPartida">
+                    <div class="pr-field">
+                        <label class="pr-label" for="nombre">Nombre en pantalla</label>
+                        <input
+                            type="text"
+                            class="pr-input"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Ej. María, Team Azul…"
+                            maxlength="40"
+                            autocomplete="nickname"
+                            required
+                        />
+                    </div>
+
+                    <div class="pr-field">
+                        <label class="pr-label" for="ficha">Ficha</label>
+                        <input
+                            type="text"
+                            class="pr-input"
+                            id="ficha"
+                            name="ficha"
+                            placeholder="Ej. 12, 305, A1…"
+                            maxlength="40"
+                            autocomplete="off"
+                            required
+                        />
+                       
+                    </div>
+
+                    <div class="pr-actions">
+                        <button type="button" class="pr-btn-primary btnEntrarPartida">Entrar al lobby</button>
+                        <a href="../../index.php" class="pr-btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </section>
         </div>
     </main>
 
-    <footer id="nopin" class="position-fixed bottom-0 w-100">
-    </footer>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/general/csrf.js"></script>
     <script type="module" src="../js/partidas/partidasUsuario.js"></script>
 </body>
 

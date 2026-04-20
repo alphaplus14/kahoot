@@ -1,15 +1,28 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../includes/auth.php';
 header('Content-Type: application/json');
+csrf_validate();
 
-
-require_once '../../models/MySQL.php';
+require_once __DIR__ . '/../../models/MySQL.php';
 try {
     $mysql = new MySQL();
     $mysql->conectar();
-    //consulta para verificar el pin
-    $stmt = $mysql->getConexion()->prepare("SELECT * FROM partidas WHERE pin_partida = :pin_partida and estado_partida = 'Esperando' or estado_partida = 'Jugando'");
-    $pinPartida = filter_input(INPUT_POST, 'pinIngresado', FILTER_SANITIZE_NUMBER_INT);
+    $pinPartida = filter_input(INPUT_POST, 'pinIngresado', FILTER_VALIDATE_INT);
+    if ($pinPartida === false || $pinPartida === null) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'PIN inválido'
+        ]);
+        exit;
+    }
+    //consulta para verificar el pin (IN en vez de AND/OR para evitar
+    //que la precedencia deje pasar cualquier partida en estado 'Jugando')
+    // Sólo se puede unir con el PIN mientras el organizador no ha pulsado "Iniciar juego".
+    $stmt = $mysql->getConexion()->prepare(
+        "SELECT * FROM partidas
+         WHERE pin_partida = :pin_partida
+           AND estado_partida = 'Esperando'"
+    );
     $stmt->bindParam(':pin_partida', $pinPartida, PDO::PARAM_INT);
     $stmt->execute();
     $partida = $stmt->fetch(PDO::FETCH_ASSOC);

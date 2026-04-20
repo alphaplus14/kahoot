@@ -1,2 +1,9 @@
 node_modules
 .DS_Store
+
+# Config local con credenciales (debe copiarse desde config.example.php)
+/config/config.php
+
+# Logs
+/logs/
+*.log

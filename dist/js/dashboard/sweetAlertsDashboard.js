@@ -99,7 +99,7 @@ export async function verificarEmail(email) {
         const formData = new FormData();
         formData.append('email', email);
         //? Solicitud de datos a controller
-        const response = await fetch('../../controller/verify/controllerVerifyEmail.php', {
+        const response = await csrfFetch('../../controller/verify/controllerVerifyEmail.php', {
             method: 'POST',
             body: formData,
         });
@@ -124,7 +124,7 @@ export async function traerDatosUsuarioPorID(id) {
         const formData = new FormData();
         formData.append('id', id);
         //? Solicitud de datos a controller
-        const json = await fetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
+        const json = await csrfFetch(`../../controller/usuarios/controllerDatosUsuarioPorID.php`, {
             method: 'POST',
             body: formData,
         });
@@ -362,7 +362,7 @@ export async function sweetUsuarioInsertar() {
                 formData.append('email', datos.email);
                 formData.append('pass', datos.pass);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/usuarios/controllerUsuarioInsertar.php', {
+                const json = await csrfFetch('../../controller/usuarios/controllerUsuarioInsertar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -468,7 +468,7 @@ export async function sweetUsuarioEditar(id) {
                 formData.append('bool', datos.bool);
                 formData.append('id', datos.id);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/usuarios/controllerUsuarioEditar.php', {
+                const json = await csrfFetch('../../controller/usuarios/controllerUsuarioEditar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -527,7 +527,7 @@ export async function sweetUsuarioActivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/usuarios/controllerUsuarioActivar.php', {
+                const json = await csrfFetch('../../controller/usuarios/controllerUsuarioActivar.php', {
                     method: 'POST',
                     body: formData,
                 });
@@ -586,7 +586,7 @@ export async function sweetUsuarioDesactivar(id) {
                 let formData = new FormData();
                 formData.append('id', datos);
                 //? Solicitud de datos a controller
-                const json = await fetch('../../controller/usuarios/controllerUsuarioDesactivar.php', {
+                const json = await csrfFetch('../../controller/usuarios/controllerUsuarioDesactivar.php', {
                     method: 'POST',
                     body: formData,
                 });

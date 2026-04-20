@@ -1,13 +1,12 @@
 <?php
-//* Se inicia la sesión para poder cerrarla correctamente
-session_start();
+require_once __DIR__ . '/../includes/auth.php';
 
-//* Se eliminan todas las variables de la sesión
-session_unset();
-
-//* Se destruye completamente la sesión actual
+$_SESSION = [];
+if (ini_get('session.use_cookies')) {
+    $params = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+}
 session_destroy();
 
-//* Se redirige al login tras cerrar la sesión
-header("Location: ../index.php");
+header('Location: ' . _auth_index_url());
 exit();

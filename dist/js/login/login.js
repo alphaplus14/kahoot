@@ -24,7 +24,7 @@ async function sweetAlertasError(message, title) {
         title: title,
         html: await contenidoAlertasError(message),
         icon: 'error',
-        confirmButtonColor: '#28a745',
+        confirmButtonColor: '#2563eb',
         confirmButtonText: 'Aceptar',
     });
 }
@@ -33,10 +33,12 @@ async function sweetAlertasError(message, title) {
 
 // #region //* Lanzar sweet errores
 //TODO Inicio Lanzar sweet errores
-window.onload = function () {
-    try {
-        document.getElementById('alertasErrores').click();
-    } catch (error) {}
-};
+window.addEventListener('DOMContentLoaded', function () {
+    const btn = document.getElementById('alertasErrores');
+    if (!btn) return;
+    const message = btn.dataset.message || '';
+    const title = btn.dataset.title || '';
+    sweetAlertasError(message, title);
+});
 //TODO Fin Lanzar sweet errores
 // #endregion

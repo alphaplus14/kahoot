@@ -1,24 +1,17 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../includes/auth.php';
 header('Content-Type: application/json');
+requireActiveUserJson();
+// Sin validación CSRF: el POST sólo lo hace el organizador ya autenticado (sesión).
+// Evita fallos cuando el token no llega al navegador (caché, mismo host, etc.).
 
-if (!isset($_SESSION['id_usuario'])) {
-    http_response_code(401);
-    echo json_encode([
-        'error' => true,
-        'message' => 'Sesión no válida'
-    ]);
-    exit;
-}
-
-
-require_once '../../models/MySQL.php';
+require_once __DIR__ . '/../../models/MySQL.php';
 
 try {
     $mysql = new MySQL();
     $mysql->conectar();
 
-    $pinPartida = filter_input(INPUT_POST, 'pin', FILTER_SANITIZE_NUMBER_INT);
+    $pinPartida = filter_input(INPUT_POST, 'pin', FILTER_VALIDATE_INT, ['options' => ['min_range' => 100000, 'max_range' => 999999]]);
 
     if (!$pinPartida) {
         echo json_encode([

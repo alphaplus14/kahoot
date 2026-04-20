@@ -1,0 +1,269 @@
+/**
+ * Entrada de jugadores (index.php) — misma línea visual que pinGenerado / pin.css
+ */
+
+.idx-page {
+    --idx-surface: #ffffff;
+    --idx-text: #0f172a;
+    --idx-muted: #64748b;
+    --idx-border: rgba(15, 23, 42, 0.1);
+    --idx-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+    --idx-radius-lg: 16px;
+    --idx-radius-btn: 10px;
+
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--idx-text);
+    margin: 0;
+    min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
+    background: linear-gradient(145deg, #5f32c9 0%, #4a28a8 35%, #2563d4 70%, #1d4ed8 100%);
+}
+
+.idx-page *,
+.idx-page *::before,
+.idx-page *::after {
+    box-sizing: border-box;
+}
+
+.idx-decor {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(255, 255, 255, 0.22), transparent 55%),
+        radial-gradient(ellipse 60% 40% at 100% 20%, rgba(120, 200, 255, 0.18), transparent 50%),
+        radial-gradient(ellipse 50% 35% at 50% 100%, rgba(180, 120, 255, 0.15), transparent 45%);
+    filter: saturate(1.05);
+}
+
+.idx-decor::after {
+    content: '';
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    top: 10%;
+    right: -120px;
+    filter: blur(40px);
+}
+
+.idx-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.idx-btn-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 10px 18px;
+    border-radius: var(--idx-radius-btn);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    color: #1e293b;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.idx-btn-login:hover {
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+    color: #1e293b;
+}
+
+.idx-main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100dvh - 72px);
+    padding: 24px 20px 48px;
+}
+
+.idx-inner {
+    width: 100%;
+    max-width: 420px;
+    animation: idxFadeUp 0.55s ease-out both;
+}
+
+.idx-hero {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.idx-hero__logo {
+    width: min(200px, 52vw);
+    height: auto;
+    display: block;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.15));
+}
+
+.idx-hero__title {
+    margin: 0 0 10px;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #fff;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+}
+
+.idx-hero__subtitle {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+}
+
+.idx-card {
+    background: var(--idx-surface);
+    border-radius: var(--idx-radius-lg);
+    box-shadow: var(--idx-shadow);
+    border: 1px solid var(--idx-border);
+    padding: 26px 24px 24px;
+}
+
+.idx-card__eyebrow {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--idx-muted);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.idx-pin-input {
+    width: 100%;
+    font-family: inherit;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-align: center;
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--idx-border);
+    background: #f8fafc;
+    color: var(--idx-text);
+    font-variant-numeric: tabular-nums;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.idx-pin-input::placeholder {
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #94a3b8;
+}
+
+.idx-pin-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.idx-pin-input.bg-danger-subtle {
+    background: #fef2f2 !important;
+    border-color: #fecaca !important;
+}
+
+.idx-btn-submit {
+    width: 100%;
+    margin-top: 16px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--idx-radius-btn);
+    cursor: pointer;
+    color: #fff;
+    background: linear-gradient(180deg, #27272a 0%, #0f172a 100%);
+    box-shadow: 0 4px 0 #020617, 0 8px 20px rgba(15, 23, 42, 0.35);
+    transition: filter 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.idx-btn-submit:hover:not(:disabled) {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.idx-btn-submit:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: 0 2px 0 #020617;
+}
+
+@keyframes idxFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .idx-inner {
+        animation: none;
+    }
+}
+
+/* Alertas pie (lobby.js) — alineadas al estilo */
+.idx-page .alerta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 20px;
+    font-size: 15px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 1000;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.8s ease-out;
+}
+
+.idx-page .alerta i {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.idx-page .fade-out {
+    animation: idxFadeOut 0.8s forwards;
+}
+
+@keyframes idxFadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
