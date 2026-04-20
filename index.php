@@ -11,6 +11,7 @@ $title    = $hasError ? (string)($_GET['title']   ?? '') : '';
 
 <head>
     <meta charset="UTF-8">
+    <?php favicon_link(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php csrf_meta(); ?>
     <title>¿Y esa pregunta? — Unirse a partida</title>

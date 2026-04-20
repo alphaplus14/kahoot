@@ -37,6 +37,7 @@ if ($verificacion === false) {
 
 <head>
     <meta charset="UTF-8">
+    <?php favicon_link(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php csrf_meta(); ?>
     <title>Juego - ¿Y esa pregunta?</title>

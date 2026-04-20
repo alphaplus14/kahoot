@@ -1,4 +1,5 @@
 'use strict';
+import { swalBindEnterConfirm } from '../general/swalEnterConfirm.js';
 // #region //* Definicion de Funciones createElement
 //! /////////////////////////////////////////////////////////
 //! Definicion de Funciones createElement
@@ -316,6 +317,7 @@ export async function sweetUsuarioInsertar() {
             focusConfirm: false, //? Desactivar focus al boton confirmar
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreUsuario').value.trim();
@@ -407,6 +409,7 @@ export async function sweetUsuarioEditar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se traen datos de usuario por ID
                 const datosUsuario = await traerDatosUsuarioPorID(id);
@@ -514,6 +517,7 @@ export async function sweetUsuarioActivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;
@@ -573,6 +577,7 @@ export async function sweetUsuarioDesactivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;

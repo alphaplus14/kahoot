@@ -10,6 +10,7 @@ if (empty($_SESSION['pinPartida'])) {
 
 <head>
     <meta charset="UTF-8">
+    <?php favicon_link(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php csrf_meta(); ?>
     <title>Tu nombre — ¿Y esa pregunta?</title>

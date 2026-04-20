@@ -11,6 +11,7 @@ $nombreMostrar = htmlspecialchars($_SESSION['nombreJugador'] ?? 'Jugador', ENT_Q
 
 <head>
     <meta charset="UTF-8">
+    <?php favicon_link(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala de espera — ¿Y esa pregunta?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">

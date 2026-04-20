@@ -11,6 +11,7 @@ $mysql->conectar();
 
 <head>
     <meta charset="UTF-8">
+    <?php favicon_link(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php csrf_meta(); ?>
     <?php csrf_inline_script(); ?>

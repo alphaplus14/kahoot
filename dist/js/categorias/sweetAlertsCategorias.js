@@ -1,4 +1,5 @@
 'use strict';
+import { swalBindEnterConfirm } from '../general/swalEnterConfirm.js';
 // #region //* Funciones Generales
 //! /////////////////////////////////////////////////////////
 //! Funciones Generales
@@ -288,6 +289,7 @@ export async function sweetCategoriaInsertar() {
             focusConfirm: false, //? Desactivar focus al boton confirmar
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
                 const nombre = document.querySelector('#nombreCategoria').value.trim();
@@ -361,6 +363,7 @@ export async function sweetCategoriaEditar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se traen datos de Categoria por ID
                 const datosCategoria = await traerDatosCategoriaPorID(id);
@@ -441,6 +444,7 @@ export async function sweetCategoriaActivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;
@@ -500,6 +504,7 @@ export async function sweetCategoriaDesactivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;

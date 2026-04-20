@@ -49,6 +49,12 @@ const inputSegundos = document.querySelector('#segundosPreguntas');
 const form = document.querySelector('#generarPinForm');
 const buttonEnviarForm = document.querySelector('#buttonEnviarForm');
 
+form?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.isComposing) return;
+    e.preventDefault();
+    buttonEnviarForm?.click();
+});
+
 buttonEnviarForm.addEventListener('click', async () => {
     //? Sacar el limite de preguntas que hay en BD
     const opcion = select.options[select.selectedIndex];

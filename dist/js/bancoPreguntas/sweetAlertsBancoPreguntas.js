@@ -1,4 +1,5 @@
 'use strict';
+import { swalBindEnterConfirm } from '../general/swalEnterConfirm.js';
 
 // #region //* Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -507,6 +508,7 @@ export async function sweetCuestionarioInsertar() {
             focusConfirm: false, //? Desactivar focus al boton confirmar
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
                 const pregunta = document.querySelector('#inputPregunta').value.trim();
@@ -609,6 +611,7 @@ export async function sweetCuestionarioEditar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: async () => {
                 //? Se capturan los datos del formulario
                 const pregunta = document.querySelector('#inputPregunta').value.trim();
@@ -714,6 +717,7 @@ export async function sweetCuestionarioActivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;
@@ -773,6 +777,7 @@ export async function sweetCuestionarioDesactivar(id) {
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
             cancelButtonColor: '#dc3545', //? Color boton cancelar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
             preConfirm: () => {
                 //? Retornar valores finales
                 return id;
@@ -828,6 +833,7 @@ export async function sweetCuestionarioVerRespuestas(id) {
             confirmButtonText: 'Confirmar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
         });
     } catch (e) {
         //? Control de errores

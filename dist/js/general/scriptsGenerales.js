@@ -1,4 +1,5 @@
 import { sweetUsuarioEditar } from '../dashboard/sweetAlertsDashboard.js';
+import { swalBindEnterConfirm } from './swalEnterConfirm.js';
 
 // #region //* Funciones Generales
 //! /////////////////////////////////////////////////////////
@@ -240,6 +241,7 @@ export async function sweetPoliticaPrivacidad() {
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
         });
     } catch (e) {
         //? Control de errores
@@ -260,6 +262,7 @@ export async function sweetTerminosCondiciones() {
             confirmButtonText: 'Aceptar', //? Texto boton confirmar
             focusConfirm: false, //? Desactivar focus al boton crear
             confirmButtonColor: '#007bff', //? Color boton confirmar
+            didOpen: (popup) => swalBindEnterConfirm(popup),
         });
     } catch (e) {
         //? Control de errores

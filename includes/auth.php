@@ -6,13 +6,22 @@
 // Configurar el handler global de errores antes que cualquier otra cosa.
 require_once __DIR__ . '/errors.php';
 
+// Detrás de proxy / CDN (p. ej. Hostinger): el cliente usa HTTPS pero PHP no rellena HTTPS.
+// Sin esto, la cookie de sesión puede marcarse mal y el CSRF pierde la sesión entre GET y POST.
+if (
+    (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower((string)$_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https')
+    || (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && (string)$_SERVER['HTTP_X_FORWARDED_SSL'] === 'on')
+) {
+    $_SERVER['HTTPS'] = 'on';
+}
+
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
         'path'     => '/',
         'httponly' => true,
         'samesite' => 'Lax',
-        'secure'   => !empty($_SERVER['HTTPS']),
+        'secure'   => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
     ]);
     @ini_set('session.use_strict_mode', '1');
     session_start();
@@ -36,6 +45,29 @@ function _auth_index_url(): string
     }
     // Fallback: subir dos niveles (controller/<sub> o dist/views)
     return '../../index.php';
+}
+
+/**
+ * Ruta relativa al favicon según la URL del script (index.php o dist/views/*.php).
+ */
+function favicon_href(): string
+{
+    $script = str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? ''));
+    $dir = dirname($script);
+    if (preg_match('#/dist/views$#', $dir)) {
+        return '../assets/media/signo-de-interrogacion.png';
+    }
+
+    return 'dist/assets/media/signo-de-interrogacion.png';
+}
+
+/**
+ * Imprime <link rel="icon" ...> para todas las vistas HTML.
+ */
+function favicon_link(): void
+{
+    $href = htmlspecialchars(favicon_href(), ENT_QUOTES, 'UTF-8');
+    echo '<link rel="icon" type="image/png" href="' . $href . '">' . "\n";
 }
 
 /**
