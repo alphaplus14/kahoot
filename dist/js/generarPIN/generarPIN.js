@@ -46,8 +46,22 @@ window.addEventListener('DOMContentLoaded', function () {
 const select = document.querySelector('#categoria');
 const inputLimite = document.querySelector('#limitePreguntas');
 const inputSegundos = document.querySelector('#segundosPreguntas');
+const modoJuego = document.querySelector('#modoJuego');
+const wrapIntervaloMs = document.querySelector('#wrapIntervaloMs');
+const intervaloEliminacion = document.querySelector('#intervaloEliminacion');
 const form = document.querySelector('#generarPinForm');
 const buttonEnviarForm = document.querySelector('#buttonEnviarForm');
+
+function syncMsUi() {
+    const ms = modoJuego && modoJuego.value === 'muerte_subita';
+    if (wrapIntervaloMs) {
+        wrapIntervaloMs.classList.toggle('d-none', !ms);
+        wrapIntervaloMs.setAttribute('aria-hidden', ms ? 'false' : 'true');
+    }
+}
+
+modoJuego?.addEventListener('change', syncMsUi);
+syncMsUi();
 
 form?.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' || e.isComposing) return;
@@ -59,15 +73,12 @@ buttonEnviarForm.addEventListener('click', async () => {
     //? Sacar el limite de preguntas que hay en BD
     const opcion = select.options[select.selectedIndex];
     const limitePreguntas = opcion.getAttribute('name');
-    //? Si existe una advertencia, se elimina para evitar errores
-    if (form.children[4]) {
-        form.children[4].remove();
-    }
+    form.querySelectorAll('.js-pin-validation-msg').forEach((el) => el.remove());
     //? Verificacion existe categoria
     if (!opcion.getAttribute('value')) {
         select.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
         let label = document.createElement('label');
-        label.classList.add('fs-3');
+        label.classList.add('fs-3', 'js-pin-validation-msg');
         label.textContent = '¡Selecciona una categoria!';
         form.append(label);
         return;
@@ -79,7 +90,7 @@ buttonEnviarForm.addEventListener('click', async () => {
     if (!inputLimite.value) {
         inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
         let label = document.createElement('label');
-        label.classList.add('fs-3');
+        label.classList.add('fs-3', 'js-pin-validation-msg');
         label.textContent = '¡Ingresa un limite de preguntas!';
         form.append(label);
         return;
@@ -88,7 +99,7 @@ buttonEnviarForm.addEventListener('click', async () => {
         if (parseInt(inputLimite.value) < 1 || parseInt(inputLimite.value) > limitePreguntas) {
             inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
             let label = document.createElement('label');
-            label.classList.add('fs-3');
+            label.classList.add('fs-3', 'js-pin-validation-msg');
             if (parseInt(inputLimite.value) < 1) {
                 label.textContent = '¡Ingresa un dato mayor a 0!';
             } else {
@@ -108,15 +119,29 @@ buttonEnviarForm.addEventListener('click', async () => {
     if (!inputSegundos.value) {
         inputSegundos.value = 15;
     } else {
-        if (parseInt(inputSegundos).value < 5 || parseInt(inputSegundos).value > 1200) {
+        const secVal = parseInt(String(inputSegundos.value), 10);
+        if (secVal < 5 || secVal > 1200) {
             inputSegundos.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
             let label = document.createElement('label');
-            label.classList.add('fs-3');
-            if (parseInt(inputSegundos).value < 5) {
+            label.classList.add('fs-3', 'js-pin-validation-msg');
+            if (secVal < 5) {
                 label.textContent = '¡Cuidado, no se permite menos de 5 segundos por pregunta!';
             } else {
                 label.textContent = '¡Cuidado, no se permite mas de 1200 segundos por pregunta!';
             }
+            form.append(label);
+            return;
+        }
+    }
+    if (modoJuego && modoJuego.value === 'muerte_subita') {
+        const lim = parseInt(String(inputLimite.value), 10);
+        const iv = parseInt(String(intervaloEliminacion?.value ?? '10'), 10);
+        if (!Number.isNaN(lim) && lim > 0 && lim < iv) {
+            inputLimite.classList.add('border', 'border-danger', 'bg', 'bg-danger-subtle');
+            const label = document.createElement('label');
+            label.classList.add('fs-3', 'js-pin-validation-msg');
+            label.textContent =
+                '¡En muerte súbita el límite de preguntas debe ser al menos ' + iv + ' (intervalo de eliminación)!';
             form.append(label);
             return;
         }
@@ -128,6 +153,10 @@ buttonEnviarForm.addEventListener('click', async () => {
     const formDataGenerarPIN = new FormData();
     formDataGenerarPIN.append('segundos', inputSegundos.value);
     formDataGenerarPIN.append('limitePreguntas', inputLimite.value);
+    formDataGenerarPIN.append('modo_juego', modoJuego ? modoJuego.value : 'normal');
+    if (modoJuego && modoJuego.value === 'muerte_subita' && intervaloEliminacion) {
+        formDataGenerarPIN.append('intervalo_eliminacion', intervaloEliminacion.value);
+    }
     const jsonGenerarPIN = await csrfFetch('../../controller/pin/controllerGenerarPIN.php', {
         method: 'POST',
         body: formDataGenerarPIN,

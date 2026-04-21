@@ -80,21 +80,58 @@ try {
         exit;
     }
 
-    $stmtJugadores = $pdo->prepare(
-        "SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
+    $modoJuego = 'normal';
+    try {
+        $stModo = $pdo->prepare('SELECT modo_juego FROM partidas WHERE id_partida = :id LIMIT 1');
+        $stModo->bindValue(':id', (int)$partida['id_partida'], PDO::PARAM_INT);
+        $stModo->execute();
+        $mrow = $stModo->fetch(PDO::FETCH_ASSOC);
+        if ($mrow && isset($mrow['modo_juego'])) {
+            $modoJuego = (string)$mrow['modo_juego'];
+        }
+    } catch (Throwable $e) {
+        if (stripos($e->getMessage(), 'Unknown column') === false) {
+            throw $e;
+        }
+    }
+
+    $estadoP   = (string)($partida['estado_partida'] ?? '');
+    $filtrarMs = ($modoJuego === 'muerte_subita' && $estadoP === 'Jugando');
+
+    $sqlJug = 'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
          FROM jugadores
-         WHERE partidas_id_partida = :id_partida
-         ORDER BY id_jugador ASC"
-    );
-    $stmtJugadores->bindValue(':id_partida', (int)$partida['id_partida'], PDO::PARAM_INT);
-    $stmtJugadores->execute();
-    $jugadores = $stmtJugadores->fetchAll(PDO::FETCH_ASSOC);
+         WHERE partidas_id_partida = :id_partida';
+    if ($filtrarMs) {
+        $sqlJug .= ' AND COALESCE(en_juego, 1) = 1';
+    }
+    $sqlJug .= ' ORDER BY puntaje_jugador DESC, id_jugador ASC';
+
+    try {
+        $stmtJugadores = $pdo->prepare($sqlJug);
+        $stmtJugadores->bindValue(':id_partida', (int)$partida['id_partida'], PDO::PARAM_INT);
+        $stmtJugadores->execute();
+        $jugadores = $stmtJugadores->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Throwable $e) {
+        if (stripos($e->getMessage(), 'Unknown column') === false) {
+            throw $e;
+        }
+        $stmtJugadores = $pdo->prepare(
+            'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
+             FROM jugadores
+             WHERE partidas_id_partida = :id_partida
+             ORDER BY puntaje_jugador DESC, id_jugador ASC'
+        );
+        $stmtJugadores->bindValue(':id_partida', (int)$partida['id_partida'], PDO::PARAM_INT);
+        $stmtJugadores->execute();
+        $jugadores = $stmtJugadores->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     echo json_encode([
-        'success'   => true,
-        'estado'    => $partida['estado_partida'],
-        'total'     => count($jugadores),
-        'jugadores' => $jugadores,
+        'success'    => true,
+        'estado'     => $partida['estado_partida'],
+        'modo_juego' => $modoJuego,
+        'total'      => count($jugadores),
+        'jugadores'  => $jugadores,
     ]);
 } catch (Exception $e) {
     error_log('controllerDatosJugadoresPorPin: ' . $e->getMessage());

@@ -165,6 +165,21 @@ while ($row = $todoCategoriaC->fetch(PDO::FETCH_ASSOC)) {
                                     <label for="segundosPreguntas" class="form-label">Segundos por pregunta</label>
                                     <input type="number" class="form-control segundosPreguntasInput" id="segundosPreguntas" name="segundosPreguntas" min="0">
                                 </div>
+                                <div class="mb-3">
+                                    <label for="modoJuego" class="form-label">Modo de juego</label>
+                                    <select class="form-select" id="modoJuego" name="modoJuego" aria-label="Modo de juego">
+                                        <option value="normal" selected>Normal</option>
+                                        <option value="muerte_subita">Muerte súbita</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3 d-none" id="wrapIntervaloMs" aria-hidden="true">
+                                    <label for="intervaloEliminacion" class="form-label">Eliminaciones cada</label>
+                                    <select class="form-select" id="intervaloEliminacion" name="intervaloEliminacion" aria-label="Intervalo muerte súbita">
+                                        <option value="10">10 preguntas</option>
+                                        <option value="5">5 preguntas</option>
+                                    </select>
+                                    <small class="text-muted d-block mt-1">Los jugadores con menos puntos se excluyen hasta quedar 5 finalistas en la lista del organizador.</small>
+                                </div>
                                 <button type="button" class="btn btn-success" id="buttonEnviarForm">Generar PIN</button>
                             </form>
                         </div>

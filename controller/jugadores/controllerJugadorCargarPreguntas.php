@@ -15,6 +15,8 @@ if ($idPartida === false || $idPartida === null) {
     exit;
 }
 
+$idJugador = (int)($_SESSION['id_jugador'] ?? 0);
+
 require_once __DIR__ . '/../../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -32,6 +34,51 @@ try {
             'message' => 'La partida aún no ha comenzado. Espera a que el organizador pulse Iniciar juego.',
         ]);
         exit;
+    }
+
+    $_SESSION['modo_juego']          = 'normal';
+    $_SESSION['intervalo_eliminacion'] = 0;
+    try {
+        $stModo = $pdo->prepare('SELECT modo_juego, intervalo_eliminacion FROM partidas WHERE id_partida = :id LIMIT 1');
+        $stModo->bindValue(':id', $idPartida, PDO::PARAM_INT);
+        $stModo->execute();
+        $mr = $stModo->fetch(PDO::FETCH_ASSOC);
+        if ($mr) {
+            $_SESSION['modo_juego'] = (string)($mr['modo_juego'] ?? 'normal');
+            if (isset($mr['intervalo_eliminacion']) && $mr['intervalo_eliminacion'] !== null) {
+                $_SESSION['intervalo_eliminacion'] = (int)$mr['intervalo_eliminacion'];
+            }
+        }
+    } catch (Throwable $e) {
+        if (stripos($e->getMessage(), 'Unknown column') === false) {
+            throw $e;
+        }
+    }
+
+    if ($idJugador > 0) {
+        try {
+            $stEj = $pdo->prepare(
+                'SELECT COALESCE(en_juego, 1) FROM jugadores
+                 WHERE id_jugador = :jid AND partidas_id_partida = :pid LIMIT 1'
+            );
+            $stEj->bindValue(':jid', $idJugador, PDO::PARAM_INT);
+            $stEj->bindValue(':pid', $idPartida, PDO::PARAM_INT);
+            $stEj->execute();
+            $ej = $stEj->fetchColumn();
+            if ($ej !== false && (int)$ej === 0) {
+                http_response_code(403);
+                echo json_encode([
+                    'success'    => false,
+                    'eliminado'  => true,
+                    'message'    => 'Fuiste eliminado de la muerte súbita.',
+                ]);
+                exit;
+            }
+        } catch (Throwable $e) {
+            if (stripos($e->getMessage(), 'Unknown column') === false) {
+                throw $e;
+            }
+        }
     }
 
     $sql = 'SELECT

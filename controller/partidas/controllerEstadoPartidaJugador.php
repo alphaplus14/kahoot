@@ -58,9 +58,43 @@ try {
         exit;
     }
 
+    $estadoPartida = (string)($row['estado_partida'] ?? '');
+    $eliminadoMs   = false;
+    if ($estadoPartida === 'Jugando' && $idJugadorSesion > 0) {
+        try {
+            $stEj = $pdo->prepare(
+                'SELECT COALESCE(en_juego, 1) FROM jugadores
+                 WHERE id_jugador = :jid AND partidas_id_partida = :pid LIMIT 1'
+            );
+            $stEj->bindValue(':jid', $idJugadorSesion, PDO::PARAM_INT);
+            $stEj->bindValue(':pid', $idPartida, PDO::PARAM_INT);
+            $stEj->execute();
+            $ej = $stEj->fetchColumn();
+            if ($ej !== false && (int)$ej === 0) {
+                $eliminadoMs = true;
+            }
+        } catch (Throwable $e) {
+            if (stripos($e->getMessage(), 'Unknown column') === false) {
+                throw $e;
+            }
+        }
+    }
+    if ($eliminadoMs) {
+        echo json_encode([
+            'success'     => true,
+            'expulsado'   => false,
+            'eliminado_ms'=> true,
+            'estado'      => $estadoPartida,
+            'nombre_jugador' => $_SESSION['nombreJugador'] ?? '',
+            'message'     => 'Has sido eliminado de la muerte súbita.',
+        ]);
+        exit;
+    }
+
     echo json_encode([
         'success'        => true,
         'expulsado'      => false,
+        'eliminado_ms'   => false,
         'estado'         => $row['estado_partida'],
         'nombre_jugador' => $_SESSION['nombreJugador'] ?? '',
     ]);

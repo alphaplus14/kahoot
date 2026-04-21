@@ -143,6 +143,19 @@ async function enviarRespuesta(letra) {
     }
 
     if (!datos || datos.success === false) {
+        if (datos?.eliminado) {
+            detenerRelojes();
+            if (Swal) {
+                await Swal.fire({
+                    title: 'Muerte súbita',
+                    text: datos?.message || 'Has sido eliminado.',
+                    icon: 'info',
+                    confirmButtonColor: '#0d6efd',
+                });
+            }
+            irAlInicio();
+            return;
+        }
         if (datos?.partida_finalizada) {
             await finalizarPorOrganizador();
             return;
@@ -176,6 +189,22 @@ async function enviarRespuesta(letra) {
     });
 
     indiceActual += 1;
+
+    if (datos.eliminado) {
+        detenerRelojes();
+        if (Swal) {
+            await Swal.fire({
+                title: 'Eliminado',
+                text:
+                    'En muerte súbita solo permanecen los 5 mejores en la lista del organizador. Has sido eliminado.',
+                icon: 'info',
+                confirmButtonText: 'Volver al inicio',
+                confirmButtonColor: '#0d6efd',
+            });
+        }
+        irAlInicio();
+        return;
+    }
 
     setTimeout(() => {
         if (indiceActual >= preguntas.length) {
@@ -265,6 +294,19 @@ async function consultarEstadoPartida() {
             irAlInicio();
             return;
         }
+        if (data.eliminado_ms) {
+            detenerRelojes();
+            if (Swal) {
+                await Swal.fire({
+                    title: 'Eliminado',
+                    text: data.message || 'Has sido eliminado de la muerte súbita.',
+                    icon: 'info',
+                    confirmButtonColor: '#0d6efd',
+                });
+            }
+            irAlInicio();
+            return;
+        }
         const est = String(data.estado ?? '').trim();
         if (data.success && est.toLowerCase() === 'finalizada') {
             await finalizarPorOrganizador();
@@ -321,6 +363,18 @@ async function iniciar() {
         const res = await csrfFetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php');
         const datos = await res.json();
         if (!Array.isArray(datos) || datos.length === 0) {
+            if (datos?.eliminado) {
+                if (Swal) {
+                    await Swal.fire({
+                        title: 'Muerte súbita',
+                        text: datos?.message || 'Fuiste eliminado.',
+                        icon: 'info',
+                        confirmButtonColor: '#0d6efd',
+                    });
+                }
+                irAlInicio();
+                return;
+            }
             if (Swal) {
                 await Swal.fire({
                     title: '¡Error!',
