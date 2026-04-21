@@ -12,6 +12,7 @@ $nombreMostrar = htmlspecialchars($_SESSION['nombreJugador'] ?? 'Jugador', ENT_Q
 <head>
     <meta charset="UTF-8">
     <?php favicon_link(); ?>
+    <?php csrf_meta(); ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala de espera — ¿Y esa pregunta?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,12 +45,13 @@ $nombreMostrar = htmlspecialchars($_SESSION['nombreJugador'] ?? 'Jugador', ENT_Q
 
                 <p class="pl-status" id="estadoLobbyTexto">Esperando al organizador…</p>
 
-                <a href="../../index.php" class="pl-btn-out">Salir de la sala</a>
+                <button type="button" class="pl-btn-out" id="btnSalirLobby">Salir de la sala</button>
             </section>
         </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/general/csrf.js"></script>
     <script src="../js/partidas/lobbyJugador.js"></script>
 </body>
 

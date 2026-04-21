@@ -57,3 +57,45 @@ async function consultarEstado() {
 
 consultarEstado();
 setInterval(consultarEstado, INTERVALO_MS);
+
+const btnSalirLobby = document.getElementById('btnSalirLobby');
+if (btnSalirLobby) {
+    btnSalirLobby.addEventListener('click', async () => {
+        const ok = await Swal.fire({
+            title: '¿Salir de la sala?',
+            text: 'Puedes volver a entrar con el PIN si la partida sigue en espera.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, salir',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#2563eb',
+        });
+        if (!ok.isConfirmed) return;
+        try {
+            const fd = new FormData();
+            const res = await csrfFetch('../../controller/jugadores/controllerSalirLobbyJugador.php', {
+                method: 'POST',
+                body: fd,
+            });
+            const data = await res.json();
+            if (!data.success) {
+                await Swal.fire({
+                    title: 'No se pudo salir',
+                    text: data.message || 'Intenta de nuevo.',
+                    icon: 'error',
+                    confirmButtonColor: '#2563eb',
+                });
+                return;
+            }
+            window.location.href = '../../index.php';
+        } catch (e) {
+            console.error(e);
+            await Swal.fire({
+                title: 'Error de red',
+                text: 'Comprueba tu conexión e intenta otra vez.',
+                icon: 'error',
+                confirmButtonColor: '#2563eb',
+            });
+        }
+    });
+}

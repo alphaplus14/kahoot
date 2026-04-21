@@ -12,6 +12,36 @@ if (empty($_SESSION['idPartida']) || empty($_SESSION['preguntas_juego'])) {
     exit;
 }
 
+$idPartidaSesion = filter_var($_SESSION['idPartida'], FILTER_VALIDATE_INT);
+if ($idPartidaSesion === false || $idPartidaSesion === null || $idPartidaSesion < 1) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Partida inválida']);
+    exit;
+}
+
+require_once __DIR__ . '/../../models/MySQL.php';
+$mysqlCheck = new MySQL();
+$mysqlCheck->conectar();
+try {
+    $stPart = $mysqlCheck->getConexion()->prepare(
+        'SELECT estado_partida FROM partidas WHERE id_partida = :id LIMIT 1'
+    );
+    $stPart->bindValue(':id', $idPartidaSesion, PDO::PARAM_INT);
+    $stPart->execute();
+    $rowPart = $stPart->fetch(PDO::FETCH_ASSOC);
+    if (!$rowPart || ($rowPart['estado_partida'] ?? '') !== 'Jugando') {
+        http_response_code(410);
+        echo json_encode([
+            'success'              => false,
+            'partida_finalizada'   => true,
+            'message'              => 'La partida fue finalizada por el organizador.',
+        ]);
+        exit;
+    }
+} finally {
+    $mysqlCheck->desconectar();
+}
+
 $indice         = filter_input(INPUT_POST, 'indice', FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]);
 $letra          = strtoupper(trim((string)($_POST['letra'] ?? '')));
 $tiempoRestante = filter_input(INPUT_POST, 'tiempo_restante', FILTER_VALIDATE_FLOAT);

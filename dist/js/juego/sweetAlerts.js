@@ -1,3 +1,6 @@
+// SweetAlert2 (CDN global). En módulos ES no existe el identificador libre `Swal`.
+const Swal = typeof window !== 'undefined' ? window.Swal : undefined;
+
 // #region //* Convertir texto de Base de datos a Texto legible
 //TODO Inicio Funcion Convertir texto de Base de datos a Texto legible
 function convertirTextoBD(text) {
@@ -259,8 +262,12 @@ async function contenidoCargarDatosJuego(datos, puntos) {
         });
         return form;
     } catch (error) {
-        console.log(error);
-        return false;
+        console.error(error);
+        const fallback = document.createElement('div');
+        fallback.className = 'text-start small';
+        fallback.textContent =
+            'No se pudo armar el detalle de las preguntas. Tus puntos se guardaron en el ranking.';
+        return fallback;
     }
 }
 // #endregion
@@ -268,28 +275,58 @@ async function contenidoCargarDatosJuego(datos, puntos) {
 // #region //* Sweet Cargar Datos Juego
 //TODO Inicio SweetAlert Cargar Datos Juego
 export async function sweetCargarDatosJuego(datos, puntos) {
+    const lista = Array.isArray(datos) ? datos : [];
+    const pts = typeof puntos === 'number' ? puntos : Number(puntos) || 0;
+
+    const irInicio = () => {
+        window.location.replace(new URL('../../index.php', window.location.href).href);
+    };
+
+    let htmlNode = null;
     try {
-        Swal.fire({
-            title: 'Resumen de juego', //? Titulo Modal
-            icon: 'info', //? Icono Modal/?
-            html: await contenidoCargarDatosJuego(datos, puntos), //? Contenido HTML
-            confirmButtonText: 'Aceptar', //? Texto boton confirmar
-            focusConfirm: false, //? Desactivar focus al boton crear
-            confirmButtonColor: '#007bff', //? Color boton confirmar
-            allowOutsideClick: () => {
-                console.log('Click afuera detectado');
-                return false;
-            },
-            allowEscapeKey: false, // Opcional: evita cerrar con la tecla Esc
-            preConfirm: () => {
-                return (window.location.href = '../../index.php');
-            },
+        htmlNode = await contenidoCargarDatosJuego(lista, pts);
+    } catch (e) {
+        console.error('contenidoCargarDatosJuego', e);
+    }
+
+    if (!htmlNode || htmlNode === false) {
+        const div = document.createElement('div');
+        div.className = 'text-start';
+        div.innerHTML = `<p class="mb-0">Obtuviste <strong>${pts}</strong> puntos en total.</p>`;
+        htmlNode = div;
+    }
+
+    if (!Swal) {
+        window.alert(`Resumen: ${pts} puntos. Pulsa Aceptar para volver al inicio.`);
+        irInicio();
+        return;
+    }
+
+    try {
+        await Swal.fire({
+            title: 'Resumen de juego',
+            icon: 'info',
+            html: htmlNode,
+            confirmButtonText: 'Aceptar',
+            focusConfirm: false,
+            confirmButtonColor: '#007bff',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
         });
     } catch (e) {
-        //? Control de errores
-        console.log(e);
-        return false;
+        console.error('sweetCargarDatosJuego', e);
+        try {
+            await Swal.fire({
+                title: 'Partida finalizada',
+                text: `Obtuviste ${pts} puntos. Pulsa para volver al inicio.`,
+                icon: 'info',
+                confirmButtonColor: '#007bff',
+            });
+        } catch (e2) {
+            window.alert('Partida finalizada');
+        }
     }
+    irInicio();
 }
 //TODO Fin SweetAlert Cargar Datos Juego
 // #endregion

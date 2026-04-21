@@ -1,5 +1,16 @@
 import { sweetCargarDatosJuego } from './sweetAlerts.js';
 
+// SweetAlert2 se carga global (CDN); en módulos ES no existe la variable libre `Swal`.
+const Swal = typeof window !== 'undefined' ? window.Swal : undefined;
+
+function urlInicio() {
+    return new URL('../../index.php', window.location.href).href;
+}
+
+function irAlInicio() {
+    window.location.replace(urlInicio());
+}
+
 // Decodifica entidades HTML que vienen almacenadas en la BD.
 function decodificarTextoBD(texto) {
     const txt = document.createElement('textarea');
@@ -42,6 +53,10 @@ let intervaloContador = null;
 let bloqueado = false;           // True cuando ya se procesó la respuesta o timeout
 let historialResumen = [];       // Se usa al terminar para el sweetCargarDatosJuego
 let puntosTotales = 0;
+let pollEstadoPartida = null;
+let finPartidaOrganizador = false;
+let pollEstadoEnCurso = false;
+const POLL_ESTADO_MS = 2000;
 
 function deshabilitarBotones() {
     Object.values(botones).forEach((b) => b.setAttribute('disabled', 'disabled'));
@@ -76,6 +91,15 @@ function pintarPregunta() {
     bloqueado = false;
     tiempoRestante = segundosPorPregunta;
     iniciarContador();
+}
+
+function detenerRelojes() {
+    clearInterval(intervaloContador);
+    intervaloContador = null;
+    if (pollEstadoPartida !== null) {
+        clearInterval(pollEstadoPartida);
+        pollEstadoPartida = null;
+    }
 }
 
 function iniciarContador() {
@@ -119,12 +143,18 @@ async function enviarRespuesta(letra) {
     }
 
     if (!datos || datos.success === false) {
-        Swal.fire({
-            title: '¡Error!',
-            text: datos?.message || 'No se pudo registrar la respuesta.',
-            icon: 'error',
-            confirmButtonColor: '#007bff',
-        });
+        if (datos?.partida_finalizada) {
+            await finalizarPorOrganizador();
+            return;
+        }
+        if (Swal) {
+            await Swal.fire({
+                title: '¡Error!',
+                text: datos?.message || 'No se pudo registrar la respuesta.',
+                icon: 'error',
+                confirmButtonColor: '#007bff',
+            });
+        }
         return;
     }
 
@@ -156,7 +186,100 @@ async function enviarRespuesta(letra) {
     }, 3000);
 }
 
+async function finalizarPorOrganizador() {
+    if (finPartidaOrganizador) return;
+    finPartidaOrganizador = true;
+    detenerRelojes();
+    bloqueado = true;
+    deshabilitarBotones();
+
+    let pts = puntosTotales;
+    const abortGuard = new AbortController();
+    const abortTid = window.setTimeout(() => abortGuard.abort(), 12000);
+    try {
+        const formData = new FormData();
+        const res = await csrfFetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
+            method: 'POST',
+            body: formData,
+            signal: abortGuard.signal,
+        });
+        const data = await res.json();
+        if (typeof data.puntos_total === 'number') {
+            pts = data.puntos_total;
+            puntosTotales = pts;
+        }
+    } catch (err) {
+        console.error('Error guardando puntos al cerrar partida', err);
+    } finally {
+        window.clearTimeout(abortTid);
+    }
+
+    // Si Swal no está disponible en módulos ES, el resumen largo fallaba y la pantalla quedaba fija.
+    const escapeId = window.setTimeout(() => irAlInicio(), 8000);
+
+    try {
+        if (Swal) {
+            await Swal.fire({
+                title: 'Partida finalizada',
+                html: `<p class="mb-2">El organizador cerró la partida.</p><p class="mb-0"><strong>Puntos guardados: ${pts}</strong></p>`,
+                icon: 'info',
+                confirmButtonText: 'Volver al inicio',
+                confirmButtonColor: '#0d6efd',
+                allowOutsideClick: true,
+            });
+        } else {
+            window.alert(`Partida finalizada. Puntos: ${pts}`);
+        }
+    } catch (e) {
+        console.error('finalizarPorOrganizador', e);
+        window.alert('Partida finalizada');
+    } finally {
+        window.clearTimeout(escapeId);
+    }
+    irAlInicio();
+}
+
+async function consultarEstadoPartida() {
+    if (finPartidaOrganizador || pollEstadoEnCurso) return;
+    pollEstadoEnCurso = true;
+    try {
+        const res = await fetch('../../controller/partidas/controllerEstadoPartidaJugador.php', {
+            credentials: 'same-origin',
+        });
+        let data;
+        try {
+            data = await res.json();
+        } catch (parseErr) {
+            return;
+        }
+        if (data.expulsado) {
+            detenerRelojes();
+            if (Swal) {
+                await Swal.fire({
+                    title: 'Fuiste quitado de la partida',
+                    text: data.message || 'Ya no estás en esta partida.',
+                    icon: 'warning',
+                    confirmButtonColor: '#007bff',
+                });
+            }
+            irAlInicio();
+            return;
+        }
+        const est = String(data.estado ?? '').trim();
+        if (data.success && est.toLowerCase() === 'finalizada') {
+            await finalizarPorOrganizador();
+        }
+    } catch (e) {
+        console.debug('poll estado partida', e);
+    } finally {
+        pollEstadoEnCurso = false;
+    }
+}
+
 async function terminarJuego() {
+    if (finPartidaOrganizador) return;
+    finPartidaOrganizador = true;
+    detenerRelojes();
     try {
         const formData = new FormData();
         const res = await csrfFetch('../../controller/jugadores/controllerInsertarPuntosJugador.php', {
@@ -164,7 +287,7 @@ async function terminarJuego() {
             body: formData,
         });
         const data = await res.json();
-        if (data.success === false) {
+        if (data.success === false && Swal) {
             await Swal.fire({
                 title: '¡Error!',
                 text: data.message,
@@ -198,12 +321,14 @@ async function iniciar() {
         const res = await csrfFetch('../../controller/jugadores/controllerJugadorCargarPreguntas.php');
         const datos = await res.json();
         if (!Array.isArray(datos) || datos.length === 0) {
-            await Swal.fire({
-                title: '¡Error!',
-                text: datos?.message || 'No se pudieron cargar las preguntas.',
-                icon: 'error',
-                confirmButtonColor: '#007bff',
-            });
+            if (Swal) {
+                await Swal.fire({
+                    title: '¡Error!',
+                    text: datos?.message || 'No se pudieron cargar las preguntas.',
+                    icon: 'error',
+                    confirmButtonColor: '#007bff',
+                });
+            }
             location.reload();
             return;
         }
@@ -211,6 +336,8 @@ async function iniciar() {
         segundosPorPregunta = datos[0].segundos_pregunta_partida;
         el.form.addEventListener('click', manejarClick);
         pintarPregunta();
+        consultarEstadoPartida();
+        pollEstadoPartida = setInterval(consultarEstadoPartida, POLL_ESTADO_MS);
     } catch (err) {
         console.error('Error cargando juego', err);
     }
