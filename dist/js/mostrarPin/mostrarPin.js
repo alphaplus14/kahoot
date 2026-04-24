@@ -127,25 +127,22 @@ actualizarTimer();
 
 const listaJugadores = document.querySelector('#listaJugadores');
 const contadorJugadores = document.querySelector('#contadorJugadores');
-const mensajeSinJugadores = document.querySelector('#mensajeSinJugadores');
 
 /** Estado actual de la partida (solo lobby permite expulsar). */
 let estadoLobbyActual = 'Esperando';
 
-function escapeHtml(texto) {
-    const txt = document.createElement('textarea');
-    txt.textContent = texto ?? '';
-    return txt.innerHTML;
-}
-
+/**
+ * Lista de jugadores: DOM + textContent (no innerHTML en nombres) para que emojis y UTF-8 se vean bien.
+ */
 function renderJugadores(jugadores) {
     if (!listaJugadores) return;
 
     const total = Array.isArray(jugadores) ? jugadores.length : 0;
     if (contadorJugadores) contadorJugadores.textContent = String(total);
 
+    listaJugadores.replaceChildren();
+
     if (total === 0) {
-        listaJugadores.innerHTML = '';
         const vacio = document.createElement('li');
         vacio.id = 'mensajeSinJugadores';
         vacio.className = 'pin-player-empty';
@@ -154,41 +151,71 @@ function renderJugadores(jugadores) {
         return;
     }
 
-    // Render idempotente: se redibuja la lista entera porque es corta (<100 ítems)
-    // y evita tener que diffear ids manualmente.
     const puedeExpulsar = estadoLobbyActual === 'Esperando';
     const idOrg = sessionStorage.getItem('idPartidaOrganizador');
 
-    listaJugadores.innerHTML = jugadores
-        .map((j, i) => {
-            const nombre = escapeHtml(j.nombre_jugador);
-            const ficha = escapeHtml(String(j.ficha_jugador ?? ''));
-            const ptsRaw = j.puntaje_jugador;
-            const pts = ptsRaw !== undefined && ptsRaw !== null && ptsRaw !== '' ? Number(ptsRaw) : 0;
-            const puntajeStr = Number.isFinite(pts) ? String(pts) : '0';
+    jugadores.forEach((j, i) => {
+        const li = document.createElement('li');
+        li.className = 'pin-player-row' + (i === 0 ? ' pin-player-row--first' : '');
+
+        const rank = document.createElement('span');
+        rank.className = 'pin-player__rank';
+        rank.title = 'Posición';
+        rank.textContent = '#' + (i + 1);
+
+        const nameblock = document.createElement('div');
+        nameblock.className = 'pin-player__nameblock';
+
+        const nameSpan = document.createElement('span');
+        nameSpan.className = 'pin-player__name';
+        const nombreRaw = j.nombre_jugador;
+        nameSpan.textContent = nombreRaw == null ? '' : String(nombreRaw);
+
+        nameblock.appendChild(nameSpan);
+
+        const fichaRaw = j.ficha_jugador;
+        if (fichaRaw != null && String(fichaRaw).trim() !== '') {
+            const meta = document.createElement('span');
+            meta.className = 'pin-player__meta';
+            meta.textContent = 'Ficha · ' + String(fichaRaw);
+            nameblock.appendChild(meta);
+        }
+
+        const scoreWrap = document.createElement('div');
+        scoreWrap.className = 'pin-player__score';
+
+        const ptsRaw = j.puntaje_jugador;
+        const pts = ptsRaw !== undefined && ptsRaw !== null && ptsRaw !== '' ? Number(ptsRaw) : 0;
+        const scoreVal = document.createElement('span');
+        scoreVal.className = 'pin-player__score-val';
+        scoreVal.textContent = Number.isFinite(pts) ? String(pts) : '0';
+
+        const scoreLbl = document.createElement('span');
+        scoreLbl.className = 'pin-player__score-lbl';
+        scoreLbl.textContent = 'pts';
+
+        scoreWrap.appendChild(scoreVal);
+        scoreWrap.appendChild(scoreLbl);
+
+        const actions = document.createElement('div');
+        actions.className = 'pin-player__actions';
+        if (puedeExpulsar && (idOrg || pin)) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'pin-btn pin-btn--outline-danger';
+            btn.setAttribute('data-action', 'expulsar');
             const jid = Number(j.id_jugador);
-            const firstClass = i === 0 ? ' pin-player-row--first' : '';
-            const btnQuitar =
-                puedeExpulsar && (idOrg || pin)
-                    ? `<div class="pin-player__actions"><button type="button" class="pin-btn pin-btn--outline-danger" data-action="expulsar" data-id-jugador="${jid}">Quitar</button></div>`
-                    : '<div class="pin-player__actions"></div>';
-            const metaFicha = ficha ? `<span class="pin-player__meta">Ficha · ${ficha}</span>` : '';
-            return `
-                <li class="pin-player-row${firstClass}">
-                    <span class="pin-player__rank" title="Posición">#${i + 1}</span>
-                    <div class="pin-player__nameblock">
-                        <span class="pin-player__name">${nombre}</span>
-                        ${metaFicha}
-                    </div>
-                    <div class="pin-player__score">
-                        <span class="pin-player__score-val">${escapeHtml(puntajeStr)}</span>
-                        <span class="pin-player__score-lbl">pts</span>
-                    </div>
-                    ${btnQuitar}
-                </li>
-            `;
-        })
-        .join('');
+            btn.setAttribute('data-id-jugador', Number.isFinite(jid) ? String(jid) : '0');
+            btn.textContent = 'Quitar';
+            actions.appendChild(btn);
+        }
+
+        li.appendChild(rank);
+        li.appendChild(nameblock);
+        li.appendChild(scoreWrap);
+        li.appendChild(actions);
+        listaJugadores.appendChild(li);
+    });
 }
 
 function actualizarUIEstado(estado) {

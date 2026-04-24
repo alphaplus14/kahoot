@@ -95,7 +95,7 @@ btnIngresarJuego.addEventListener('click', () => {
         } else {
             Swal.fire({
                 title: '¡Error!',
-                text: 'Ah ocurrido un error, intenta nuevamente!',
+                text: responseJuego.message || 'Ha ocurrido un error, intenta nuevamente.',
                 icon: 'error',
                 confirmButtonColor: '#2563eb',
                 confirmButtonText: '¡OK!',

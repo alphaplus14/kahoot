@@ -1,20 +1,22 @@
 <?php
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/jugador_campos.php';
 header('Content-Type: application/json');
 csrf_validate();
 
 if (
-    empty($_POST['nombreJugador']) ||
-    empty($_POST['fichaJugador']) ||
-    empty($_POST['idPartida'])
+    !isset($_POST['nombreJugador'], $_POST['fichaJugador'], $_POST['idPartida']) ||
+    $_POST['nombreJugador'] === '' ||
+    $_POST['fichaJugador'] === '' ||
+    $_POST['idPartida'] === ''
 ) {
     http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Faltan datos']);
     exit;
 }
 
-$nombre    = trim(substr(filter_var($_POST['nombreJugador'], FILTER_SANITIZE_FULL_SPECIAL_CHARS), 0, 40));
-$ficha     = trim(substr(filter_var($_POST['fichaJugador'],  FILTER_SANITIZE_FULL_SPECIAL_CHARS), 0, 40));
+$nombre    = jugador_normalizar_campo((string)$_POST['nombreJugador'], 40, 2);
+$ficha     = jugador_normalizar_campo((string)$_POST['fichaJugador'], 40, 1);
 $idPartida = filter_var($_POST['idPartida'], FILTER_VALIDATE_INT);
 
 if ($idPartida === false || $idPartida === null) {
@@ -23,17 +25,11 @@ if ($idPartida === false || $idPartida === null) {
     exit;
 }
 
-// Evita símbolos raros y texto vacío; el organizador revisa nombres en el lobby antes de iniciar.
-if ($nombre === '' || $ficha === '') {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Nombre y ficha son obligatorios']);
-    exit;
-}
-if (!preg_match('/^[\p{L}\p{N}\s\-\.]{2,40}$/u', $nombre) || !preg_match('/^[\p{L}\p{N}\s\-\.]{1,40}$/u', $ficha)) {
+if ($nombre === null || $ficha === null) {
     http_response_code(400);
     echo json_encode([
         'success' => false,
-        'message' => 'Usa solo letras, números, espacios, guiones o puntos (sin insultos ni símbolos raros).',
+        'message' => 'Nombre (mín. 2 caracteres) y ficha son obligatorios. Evita solo espacios o caracteres vacíos.',
     ]);
     exit;
 }

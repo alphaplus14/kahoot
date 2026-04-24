@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../../includes/auth.php';
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=UTF-8');
 requireActiveUserJson();
 
 require_once __DIR__ . '/../../models/MySQL.php';
@@ -126,13 +126,16 @@ try {
         $jugadores = $stmtJugadores->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    echo json_encode([
-        'success'    => true,
-        'estado'     => $partida['estado_partida'],
-        'modo_juego' => $modoJuego,
-        'total'      => count($jugadores),
-        'jugadores'  => $jugadores,
-    ]);
+    echo json_encode(
+        [
+            'success'    => true,
+            'estado'     => $partida['estado_partida'],
+            'modo_juego' => $modoJuego,
+            'total'      => count($jugadores),
+            'jugadores'  => $jugadores,
+        ],
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+    );
 } catch (Exception $e) {
     error_log('controllerDatosJugadoresPorPin: ' . $e->getMessage());
     http_response_code(500);

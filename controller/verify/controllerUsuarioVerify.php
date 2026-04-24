@@ -1,13 +1,14 @@
 <?php
 // Usado por el flujo de jugador (no requiere login, sí requiere sesión de jugador).
 require_once __DIR__ . '/../../includes/auth.php';
+require_once __DIR__ . '/../../includes/jugador_campos.php';
 header('Content-Type: application/json');
 
-$nombre    = isset($_POST['nombre']) ? trim(filter_var($_POST['nombre'], FILTER_SANITIZE_FULL_SPECIAL_CHARS)) : '';
-$ficha     = isset($_POST['ficha'])  ? trim(filter_var($_POST['ficha'],  FILTER_SANITIZE_FULL_SPECIAL_CHARS)) : '';
+$nombre    = isset($_POST['nombre']) ? jugador_normalizar_campo((string)$_POST['nombre'], 40, 2) : null;
+$ficha     = isset($_POST['ficha']) ? jugador_normalizar_campo((string)$_POST['ficha'], 40, 1) : null;
 $idPartida = filter_input(INPUT_POST, 'idPartida', FILTER_VALIDATE_INT);
 
-if ($nombre === '' || $ficha === '' || !$idPartida) {
+if ($nombre === null || $ficha === null || !$idPartida) {
     echo json_encode(false);
     exit;
 }

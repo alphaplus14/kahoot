@@ -10,7 +10,8 @@
     --pl-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
     --pl-radius: 16px;
 
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif, 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Color Emoji', emoji;
     color: var(--pl-text);
     margin: 0;
     min-height: 100dvh;

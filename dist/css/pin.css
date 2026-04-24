@@ -23,7 +23,8 @@ html.pin-lobby-root {
     --pin-gold: #d4a012;
     --pin-gold-soft: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
 
-    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif, 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Apple Color Emoji', 'Noto Color Emoji', emoji;
     color: var(--pin-text);
     margin: 0;
     position: relative;
