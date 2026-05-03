@@ -98,7 +98,8 @@ try {
     $estadoP   = (string)($partida['estado_partida'] ?? '');
     $filtrarMs = ($modoJuego === 'muerte_subita' && $estadoP === 'Jugando');
 
-    $sqlJug = 'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
+    $sqlJug = 'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador,
+            preguntas_respondidas
          FROM jugadores
          WHERE partidas_id_partida = :id_partida';
     if ($filtrarMs) {
@@ -115,27 +116,34 @@ try {
         if (stripos($e->getMessage(), 'Unknown column') === false) {
             throw $e;
         }
-        $stmtJugadores = $pdo->prepare(
-            'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
+        $sqlLegacy = 'SELECT id_jugador, nombre_jugador, ficha_jugador, puntaje_jugador
              FROM jugadores
-             WHERE partidas_id_partida = :id_partida
-             ORDER BY puntaje_jugador DESC, id_jugador ASC'
-        );
+             WHERE partidas_id_partida = :id_partida';
+        if ($filtrarMs) {
+            $sqlLegacy .= ' AND COALESCE(en_juego, 1) = 1';
+        }
+        $sqlLegacy .= ' ORDER BY puntaje_jugador DESC, id_jugador ASC';
+        $stmtJugadores = $pdo->prepare($sqlLegacy);
         $stmtJugadores->bindValue(':id_partida', (int)$partida['id_partida'], PDO::PARAM_INT);
         $stmtJugadores->execute();
         $jugadores = $stmtJugadores->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    echo json_encode(
-        [
-            'success'    => true,
-            'estado'     => $partida['estado_partida'],
-            'modo_juego' => $modoJuego,
-            'total'      => count($jugadores),
-            'jugadores'  => $jugadores,
-        ],
-        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
-    );
+    $payload = [
+        'success'    => true,
+        'estado'     => $partida['estado_partida'],
+        'modo_juego' => $modoJuego,
+        'total'      => count($jugadores),
+        'jugadores'  => $jugadores,
+    ];
+    if ($estadoP === 'Jugando') {
+        $stCnt = $pdo->prepare('SELECT COUNT(*) FROM quiz WHERE partidas_id_partida = :pid');
+        $stCnt->bindValue(':pid', (int)$partida['id_partida'], PDO::PARAM_INT);
+        $stCnt->execute();
+        $payload['total_preguntas'] = (int)$stCnt->fetchColumn();
+    }
+
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 } catch (Exception $e) {
     error_log('controllerDatosJugadoresPorPin: ' . $e->getMessage());
     http_response_code(500);

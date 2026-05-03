@@ -55,6 +55,26 @@ try {
     }
 
     if ($ok) {
+        try {
+            $stPid = $pdo->prepare('SELECT id_partida FROM partidas WHERE pin_partida = :pin LIMIT 1');
+            $stPid->bindValue(':pin', $pin, PDO::PARAM_INT);
+            $stPid->execute();
+            $rowPid = $stPid->fetch(PDO::FETCH_ASSOC);
+            if ($rowPid) {
+                $stReset = $pdo->prepare(
+                    'UPDATE jugadores SET preguntas_respondidas = 0,
+                        ultima_pregunta_indice = NULL,
+                        ultima_respuesta_letra = NULL
+                     WHERE partidas_id_partida = :pid'
+                );
+                $stReset->bindValue(':pid', (int)$rowPid['id_partida'], PDO::PARAM_INT);
+                $stReset->execute();
+            }
+        } catch (Throwable $e) {
+            if (stripos($e->getMessage(), 'Unknown column') === false) {
+                error_log('IniciarPartida reset progreso jugadores: ' . $e->getMessage());
+            }
+        }
         echo json_encode(['success' => true, 'message' => 'Partida iniciada. Los jugadores pueden jugar.']);
         exit;
     }

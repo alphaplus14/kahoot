@@ -131,6 +131,9 @@ const contadorJugadores = document.querySelector('#contadorJugadores');
 /** Estado actual de la partida (solo lobby permite expulsar). */
 let estadoLobbyActual = 'Esperando';
 
+/** Total de preguntas del cuestionario (solo en partida Jugando; para 13/40 en la lista). */
+let totalPreguntasCuestionario = 0;
+
 /**
  * Lista de jugadores: DOM + textContent (no innerHTML en nombres) para que emojis y UTF-8 se vean bien.
  */
@@ -179,6 +182,17 @@ function renderJugadores(jugadores) {
             meta.className = 'pin-player__meta';
             meta.textContent = 'Ficha · ' + String(fichaRaw);
             nameblock.appendChild(meta);
+        }
+
+        if (estadoLobbyActual === 'Jugando' && totalPreguntasCuestionario > 0) {
+            const prR = j.preguntas_respondidas;
+            const prN =
+                prR !== undefined && prR !== null && prR !== '' ? parseInt(String(prR), 10) : 0;
+            const prOk = Number.isFinite(prN) ? prN : 0;
+            const prog = document.createElement('span');
+            prog.className = 'pin-player__progreso';
+            prog.textContent = 'Respondidas: ' + prOk + '/' + totalPreguntasCuestionario;
+            nameblock.appendChild(prog);
         }
 
         const scoreWrap = document.createElement('div');
@@ -238,6 +252,19 @@ function actualizarUIEstado(estado) {
     }
 }
 
+const POLL_JUGADORES_LOBBY_MS = 3000;
+const POLL_JUGADORES_JUEGO_MS = 2000;
+
+let pollJugadoresTimer = null;
+
+function programarPollJugadores() {
+    if (pollJugadoresTimer) {
+        clearInterval(pollJugadoresTimer);
+    }
+    const ms = estadoLobbyActual === 'Jugando' ? POLL_JUGADORES_JUEGO_MS : POLL_JUGADORES_LOBBY_MS;
+    pollJugadoresTimer = setInterval(refrescarJugadores, ms);
+}
+
 async function refrescarJugadores() {
     if (!pin) return;
     if (document.hidden) return;
@@ -256,9 +283,19 @@ async function refrescarJugadores() {
         }
         const data = await resp.json();
         if (data && data.success) {
+            if (typeof data.total_preguntas === 'number' && data.total_preguntas >= 0) {
+                totalPreguntasCuestionario = data.total_preguntas;
+            }
             if (data.estado) {
+                const cambio = data.estado !== estadoLobbyActual;
                 estadoLobbyActual = data.estado;
                 actualizarUIEstado(data.estado);
+                if (cambio) {
+                    programarPollJugadores();
+                }
+            }
+            if (data.estado !== 'Jugando') {
+                totalPreguntasCuestionario = 0;
             }
             renderJugadores(data.jugadores || []);
         }
@@ -269,9 +306,8 @@ async function refrescarJugadores() {
 }
 
 refrescarJugadores();
-const INTERVALO_JUGADORES_MS = 3000;
-const pollJugadores = setInterval(refrescarJugadores, INTERVALO_JUGADORES_MS);
-window.addEventListener('beforeunload', () => clearInterval(pollJugadores));
+programarPollJugadores();
+window.addEventListener('beforeunload', () => clearInterval(pollJugadoresTimer));
 
 if (listaJugadores) {
     listaJugadores.addEventListener('click', async (ev) => {
